@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — List on market</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.side-inner{min-height:860px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover{background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46;color:#A1A7AF;cursor:default}
+.btn-s:hover{border-color:#4A5059;background:#121417}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.field:disabled{opacity:.45}
+.seg:focus-within{outline:2px solid #ECEDEF;outline-offset:1px}
+.sr{position:absolute;width:1px;height:1px;opacity:0;margin:0}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Main" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: #0F1114">
+<span class="lbl">Balance</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span class="mono" style="font-size: 24px; font-weight: 600">4,870</span><span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Free case</span><span class="mono" style="color: #ECEDEF">Ready</span></div>
+</div>
+<a href="Profile.dc.html" style="display: flex; gap: 10px; align-items: center; padding: 8px 4px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">V</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">vex</span><span style="font-size: 12px; color: #A1A7AF">View profile</span></span>
+</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div role="status" style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; min-height: 40px; padding: 8px 32px; box-sizing: border-box; border-bottom: 1px solid #1C1F24; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px"><span style="font-weight: 600">nyx</span><span style="color: #A1A7AF">unboxed</span><span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span><span class="mono" style="font-size: 12px; color: #A1A7AF">FN · 0.0081</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+
+<div style="width: 100%; max-width: 1240px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; flex-direction: column; gap: 12px">
+<a href="Item.dc.html" class="mono" style="align-self: flex-start; font-size: 12px; color: #A1A7AF; text-decoration: none">← AWP | Chrome Cannon</a>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">List on market</h1>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+<aside style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow: hidden">
+<div style="position: relative; height: 260px; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 50%, rgba(235,75,75,0.10), rgba(14,16,19,0) 70%)">
+<span aria-hidden="true" style="position: absolute; inset: 8% 6%; background: radial-gradient(closest-side, rgba(235,75,75,0.30), rgba(235,75,75,0))"></span>
+<span aria-hidden="true" style="position: absolute; left: 18px; top: 18px; width: 18px; height: 18px; border-left: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 18px; bottom: 18px; width: 18px; height: 18px; border-right: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<svg role="img" aria-label="AWP | Chrome Cannon (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 84%; fill: #DADDE2"><path d="{{art}}"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px 22px; border-top: 1px solid #1A1D22">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: #A1A7AF">AWP</span><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.02em">Chrome Cannon</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span class="mono" style="display: inline-flex; align-items: center; height: 28px; padding: 0 8px; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600">STATTRAK™</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 12px"><span aria-hidden="true" style="width: 7px; height: 7px; background: #EB4B4B"></span>Covert</span>
+<span class="mono" style="display: inline-flex; align-items: center; height: 28px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px">MW · 0.0934</span>
+</div>
+<dl style="margin: 0; display: flex; flex-direction: column">
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #1A1D22; font-size: 14px"><dt style="color: #A1A7AF">Average sale, 30 d</dt><dd class="mono" style="margin: 0">7,217 CR</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #1A1D22; font-size: 14px"><dt style="color: #A1A7AF">Last sale</dt><dd class="mono" style="margin: 0">7,100 CR</dd></div>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #1A1D22; font-size: 14px"><dt style="color: #A1A7AF">Recycle value</dt><dd class="mono" style="margin: 0">6,000 CR</dd></div>
+</dl>
+</div>
+</aside>
+
+<div style="flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+
+<sc-if value="{{listed}}" hint-placeholder-val="{{ false }}">
+<section role="status" style="display: flex; flex-direction: column; gap: 14px; padding: 28px; border: 1px solid #ECEDEF; border-radius: 6px; background: #111316">
+<span class="lbl" style="color: #ECEDEF">Listed</span>
+<span style="font-size: 22px; font-weight: 600">Your AWP | Chrome Cannon is up for {{durationLabel}}.</span>
+<span style="font-size: 14px; line-height: 1.5; color: #A1A7AF">Starting at {{startFmt}} CR{{buySentence}}. It stays locked in your inventory until the sale closes.</span>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px">
+<a href="Market.dc.html" class="btn-p" style="display: inline-flex; align-items: center; height: 44px; padding: 0 20px; background: #ECEDEF; color: #0A0B0D; text-decoration: none; font-size: 14px; font-weight: 600">See my listings</a>
+<a href="Inventory.dc.html" class="btn-s" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 14px">Back to inventory</a>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{editing}}" hint-placeholder-val="{{ true }}">
+<form onSubmit="{{submit}}" style="display: flex; flex-direction: column; gap: 22px">
+
+<label style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 15px; font-weight: 600">Starting price</span>
+<span style="position: relative; display: block">
+<input type="number" class="field mono" min="1" step="10" value="{{start}}" onChange="{{onStart}}" style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 56px 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font-size: 20px">
+<span class="mono" style="position: absolute; right: 16px; top: 16px; font-size: 14px; color: #A1A7AF">CR</span>
+</span>
+<span style="font-size: 13px; color: #A1A7AF">Each new bid has to beat the previous one by at least 5%.</span>
+</label>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<label style="display: flex; align-items: center; gap: 12px; cursor: pointer; min-height: 44px">
+<input type="checkbox" checked="{{buyOn}}" onChange="{{toggleBuy}}" style="width: 20px; height: 20px; margin: 0; accent-color: #ECEDEF">
+<span style="font-size: 15px; font-weight: 600">Add a buy-now price</span>
+<span style="font-size: 13px; color: #A1A7AF">Optional</span>
+</label>
+<span style="position: relative; display: block">
+<input type="number" class="field mono" aria-label="Buy-now price" min="1" step="10" value="{{buy}}" disabled="{{buyOff}}" onChange="{{onBuy}}" style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 56px 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font-size: 20px">
+<span class="mono" style="position: absolute; right: 16px; top: 16px; font-size: 14px; color: #A1A7AF">CR</span>
+</span>
+<sc-if value="{{buyError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 13px; color: #F27D7D">The buy-now price has to be above the starting price.</span></sc-if>
+</div>
+
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px">
+<legend style="padding: 0; margin-bottom: 10px; font-size: 15px; font-weight: 600">Duration</legend>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{durations}}" as="d" hint-placeholder-count="2">
+<label class="seg" style="position: relative; display: flex; flex-direction: column; gap: 2px; padding: 14px 16px; border-radius: 2px; cursor: pointer; {{d.style}}">
+<input type="radio" class="sr" name="duration" value="{{d.v}}" checked="{{d.on}}" onChange="{{d.pick}}">
+<span class="mono" style="font-size: 18px; font-weight: 500">{{d.label}}</span>
+<span style="font-size: 12px; opacity: 0.75">{{d.hint}}</span>
+</label>
+</sc-for>
+</div>
+</fieldset>
+
+<section aria-labelledby="sum-title" style="display: flex; flex-direction: column; padding: 18px 20px 8px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="sum-title" class="lbl" style="margin: 0 0 8px">// What you get</h2>
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #1A1D22; font-size: 14px"><span style="color: #A1A7AF">Sold at the starting price</span><span class="mono">{{netStart}} CR</span></div>
+<sc-if value="{{buyOn}}" hint-placeholder-val="{{ true }}"><div style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #1A1D22; font-size: 14px"><span style="color: #A1A7AF">Bought now</span><span class="mono">{{netBuy}} CR</span></div></sc-if>
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #1A1D22; font-size: 13px"><span style="color: #858B94">5% market fee, taken from the final price</span><span class="mono" style="color: #858B94">−{{feeStart}} CR</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #1A1D22; font-size: 13px"><span style="color: #858B94">Recycling it instead</span><span class="mono" style="color: #858B94">6,000 CR</span></div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button type="submit" class="btn-p" disabled="{{invalid}}" style="height: 52px; padding: 0 30px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">List for {{durationLabel}}</button>
+<a href="Item.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 8px; color: #A1A7AF; font-size: 14px">Cancel</a>
+<span style="flex-basis: 100%; font-size: 12px; color: #858B94">Locked while listed: no trades, recycling or contracts. Active listings: 1 of 10.</span>
+</div>
+</form>
+</sc-if>
+
+</div>
+</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1120}}'>
+const NAVDEF = [
+  ['home', 'Home', 'Main.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['market', 'Market', 'Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+  ['trades', 'Trades', 'Trades.dc.html', 'M4 8h15l-4-4M20 16H5l4 4'],
+  ['tradeup', 'Trade-up', 'TradeUp.dc.html', 'M12 20V5M6 11l6-6 6 6M5 20h14'],
+  ['friends', 'Friends', 'Friends.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'],
+  ['leaderboard', 'Leaderboard', 'Leaderboard.dc.html', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+];
+const SNIPER = 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z';
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { start: '6500', buy: '9000', buyOn: true, duration: '48', listed: false };
+  }
+  renderVals() {
+    const st = this.state;
+    const nav = NAVDEF.map((n) => ({
+      label: n[1], href: n[2], icon: n[3],
+      current: n[0] === 'market' ? 'page' : undefined,
+      style: n[0] === 'market' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF'
+    }));
+    const start = Math.max(0, parseInt(st.start, 10) || 0);
+    const buy = Math.max(0, parseInt(st.buy, 10) || 0);
+    const buyError = st.buyOn && buy <= start;
+    const durationLabel = st.duration === '24' ? '24 h' : '48 h';
+    return {
+      nav, art: SNIPER,
+      start: st.start, buy: st.buy, buyOn: st.buyOn, buyOff: !st.buyOn,
+      buyError,
+      invalid: start < 1 || buyError,
+      netStart: fmt(start * 0.95), feeStart: fmt(start * 0.05), netBuy: fmt(buy * 0.95),
+      startFmt: fmt(start),
+      buySentence: st.buyOn ? ', or ' + fmt(buy) + ' CR to buy it now' : '',
+      durationLabel,
+      listed: st.listed, editing: !st.listed,
+      durations: [['24', '24 h', 'Ends tomorrow'], ['48', '48 h', 'More time for bids']].map((d) => ({
+        v: d[0], label: d[1], hint: d[2], on: st.duration === d[0],
+        style: st.duration === d[0] ? 'background: #ECEDEF; color: #0A0B0D; border: 1px solid #ECEDEF' : 'background: #0E1013; color: #ECEDEF; border: 1px solid #2C3138',
+        pick: () => this.setState({ duration: d[0] })
+      })),
+      onStart: (e) => this.setState({ start: e.target.value }),
+      onBuy: (e) => this.setState({ buy: e.target.value }),
+      toggleBuy: () => this.setState({ buyOn: !st.buyOn }),
+      submit: (e) => { if (e && e.preventDefault) e.preventDefault(); if (start >= 1 && !buyError) this.setState({ listed: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

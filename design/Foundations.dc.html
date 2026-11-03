@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Foundations</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+@keyframes mint-blink{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1240px; box-sizing: border-box; padding: 64px; display: flex; flex-direction: column; gap: 48px; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif; overflow: hidden">
+
+<header style="display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; padding-bottom: 32px; border-bottom: 1px solid #1C1F24">
+<div style="display: flex; align-items: center; gap: 20px">
+<span aria-hidden="true" style="width: 44px; height: 44px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 44px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</div>
+<p style="margin: 0; max-width: 520px; font-size: 16px; line-height: 1.55; color: #A1A7AF">Gallery calm, HUD precision. The interface stays black, grey and white; colour only ever comes from rarity, so a Covert reads red from across the room.</p>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 64px">
+
+<section aria-labelledby="f-color" style="display: flex; flex-direction: column; gap: 20px">
+<h2 id="f-color" class="lbl" style="margin: 0">// Colour</h2>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{grounds}}" as="g" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="height: 56px; border: 1px solid #2C3138; border-radius: 2px; background: {{g.hex}}"></span>
+<span style="font-size: 12px">{{g.name}}</span>
+<span class="mono" style="font-size: 11px; color: #858B94">{{g.hex}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{rarities}}" as="r" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013; overflow: hidden">
+<span style="position: relative; height: 64px; display: block"><span style="position: absolute; inset: 8% 14%; background: radial-gradient(closest-side, {{r.glow}}, rgba(0,0,0,0))"></span></span>
+<span style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px">
+<span style="font-size: 13px; font-weight: 600; color: {{r.text}}">{{r.name}}</span>
+<span class="mono" style="font-size: 11px; color: #858B94">{{r.hex}} · text {{r.text}}</span>
+</span>
+<span style="height: 3px; background: {{r.hex}}"></span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; gap: 2px; height: 8px"><span style="flex: 7 1 0; background: #3FB950"></span><span style="flex: 8 1 0; background: #9BC53D"></span><span style="flex: 23 1 0; background: #E3B341"></span><span style="flex: 7 1 0; background: #F0883E"></span><span style="flex: 55 1 0; background: #F05D52"></span></div>
+<span style="font-size: 12px; color: #A1A7AF">Wear scale, only inside the float bar: Factory New to Battle-Scarred.</span>
+</div>
+</section>
+
+<section aria-labelledby="f-type" style="display: flex; flex-direction: column; gap: 18px">
+<h2 id="f-type" class="lbl" style="margin: 0">// Type</h2>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid #1A1D22"><span style="font-size: 52px; line-height: 1; font-weight: 600; letter-spacing: -0.025em">Chrome Cannon</span><span class="mono" style="font-size: 11px; color: #858B94">Instrument Sans 600 · 52</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid #1A1D22"><span style="font-size: 18px; font-weight: 600">Friends' activity</span><span class="mono" style="font-size: 11px; color: #858B94">Instrument Sans 600 · 18</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid #1A1D22"><span style="font-size: 15px; color: #A1A7AF">Every case costs 250 CR and shares the same odds.</span><span class="mono" style="font-size: 11px; color: #858B94">Instrument Sans 400 · 15</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid #1A1D22"><span class="mono" style="font-size: 26px; font-weight: 500">0.093412887</span><span class="mono" style="font-size: 11px; color: #858B94">JetBrains Mono 500 · every number</span></div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px"><span class="lbl">// Daily drop</span><span class="mono" style="font-size: 11px; color: #858B94">Mono 11 · caps · 0.14em · HUD labels</span></div>
+</section>
+
+<section aria-labelledby="f-card" style="display: flex; flex-direction: column; gap: 20px">
+<h2 id="f-card" class="lbl" style="margin: 0">// Item card · default, selected, locked, missing</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="4">
+<div style="position: relative; display: flex; flex-direction: column; border-radius: 4px; overflow: hidden; {{c.frame}}">
+<div style="position: relative; aspect-ratio: 4 / 3; display: grid; place-items: center">
+<span aria-hidden="true" style="position: absolute; inset: 10% 12%; background: radial-gradient(closest-side, {{c.glow}}, rgba(0,0,0,0)); opacity: {{c.op}}"></span>
+<svg role="img" aria-label="{{c.full}}" viewBox="0 0 240 100" style="position: relative; width: 78%; fill: {{c.fill}}; opacity: {{c.op}}"><path d="{{c.art}}"></path></svg>
+<sc-if value="{{c.selected}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="position: absolute; left: 12px; top: 12px; width: 20px; height: 20px; border-radius: 2px; background: #ECEDEF; display: grid; place-items: center"><svg width="14" height="14" viewBox="0 0 24 24" style="fill: none; stroke: #0A0B0D; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></sc-if>
+<sc-if value="{{c.locked}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="position: absolute; left: 12px; top: 14px; display: flex; align-items: center; gap: 6px; color: #ECEDEF"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg>Listed</span></sc-if>
+<sc-if value="{{c.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="position: absolute; right: 12px; top: 14px; padding: 2px 6px; background: #ECEDEF; color: #0A0B0D; font-size: 10px; font-weight: 600">ST™</span></sc-if>
+</div>
+<div style="padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 12px; color: #A1A7AF">{{c.weapon}}</span>
+<span style="font-size: 14px; font-weight: 600; color: {{c.nameColor}}">{{c.skin}}</span>
+<span class="mono" style="margin-top: 6px; font-size: 11px; color: #A1A7AF">{{c.meta}}</span>
+</div>
+<span aria-hidden="true" style="height: 3px; background: {{c.bar}}"></span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="f-float" style="display: flex; flex-direction: column; gap: 20px">
+<h2 id="f-float" class="lbl" style="margin: 0">// Float bar</h2>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 22px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="lbl">Float</span><span class="mono" style="font-size: 22px; font-weight: 500">0.238104546</span></div>
+<div style="position: relative; padding-top: 10px">
+<div aria-hidden="true" style="position: relative; display: flex; gap: 2px; height: 8px">
+<span style="flex: 7 1 0; background: #3FB950"></span><span style="flex: 8 1 0; background: #9BC53D"></span><span style="flex: 23 1 0; background: #E3B341"></span><span style="flex: 7 1 0; background: #F0883E"></span><span style="flex: 55 1 0; background: #F05D52"></span>
+<span style="position: absolute; left: 0; width: 2%; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, rgba(10,11,13,0.82) 0 4px, rgba(10,11,13,0.6) 4px 8px)"></span>
+<span style="position: absolute; left: 80%; right: 0; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, rgba(10,11,13,0.82) 0 4px, rgba(10,11,13,0.6) 4px 8px)"></span>
+</div>
+<span aria-hidden="true" style="position: absolute; top: 0; left: 23.81%; width: 2px; height: 28px; margin-left: -1px; background: #ECEDEF"></span>
+<div class="mono" aria-hidden="true" style="display: flex; gap: 2px; margin-top: 12px; font-size: 10px; color: #858B94"><span style="flex: 7 1 0">FN</span><span style="flex: 8 1 0">MW</span><span style="flex: 23 1 0">FT</span><span style="flex: 7 1 0">WW</span><span style="flex: 55 1 0">BS</span></div>
+</div>
+<p style="margin: 0; font-size: 13px; color: #A1A7AF">Five zones to scale, a white cursor at the exact float, hatching outside the skin's own min–max.</p>
+</div>
+</section>
+
+<section aria-labelledby="f-actions" style="display: flex; flex-direction: column; gap: 20px">
+<h2 id="f-actions" class="lbl" style="margin: 0">// Actions</h2>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button type="button" style="height: 48px; padding: 0 28px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 15px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Open case · 250 CR</button>
+<button type="button" style="display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 15px; font-weight: 500">Recycle <span class="mono" style="font-size: 13px; color: #A1A7AF">+2,500 CR</span></button>
+<button type="button" style="height: 48px; padding: 0 8px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 4px">Open another</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-pressed="true" style="height: 36px; padding: 0 14px; border: 1px solid #ECEDEF; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 13px; font-weight: 500">All</button>
+<button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #A1A7AF; font: inherit; font-size: 13px; font-weight: 500"><span aria-hidden="true" style="width: 8px; height: 8px; background: #EB4B4B"></span>Covert</button>
+<span class="mono" style="display: inline-flex; align-items: center; height: 30px; padding: 0 10px; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font-size: 12px; font-weight: 600; letter-spacing: 0.06em">STATTRAK™</span>
+</div>
+</section>
+
+<section aria-labelledby="f-live" style="display: flex; flex-direction: column; gap: 20px">
+<h2 id="f-live" class="lbl" style="margin: 0">// Live: countdown and global drop</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 18px; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013">
+<span class="lbl">Ends in</span>
+<span class="mono" style="font-size: 22px; font-weight: 500">23:14:07</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 18px; border-radius: 4px; background: #ECEDEF; color: #0A0B0D">
+<span class="lbl" style="display: flex; align-items: center; gap: 8px; color: #0A0B0D"><span aria-hidden="true" class="anim" style="width: 8px; height: 8px; border-radius: 50%; background: #C8382F; animation: mint-blink 1s ease-in-out infinite"></span>Ending</span>
+<span class="mono" style="font-size: 22px; font-weight: 600">01:42</span>
+</div>
+<p style="flex: 1 1 200px; margin: 0; align-self: center; font-size: 13px; line-height: 1.5; color: #A1A7AF">Last 2 minutes: the timer inverts and blinks. A bid now adds 2 minutes.</p>
+</div>
+<div role="status" style="display: flex; align-items: center; gap: 14px; height: 40px; padding: 0 18px; border: 1px solid #1C1F24; border-radius: 4px; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span><strong>nyx</strong> <span style="color: #A1A7AF">unboxed</span> <span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z'
+};
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      grounds: [
+        { name: 'Ground', hex: '#0A0B0D' }, { name: 'Rail', hex: '#0D0E11' }, { name: 'Surface', hex: '#0E1013' },
+        { name: 'Line', hex: '#1C1F24' }, { name: 'Text 2', hex: '#A1A7AF' }, { name: 'Text', hex: '#ECEDEF' }
+      ],
+      rarities: [
+        { name: 'Mil-Spec', hex: '#4B69FF', text: '#8197FF', glow: 'rgba(75,105,255,0.35)' },
+        { name: 'Restricted', hex: '#8847FF', text: '#A983FF', glow: 'rgba(136,71,255,0.36)' },
+        { name: 'Classified', hex: '#D32CE6', text: '#E57AF0', glow: 'rgba(211,44,230,0.34)' },
+        { name: 'Covert', hex: '#EB4B4B', text: '#F27D7D', glow: 'rgba(235,75,75,0.36)' },
+        { name: '★ Knife/gloves', hex: '#E4AE39', text: '#ECC163', glow: 'rgba(228,174,57,0.40)' }
+      ],
+      cards: [
+        { weapon: 'AK-47', skin: 'Inheritance', full: 'AK-47 | Inheritance', art: ART.rifle, glow: 'rgba(235,75,75,0.32)', bar: '#EB4B4B', fill: '#D3D6DB', op: '1', nameColor: '#ECEDEF', meta: 'FT · 0.2381 · 2,500 CR', frame: 'background: #0E1013; border: 1px solid #1C1F24', selected: false, locked: false, st: false },
+        { weapon: 'MAC-10', skin: 'Light Box', full: 'MAC-10 | Light Box, selected', art: ART.smg, glow: 'rgba(75,105,255,0.30)', bar: '#4B69FF', fill: '#D3D6DB', op: '1', nameColor: '#ECEDEF', meta: 'FT · 0.3121 · 30 CR', frame: 'background: #0E1013; border: 1px solid #ECEDEF', selected: true, locked: false, st: false },
+        { weapon: 'AK-47', skin: 'Head Shot', full: 'AK-47 | Head Shot, listed on the market', art: ART.rifle, glow: 'rgba(235,75,75,0.32)', bar: '#EB4B4B', fill: '#D3D6DB', op: '0.4', nameColor: '#ECEDEF', meta: 'FT · 0.2710 · 2,500 CR', frame: 'background: #0E1013; border: 1px solid #1C1F24', selected: false, locked: true, st: false },
+        { weapon: 'Zeus x27', skin: 'Olympus', full: 'Zeus x27 | Olympus, not collected yet', art: ART.pistol, glow: 'rgba(0,0,0,0)', bar: 'rgba(211,44,230,0.30)', fill: '#262A30', op: '1', nameColor: '#858B94', meta: 'Not collected', frame: 'background: #0B0C0E; border: 1px dashed #2C3138', selected: false, locked: false, st: false }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

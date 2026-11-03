@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Items</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 64px; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">// Items</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Items</h1>
+<p style="margin: 0; font-size: 14px; color: #A1A7AF">Look up any item by ID, follow its history and fix its status. 61,402 items, 412 destroyed this week. All times UTC.</p>
+</header>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="position: relative; max-width: 760px">
+<label for="iq" class="sr">Item ID or skin name</label>
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="position: absolute; left: 18px; top: 16px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="iq" type="text" class="field mono" value="{{q}}" onChange="{{onQ}}" placeholder="Item ID or skin name" style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 52px 0 50px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font-size: 16px">
+<sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear search" onClick="{{clearQ}}" style="position: absolute; right: 4px; top: 4px; width: 44px; height: 44px; border: 0; background: none; color: #A1A7AF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<div role="group" aria-label="Rarity" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{rarChips}}" as="c" hint-placeholder-count="5">
+<button type="button" aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 2px; font: inherit; font-size: 13px; cursor: pointer; {{c.style}}"><span aria-hidden="true" style="width: 8px; height: 8px; background: {{c.color}}"></span>{{c.label}}</button>
+</sc-for>
+</div>
+<span aria-hidden="true" style="width: 1px; height: 24px; background: #1C1F24; margin: 0 4px"></span>
+<label style="position: relative; display: inline-flex"><span class="sr">Status</span>
+<select class="field" onChange="{{onStatus}}" style="appearance: none; height: 40px; padding: 0 36px 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">
+<option value="all">Any status</option>
+<option value="Available">Available</option>
+<option value="Listed">Listed</option>
+<option value="In trade">In trade</option>
+<option value="Destroyed">Destroyed</option>
+<option value="stuck">Stuck (no live listing or offer)</option>
+</select>
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 14px; top: 14px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg>
+</label>
+<button type="button" aria-pressed="{{stOnly}}" onClick="{{toggleSt}}" style="height: 40px; padding: 0 14px; border-radius: 2px; font: inherit; font-size: 13px; cursor: pointer; {{stStyle}}">StatTrak™ only</button>
+<sc-if value="{{hasFilters}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{clearAll}}" style="height: 40px; padding: 0 10px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer">Clear filters</button></sc-if>
+</div>
+</div>
+
+<sc-if value="{{show.table}}" hint-placeholder-val="{{ true }}">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<div role="table" aria-label="Items" style="min-width: 980px">
+<div role="row" style="position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: 116px minmax(0, 1fr) 132px 56px 110px 170px 84px; align-items: center; min-height: 44px; padding: 0 18px; border-bottom: 1px solid #1C1F24; background: #0D0E11">
+<span role="columnheader" class="lbl" style="font-size: 10px">ID</span><span role="columnheader" class="lbl" style="font-size: 10px">Item</span><span role="columnheader" class="lbl" style="font-size: 10px">Wear · float</span><span role="columnheader" class="lbl" style="font-size: 10px">ST™</span><span role="columnheader" class="lbl" style="font-size: 10px">Owner</span><span role="columnheader" class="lbl" style="font-size: 10px">Status</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right">Obtained ↓</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+<div role="row" class="row" style="display: grid; grid-template-columns: 116px minmax(0, 1fr) 132px 56px 110px 170px 84px; align-items: center; min-height: 52px; padding: 0 18px; border-bottom: 1px solid #1A1D22; font-size: 14px; {{r.rowStyle}}">
+<span role="cell" class="mono" style="font-size: 13px">{{r.id}}</span>
+<span role="cell" style="display: flex; align-items: center; gap: 10px; min-width: 0"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; background: {{r.color}}"></span><button type="button" class="stretch" onClick="{{r.open}}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{r.name}}</button></span>
+<span role="cell" class="mono" style="font-size: 13px; color: #A1A7AF">{{r.wear}} {{r.float4}}</span>
+<span role="cell"><sc-if value="{{r.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="padding: 1px 5px; background: #ECEDEF; color: #0A0B0D; font-size: 10px; font-weight: 600">ST™</span></sc-if></span>
+<span role="cell"><sc-if value="{{r.hasOwner}}" hint-placeholder-val="{{ true }}"><a href="Admin-Player.dc.html" class="above" style="font-size: 14px">{{r.owner}}</a></sc-if><sc-if value="{{r.noOwner}}" hint-placeholder-val="{{ false }}"><span style="color: #858B94">—</span></sc-if></span>
+<span role="cell" style="display: flex; flex-direction: column; gap: 2px">
+<span class="mono" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 2px; font-size: 11px; {{r.chipStyle}}"><sc-if value="{{r.locked}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg></sc-if>{{r.status}}</span>
+<sc-if value="{{r.stuck}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #A1A7AF"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span>No live offer</span></sc-if>
+</span>
+<span role="cell" class="mono" style="font-size: 13px; color: #A1A7AF; text-align: right">{{r.obtained}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 18px">
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{footer}}</span>
+<button type="button" class="btn-s" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Show more</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{show.loading}}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" aria-label="Loading items" style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="height: 44px; border-bottom: 1px solid #1C1F24; background: #0D0E11"></div>
+<sc-for list="{{skel}}" as="s" hint-placeholder-count="8">
+<div style="display: flex; align-items: center; gap: 24px; height: 52px; padding: 0 18px; border-bottom: 1px solid #1A1D22"><span class="skel" style="width: 84px; height: 12px"></span><span class="skel" style="width: {{s.w}}; height: 12px"></span><span class="skel" style="width: 90px; height: 12px; margin-left: auto"></span><span class="skel" style="width: 70px; height: 20px"></span></div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{show.empty}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 56px 24px; border: 1px dashed #2C3138; border-radius: 6px; text-align: center">
+<p style="margin: 0; font-size: 15px">No item has the ID <span class="mono">{{emptyQ}}</span>.</p>
+<p style="margin: 0; font-size: 13px; color: #A1A7AF">IDs have 9 digits. Destroyed items keep their ID, so check the number.</p>
+<button type="button" class="btn-s" onClick="{{clearAll}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Clear search</button>
+</div>
+</sc-if>
+
+<sc-if value="{{show.error}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 28px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<span style="font-size: 15px; font-weight: 600">Couldn't load items.</span>
+<span style="font-size: 13px; color: #A1A7AF">The item index didn't answer in 10 s. Nothing was changed. <span class="mono" style="color: #858B94">items.search timeout</span></span>
+<button type="button" class="btn-p" onClick="{{retry}}" style="height: 44px; padding: 0 20px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Retry</button>
+</div>
+</sc-if>
+
+
+</div>
+</main>
+
+<sc-if value="{{drawerOpen}}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" onClick="{{close}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(5,6,8,0.62)"></div>
+<aside role="dialog" aria-modal="true" aria-labelledby="dr-t" style="position: absolute; top: 0; right: 0; bottom: 0; z-index: 31; width: min(520px, 100%); box-sizing: border-box; display: flex; flex-direction: column; background: #0E1013; border-left: 1px solid #2C3138; box-shadow: -24px 0 60px rgba(0,0,0,0.5)">
+<div class="dscroll" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 22px; padding: 20px 28px 28px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span class="lbl">// Item <span class="mono" style="color: #ECEDEF; letter-spacing: 0.04em">{{d.id}}</span></span>
+<button type="button" aria-label="Close" onClick="{{close}}" style="width: 44px; height: 44px; margin-right: -12px; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+
+<div style="position: relative; height: 210px; display: grid; place-items: center; background: #0A0B0D; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<span aria-hidden="true" style="position: absolute; inset: 6% 14%; background: radial-gradient(closest-side, {{d.glow}}, rgba(0,0,0,0)); opacity: {{d.op}}"></span>
+<span aria-hidden="true" style="position: absolute; left: 14px; top: 14px; width: 14px; height: 14px; border-left: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 14px; top: 14px; width: 14px; height: 14px; border-right: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; left: 14px; bottom: 14px; width: 14px; height: 14px; border-left: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 14px; bottom: 14px; width: 14px; height: 14px; border-right: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<svg role="img" aria-label="{{d.name}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 74%; fill: {{d.fill}}; opacity: {{d.op}}"><path d="{{d.art}}"></path></svg>
+<span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: {{d.color}}"></span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 13px; color: #A1A7AF">{{d.weapon}} · <span style="color: {{d.text}}">{{d.rarity}}</span></span>
+<h2 id="dr-t" style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.01em">{{d.skin}}</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span class="mono" style="height: 26px; display: inline-flex; align-items: center; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px">{{d.wearName}}</span>
+<sc-if value="{{d.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="height: 26px; display: inline-flex; align-items: center; padding: 0 8px; background: #ECEDEF; color: #0A0B0D; border-radius: 2px; font-size: 11px; font-weight: 600">StatTrak™</span></sc-if>
+<span class="mono" style="height: 26px; display: inline-flex; align-items: center; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #A1A7AF">Pattern {{d.pattern}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px">
+<div style="position: relative; display: flex; height: 6px; gap: 2px">
+<span style="flex: 7; background: #3FB950"></span><span style="flex: 8; background: #9BC53D"></span><span style="flex: 23; background: #E3B341"></span><span style="flex: 7; background: #F0883E"></span><span style="flex: 55; background: #F05D52"></span>
+<span aria-hidden="true" style="position: absolute; top: -5px; left: {{d.floatPct}}; width: 2px; height: 16px; margin-left: -1px; background: #ECEDEF"></span>
+</div>
+<span style="display: flex; justify-content: space-between; font-size: 12px; color: #A1A7AF"><span>Float</span><span class="mono" style="color: #ECEDEF">{{d.float9}}</span></span>
+</div>
+</div>
+
+<sc-if value="{{d.stuck}}" hint-placeholder-val="{{ false }}">
+<div role="note" style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border: 1px solid #2C3138; border-radius: 4px; background: #111316">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #C8382F"></span>Stuck in “In trade”</span>
+<span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">Offer #2231 expired on Oct 19 at 03:00, but the item lock wasn't released. No live listing or offer holds it, so vex can't sell, trade or recycle it. Unlock puts it back to Available in vex's inventory.</span>
+</div>
+</sc-if>
+
+<dl style="margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<sc-for list="{{d.facts}}" as="f" hint-placeholder-count="8">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">{{f.k}}</dt><dd style="margin: 0; font-size: 14px; {{f.style}}">{{f.v}}</dd></div>
+</sc-for>
+</dl>
+
+<section aria-labelledby="tl-t" style="display: flex; flex-direction: column; gap: 12px">
+<h3 id="tl-t" class="lbl" style="margin: 0">// Timeline</h3>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{d.timeline}}" as="t" hint-placeholder-count="4">
+<li style="position: relative; display: flex; gap: 14px; padding-bottom: 16px">
+<span aria-hidden="true" style="position: relative; flex: none; width: 9px; display: flex; justify-content: center"><span style="position: absolute; top: 14px; bottom: -6px; width: 1px; background: {{t.line}}"></span><span style="margin-top: 5px; width: 9px; height: 9px; box-sizing: border-box; border-radius: 50%; {{t.dot}}"></span></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><a href="{{t.href}}" style="font-size: 14px; text-decoration: none; {{t.textStyle}}">{{t.text}}</a><span class="mono" style="font-size: 11px; color: #858B94">{{t.when}}</span></span>
+</li>
+</sc-for>
+</ol>
+</section>
+
+</div>
+<div style="flex: none; padding: 16px 28px 20px; border-top: 1px solid #1C1F24; background: #0E1013">
+<sc-if value="{{hasConfirm}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-labelledby="cf-t" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<span id="cf-t" style="font-size: 15px; font-weight: 600">{{c.title}}</span>
+<sc-if value="{{c.isMove}}" hint-placeholder-val="{{ false }}">
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Move to</span><input type="text" class="field" value="{{moveTo}}" onChange="{{onMoveTo}}" placeholder="Username or Discord ID" style="box-sizing: border-box; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+</sc-if>
+<div style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 2px">
+<sc-for list="{{c.diff}}" as="x" hint-placeholder-count="2">
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-bottom: 1px solid #1A1D22; font-size: 13px"><span style="color: #A1A7AF">{{x.k}}</span><span class="mono">{{x.v}}</span></div>
+</sc-for>
+</div>
+<sc-if value="{{c.hasNote}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">{{c.note}}</span></sc-if>
+<sc-if value="{{c.isRestore}}" hint-placeholder-val="{{ false }}"><label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 13px; cursor: pointer"><input type="checkbox" checked="{{clawback}}" onChange="{{toggleClaw}}" style="width: 18px; height: 18px; accent-color: #ECEDEF">Also take back the 500 CR lou got for recycling it <span class="mono" style="color: #A1A7AF">957 → 457 CR</span></label></sc-if>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Reason <span style="color: #858B94">· required, shown in the admin log</span></span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="e.g. support ticket #58" style="box-sizing: border-box; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" class="btn-s" onClick="{{cancel}}" style="height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-p" onClick="{{confirmGo}}" disabled="{{noReason}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{c.button}}</button>
+</div>
+<span class="mono" style="font-size: 11px; color: #858B94">Logged as {{staffName}}</span>
+</div>
+</sc-if>
+
+<sc-if value="{{noConfirm}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{d.actions}}" as="a" hint-placeholder-count="3">
+<button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.disabled}}" title="{{a.hint}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 2px; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; {{a.style}}"><sc-if value="{{a.lockIcon}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg></sc-if>{{a.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{hasRoleHint}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 11px; color: #858B94">{{roleHint}}</span></sc-if>
+</div>
+</sc-if>
+</div>
+</aside>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"enum","options":["stuck","destroyed","listed","none"],"default":"stuck","section":"State"},"state":{"editor":"enum","options":["ready","loading","empty","error"],"default":"ready","section":"State"},"role":{"editor":"enum","options":["admin","moderator","viewer"],"default":"admin","section":"State"},"$preview":{"width":1440,"height":1100}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  pistol: 'M40 34H170V54H40Z M170 40H190V48H170Z M60 54H96L106 90H76Z M110 54H124Q128 64 120 70H108Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const RAR = {
+  milspec: ['#4B69FF', 'rgba(75,105,255,0.30)', '#8197FF', 'Mil-Spec'],
+  restricted: ['#8847FF', 'rgba(136,71,255,0.32)', '#A983FF', 'Restricted'],
+  classified: ['#D32CE6', 'rgba(211,44,230,0.30)', '#E57AF0', 'Classified'],
+  covert: ['#EB4B4B', 'rgba(235,75,75,0.32)', '#F27D7D', 'Covert'],
+  gold: ['#E4AE39', 'rgba(228,174,57,0.36)', '#ECC163', '★ Rare special']
+};
+const WEAR = { FN: 'Factory New', MW: 'Minimal Wear', FT: 'Field-Tested', WW: 'Well-Worn', BS: 'Battle-Scarred' };
+// id, weapon, skin, rarity, art, wear, float(9), st, owner, status, obtained, origin, pattern, market, recycle, stuck, showcase
+const ITEMS = [
+  ['000483002', 'MAG-7', 'Insomnia', 'milspec', 'smg', 'FT', '0.245518203', false, 'vex', 'Available', 'Oct 23', 'Revolution Case', '77', '36 CR', '30 CR', false, false],
+  ['000482990', 'Nova', 'Dark Sigil', 'milspec', 'rifle', 'FT', '0.229004117', false, 'vex', 'Available', 'Oct 23', 'Kilowatt Case', '518', '30 CR', '30 CR', false, false],
+  ['000482870', 'M4A4', 'Temukau', 'covert', 'rifle', 'MW', '0.081236540', false, 'lou', 'Listed', 'Oct 22', 'Revolution Case', '233', '3,100 CR', '2,500 CR', false, false],
+  ['000482541', 'AK-47', 'Head Shot', 'covert', 'rifle', 'FT', '0.271093388', false, 'vex', 'Available', 'Oct 22', 'Revolution Case', '904', '2,500 CR', '2,500 CR', false, false],
+  ['000482113', 'AK-47', 'Redline', 'classified', 'rifle', 'FT', '0.238104771', true, 'vex', 'Listed', 'Oct 21', 'Operation Phoenix Weapon Case', '661', '1,380 CR', '500 CR', false, false],
+  ['000481907', '★ Karambit', 'Fade', 'gold', 'knife', 'FN', '0.031244019', false, 'kenji', 'Available', 'Oct 19', 'Operation Phoenix Weapon Case', '412', '15,600 CR', '12,000 CR', false, true],
+  ['000481002', '★ Kukri Knife', 'Fade', 'gold', 'knife', 'FN', '0.021385502', false, 'vex', 'Available', 'Oct 18', 'Kilowatt Case', '128', '15,000 CR', '12,000 CR', false, true],
+  ['000480377', 'AWP', 'Chrome Cannon', 'covert', 'sniper', 'MW', '0.093470016', true, 'vex', 'Available', 'Oct 16', 'Kilowatt Case', '35', '6,000 CR', '2,500 CR', false, false],
+  ['000479555', 'MP7', 'Skulls', 'milspec', 'smg', 'FN', '0.030017432', false, 'vex', 'In trade', 'Oct 12', 'Revolution Case', '412', '45 CR', '36 CR', true, false],
+  ['000477210', 'AWP', 'Redline', 'classified', 'sniper', 'FT', '0.171402856', false, '', 'Destroyed', 'Oct 10', 'Revolution Case', '250', '1,450 CR', '500 CR', false, false]
+];
+const TIMELINE = {
+  '000479555': [['Opened by vex from Revolution Case', 'Oct 12, 14:02', 'Admin-Player.dc.html', 0], ['Offered to kenji in offer #2231', 'Oct 16, 20:11', 'Admin-Market.dc.html', 0], ['Offer #2231 expired (Trade expiry job)', 'Oct 19, 03:00', 'Admin-Logs.dc.html', 0], ['Lock not released: still “In trade”', 'since Oct 19, 03:00', 'Admin-Logs.dc.html', 2]],
+  '000477210': [['Opened by vex from Revolution Case', 'Oct 10, 14:02', 'Admin-Player.dc.html', 0], ['Traded to kenji (offer #2214)', 'Oct 14, 19:30', 'Admin-Market.dc.html', 0], ['Listed on the market by kenji', 'Oct 15, 08:12', 'Admin-Market.dc.html', 0], ['Sold to lou for 1,450 CR', 'Oct 17, 08:12', 'Admin-Market.dc.html', 0], ['Recycled by lou for 500 CR', 'Oct 20, 22:47', 'Admin-Logs.dc.html', 1]],
+  '000481907': [['Opened by vex from Operation Phoenix Weapon Case', 'Oct 19, 21:06', 'Admin-Player.dc.html', 0], ['Offered to kenji for 15,000 CR (offer #2236)', 'Oct 22, 17:58', 'Admin-Market.dc.html', 0], ['Credits taken, item not delivered (bug)', 'Oct 22, 17:58', 'Admin-Logs.dc.html', 2], ['Moved to kenji by mathys · support ticket #58', 'Oct 22, 18:45', 'Admin-Logs.dc.html', 3]],
+  '000482113': [['Opened by vex from Operation Phoenix Weapon Case', 'Oct 21, 18:40', 'Admin-Player.dc.html', 0], ['Listed on the market · start 1,000 CR', 'Oct 23, 09:00', 'Admin-Market.dc.html', 0], ['4 bids · leading 1,380 CR by kenji', 'Oct 23, 13:51', 'Admin-Market.dc.html', 0]]
+};
+const OPEN = { stuck: '000479555', destroyed: '000477210', listed: '000482113', none: null };
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const RCH = [['milspec', 'Mil-Spec'], ['restricted', 'Restricted'], ['classified', 'Classified'], ['covert', 'Covert'], ['gold', '★']];
+const CHIPS = {
+  Available: 'border: 1px solid #2C3138; color: #ECEDEF',
+  Listed: 'color: #ECEDEF; padding-left: 0',
+  'In trade': 'color: #ECEDEF; padding-left: 0',
+  Destroyed: 'border: 1px dashed #4A5059; color: #858B94'
+};
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: undefined, q: '', rar: [], status: 'all', stOnly: false, fix: {}, action: null, reason: '', moveTo: 'kenji', claw: true, toast: '', retried: false };
+  }
+  componentDidUpdate(prev) {
+    if (prev.open !== this.props.open || prev.role !== this.props.role || prev.state !== this.props.state) this.setState({ sel: undefined, action: null, toast: '', retried: false });
+  }
+  renderVals() {
+    const st = this.state;
+    const role = RANK[this.props.role] !== undefined ? this.props.role : 'admin';
+    const r = RANK[role];
+    const staffName = r === 2 ? 'mathys' : r === 1 ? 'lea' : 'sam';
+    const nav = ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === 'items' ? 'page' : undefined, style: n[0] === 'items' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' }));
+    const live = ITEMS.map((i) => {
+      const f = st.fix[i[0]] || {};
+      return { raw: i, id: i[0], weapon: i[1], skin: i[2], rar: i[3], owner: f.owner !== undefined ? f.owner : i[8], status: f.status || i[9], stuck: f.stuck !== undefined ? f.stuck : i[15], showcase: f.showcase !== undefined ? f.showcase : i[16], st: i[7] };
+    });
+    const q = st.q.trim().toLowerCase();
+    const list = live.filter((x) => {
+      if (q && x.id.indexOf(q) < 0 && (x.weapon + ' | ' + x.skin).toLowerCase().indexOf(q) < 0) return false;
+      if (st.rar.length && st.rar.indexOf(x.rar) < 0) return false;
+      if (st.stOnly && !x.st) return false;
+      if (st.status === 'stuck') return x.stuck;
+      if (st.status !== 'all' && x.status !== st.status) return false;
+      return true;
+    });
+    let mode = this.props.state || 'ready';
+    if (mode === 'error' && st.retried) mode = 'ready';
+    if (mode === 'ready' && !list.length) mode = 'empty';
+    const emptyQ = this.props.state === 'empty' ? '000999999' : (st.q || 'this filter');
+    const selId = st.sel !== undefined ? st.sel : OPEN[this.props.open || 'stuck'];
+    const rows = (this.props.state === 'empty' ? [] : list).map((x) => {
+      const i = x.raw;
+      return {
+        id: x.id, name: x.weapon + ' | ' + x.skin, color: RAR[x.rar][0], wear: i[5], float4: i[6].slice(0, 6), st: x.st,
+        owner: x.owner, hasOwner: !!x.owner, noOwner: !x.owner, status: x.status, chipStyle: CHIPS[x.status], locked: x.status === 'Listed' || x.status === 'In trade', stuck: x.stuck,
+        obtained: i[10], rowStyle: x.id === selId ? 'background: #16181C' : '', open: () => this.setState({ sel: x.id, action: null, reason: '' })
+      };
+    });
+    const cur = live.find((x) => x.id === selId) || null;
+    let d = { id: '', name: '', weapon: '', skin: '', rarity: '', color: 'transparent', glow: 'transparent', text: '#ECEDEF', art: '', fill: '#D3D6DB', op: '1', wearName: '', st: false, pattern: '', float9: '', floatPct: '0%', stuck: false, facts: [], timeline: [], actions: [] };
+    let c = { title: '', diff: [], note: '', hasNote: false, button: '', isMove: false, isRestore: false };
+    if (cur) {
+      const i = cur.raw;
+      const rr = RAR[cur.rar];
+      const tl = (TIMELINE[cur.id] || [['Opened by ' + i[8] + ' from ' + i[11], i[10] + ', 14:02', 'Admin-Player.dc.html', 0]]).map((t) => t.slice());
+      if (st.fix[cur.id] && st.fix[cur.id].event) tl.push([st.fix[cur.id].event, 'Oct 23, 14:12 · by ' + staffName, 'Admin-Logs.dc.html', 3]);
+      const statusStyle = cur.status === 'Destroyed' ? 'color: #858B94' : '';
+      const need = (n, extra) => {
+        const ok = r >= n;
+        return { ok, hint: !ok ? (n === 2 ? 'Admins only' : 'Moderators and admins') : (extra || '') };
+      };
+      const mk = (label, n, go, primary, blockedWhy) => {
+        const p = need(n);
+        const disabled = !p.ok || !!blockedWhy;
+        return { label, go, disabled, hint: !p.ok ? p.hint : (blockedWhy || ''), lockIcon: !p.ok, cls: primary ? 'btn-p' : 'btn-s', style: primary ? 'border: 0; background: #ECEDEF; color: #0A0B0D' : 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF' };
+      };
+      const ask = (k) => () => this.setState({ action: k, reason: '' });
+      const actions = [];
+      if (cur.stuck) actions.push(mk('Unlock', 2, ask('unlock'), true));
+      if (cur.status === 'Destroyed') actions.push(mk('Restore', 2, ask('restore'), true));
+      actions.push(mk('Move to player', 2, ask('move'), false, cur.status === 'Destroyed' ? 'Restore it first' : ''));
+      actions.push(mk('Remove from showcase', 1, ask('showcase'), false, cur.showcase ? '' : 'Not in a showcase'));
+      d = {
+        id: cur.id, name: cur.weapon + ' | ' + cur.skin, weapon: cur.weapon, skin: cur.skin, rarity: rr[3], color: rr[0], glow: rr[1], text: rr[2],
+        art: ART[i[4]], fill: cur.rar === 'gold' ? '#EFE6D2' : '#D3D6DB', op: cur.status === 'Destroyed' ? '0.35' : '1',
+        wearName: WEAR[i[5]], st: cur.st, pattern: i[12], float9: i[6], floatPct: (parseFloat(i[6]) * 100).toFixed(2) + '%', stuck: cur.stuck,
+        facts: [['ID', cur.id, 'font-family: JetBrains Mono, monospace'], ['Origin case', i[11], ''], ['Original owner', 'vex', ''], ['Current owner', cur.owner || '— (destroyed)', ''], ['Status', cur.status + (cur.stuck ? ' · stuck' : ''), statusStyle], ['Obtained', i[10] + ', 14:02', 'font-family: JetBrains Mono, monospace'], ['Market value', i[13], 'font-family: JetBrains Mono, monospace'], ['Recycle value', i[14], 'font-family: JetBrains Mono, monospace']].map((f) => ({ k: f[0], v: f[1], style: f[2] })),
+        timeline: tl.map((t, ix) => ({
+          text: t[0], when: t[1], href: t[2],
+          textStyle: t[3] === 2 ? 'color: #ECEDEF; font-weight: 600' : 'color: #ECEDEF',
+          dot: t[3] === 2 ? 'background: #C8382F' : t[3] === 3 ? 'background: #ECEDEF' : t[3] === 1 ? 'border: 1px dashed #858B94' : 'border: 1px solid #A1A7AF; background: #0E1013',
+          line: ix === tl.length - 1 ? 'transparent' : '#2C3138'
+        })),
+        actions
+      };
+      const target = st.moveTo.trim() || 'kenji';
+      const C = {
+        unlock: { title: 'Unlock ' + d.name, diff: [['Status', 'In trade → Available'], ['Owner', 'vex (unchanged)']], note: 'No live listing or offer holds it, so nothing else changes.', button: 'Unlock item', toast: 'Unlocked ' + d.name + ' (' + cur.id + ') · logged', fix: { status: 'Available', stuck: false, event: 'Unlocked: back to Available' } },
+        restore: { title: 'Restore ' + d.name + ' to lou', diff: [['Status', 'Destroyed → Available'], ['Owner', '— → lou']], note: 'lou was the last owner. The item keeps its ID, float and pattern.', button: 'Restore to lou', toast: 'Restored ' + d.name + ' to lou' + (st.claw ? ', took back 500 CR' : '') + ' · logged', fix: { status: 'Available', owner: 'lou', event: 'Restored to lou' + (st.claw ? ' · 500 CR taken back' : '') } },
+        move: { title: 'Move ' + d.name + ' to ' + target, diff: [['Owner', (cur.owner || '—') + ' → ' + target], ['Status', cur.status === 'Listed' || cur.status === 'In trade' ? cur.status + ' → Available' : cur.status + ' (unchanged)']], note: cur.status === 'Listed' ? 'Its listing is cancelled first and the leading bid (1,380 CR, kenji) is refunded.' : cur.status === 'In trade' ? 'Offer #2231 is already expired, so no offer is cancelled.' : '', button: 'Move to ' + target, toast: 'Moved ' + d.name + ' to ' + target + ' · logged', fix: { owner: target, status: 'Available', stuck: false, event: 'Moved to ' + target } },
+        showcase: { title: 'Remove ' + d.name + ' from ' + (cur.owner || '') + '’s showcase', diff: [['Showcase', 'shown → hidden'], ['Inventory', 'unchanged']], note: 'The player can’t put it back for 24 h.', button: 'Remove from showcase', toast: 'Removed ' + d.name + ' from ' + cur.owner + '’s showcase · logged', fix: { showcase: false, event: 'Removed from showcase' } }
+      };
+      if (st.action && C[st.action]) {
+        const a = C[st.action];
+        c = { title: a.title, diff: a.diff.map((x) => ({ k: x[0], v: x[1] })), note: a.note, hasNote: !!a.note, button: a.button, isMove: st.action === 'move', isRestore: st.action === 'restore', toast: a.toast, fix: a.fix };
+      }
+    }
+    const hasConfirm = !!(cur && st.action);
+    return {
+      nav, staffName, staffInitial: staffName.charAt(0).toUpperCase(), roleLabel: { admin: 'Admin', moderator: 'Moderator', viewer: 'Viewer' }[role],
+      q: st.q, hasQ: !!st.q, onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }),
+      rarChips: RCH.map((x) => {
+        const on = st.rar.indexOf(x[0]) >= 0;
+        return { label: x[1], color: RAR[x[0]][0], on, style: on ? 'border: 1px solid #ECEDEF; background: #16181C; color: #ECEDEF' : 'border: 1px solid #2C3138; background: transparent; color: #A1A7AF', pick: () => this.setState({ rar: on ? st.rar.filter((y) => y !== x[0]) : st.rar.concat([x[0]]) }) };
+      }),
+      onStatus: (e) => this.setState({ status: e.target.value }),
+      stOnly: st.stOnly, toggleSt: () => this.setState({ stOnly: !st.stOnly }),
+      stStyle: st.stOnly ? 'border: 1px solid #ECEDEF; background: #16181C; color: #ECEDEF' : 'border: 1px solid #2C3138; background: transparent; color: #A1A7AF',
+      hasFilters: !!(st.q || st.rar.length || st.stOnly || st.status !== 'all'),
+      clearAll: () => this.setState({ q: '', rar: [], stOnly: false, status: 'all' }),
+      show: { table: mode === 'ready', loading: mode === 'loading', empty: mode === 'empty', error: mode === 'error' },
+      skel: ['46%', '38%', '52%', '30%', '44%', '36%', '50%', '40%'].map((w) => ({ w })),
+      emptyQ, retry: () => this.setState({ retried: true }),
+      rows, footer: '1–' + rows.length + ' of ' + (q || st.rar.length || st.stOnly || st.status !== 'all' ? rows.length : '61,402'),
+      drawerOpen: !!cur && mode === 'ready', close: () => this.setState({ sel: null, action: null }),
+      d, c, hasConfirm, noConfirm: !hasConfirm,
+      hasRoleHint: r < 2, roleHint: r === 0 ? 'Read-only: you’re a Viewer. Item fixes are for admins.' : 'Unlock, Restore and Move to player: Admins only.',
+      reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }), noReason: !st.reason.trim(),
+      moveTo: st.moveTo, onMoveTo: (e) => this.setState({ moveTo: e.target.value }),
+      clawback: st.claw, toggleClaw: () => this.setState({ claw: !st.claw }),
+      cancel: () => this.setState({ action: null }),
+      confirmGo: () => {
+        if (!cur || !c.fix) return;
+        const fix = Object.assign({}, st.fix);
+        fix[cur.id] = Object.assign({}, fix[cur.id] || {}, c.fix);
+        this.setState({ fix, action: null, reason: '', toast: c.toast });
+      },
+      hasToast: !!st.toast, toast: st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

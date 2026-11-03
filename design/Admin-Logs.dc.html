@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Logs & tools</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">// Logs &amp; tools</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Logs &amp; tools</h1>
+<p style="margin: 0; font-size: 14px; color: #A1A7AF">Every staff action with who, why and what changed. Entries can't be edited or deleted. All times UTC.</p>
+</header>
+
+<div role="tablist" aria-label="Logs and tools" style="display: flex; flex-wrap: wrap; gap: 4px 28px; border-bottom: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button type="button" role="tab" class="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0; margin-bottom: -1px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; {{t.style}}">{{t.label}}<sc-if value="{{t.later}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 9px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 5px; border: 1px dashed #4A5059; color: #858B94">Later</span></sc-if></button>
+</sc-for>
+</div>
+
+<sc-if value="{{tab.log}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<div style="position: relative; flex: 0 1 300px">
+<label for="lt" class="sr">Target</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="lt" type="text" class="field" value="{{q}}" onChange="{{onQ}}" placeholder="Target: player, item ID, case" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 40px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear target" onClick="{{clearQ}}" style="position: absolute; right: 0; top: 0; width: 44px; height: 44px; border: 0; background: none; color: #A1A7AF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+</div>
+<label style="position: relative; display: inline-flex"><span class="sr">Staff</span>
+<select class="field" onChange="{{onStaff}}" style="appearance: none; height: 44px; padding: 0 36px 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">
+<option value="all">Any staff</option>
+<option value="mathys">mathys</option>
+<option value="lea">lea</option>
+</select>
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 14px; top: 16px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg>
+</label>
+<label style="position: relative; display: inline-flex"><span class="sr">Action type</span>
+<select class="field" onChange="{{onAction}}" style="appearance: none; height: 44px; padding: 0 36px 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">
+<option value="all">Any action</option>
+<option value="credits">credits.*</option>
+<option value="item">item.*</option>
+<option value="player">player.*</option>
+<option value="case">case.* and catalog.*</option>
+<option value="economy">economy.*</option>
+<option value="auction">auction.* and offer.*</option>
+</select>
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 14px; top: 16px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg>
+</label>
+<label style="position: relative; display: inline-flex"><span class="sr">Date</span>
+<select class="field" style="appearance: none; height: 44px; padding: 0 36px 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">
+<option>Last 7 days</option>
+<option>Today</option>
+<option>Last 30 days</option>
+<option>All time</option>
+</select>
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 14px; top: 16px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg>
+</label>
+<button type="button" class="btn-s" style="margin-left: auto; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Export CSV</button>
+</div>
+<sc-if value="{{hasChips}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="2">
+<button type="button" onClick="{{c.remove}}" aria-label="{{c.aria}}" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; background: #121417; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">{{c.label}}<svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</sc-for>
+<button type="button" onClick="{{clearAll}}" style="height: 32px; padding: 0 6px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer">Clear filters</button>
+</div>
+</sc-if>
+
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<div role="table" aria-label="Admin log" style="min-width: 1020px">
+<div role="row" style="display: grid; grid-template-columns: 36px 120px 90px 150px 150px 170px minmax(0, 1fr); align-items: center; min-height: 44px; padding: 0 18px 0 8px; border-bottom: 1px solid #1C1F24; background: #0D0E11">
+<span role="columnheader"><span class="sr">Expand</span></span><span role="columnheader" class="lbl" style="font-size: 10px">Time ↓</span><span role="columnheader" class="lbl" style="font-size: 10px">Staff</span><span role="columnheader" class="lbl" style="font-size: 10px">Action</span><span role="columnheader" class="lbl" style="font-size: 10px">Target</span><span role="columnheader" class="lbl" style="font-size: 10px">Change</span><span role="columnheader" class="lbl" style="font-size: 10px">Reason</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+<div role="rowgroup" style="border-bottom: 1px solid #1A1D22; {{r.groupStyle}}">
+<div role="row" class="row" style="display: grid; grid-template-columns: 36px 120px 90px 150px 150px 170px minmax(0, 1fr); align-items: center; min-height: 52px; padding: 0 18px 0 8px; font-size: 14px">
+<span role="cell"><button type="button" class="stretch" aria-expanded="{{r.open}}" aria-label="{{r.aria}}" onClick="{{r.toggle}}" style="width: 28px; height: 28px; display: grid; place-items: center; color: #A1A7AF"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; transform: {{r.rot}}"><path d="M9 6l6 6-6 6"></path></svg></button></span>
+<span role="cell" class="mono" style="font-size: 13px; color: #A1A7AF">{{r.time}}</span>
+<span role="cell">{{r.staff}}</span>
+<span role="cell" class="mono" style="font-size: 13px">{{r.action}}</span>
+<span role="cell" style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><a href="{{r.href}}" class="above {{r.targetClass}}">{{r.target}}</a></span>
+<span role="cell" class="mono" style="font-size: 13px">{{r.change}}</span>
+<span role="cell" style="color: #A1A7AF; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{r.reason}}</span>
+</div>
+<sc-if value="{{r.open}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 16px; padding: 4px 18px 18px 44px">
+<div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 6px"><span class="lbl" style="font-size: 10px">Before</span><pre class="mono" style="margin: 0; padding: 12px 14px; border: 1px solid #1C1F24; border-radius: 4px; background: #0A0B0D; font-size: 12px; line-height: 1.7; color: #A1A7AF; white-space: pre-wrap">{{r.before}}</pre></div>
+<div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 6px"><span class="lbl" style="font-size: 10px">After</span><pre class="mono" style="margin: 0; padding: 12px 14px; border: 1px solid #2C3138; border-radius: 4px; background: #0A0B0D; font-size: 12px; line-height: 1.7; color: #ECEDEF; white-space: pre-wrap">{{r.after}}</pre></div>
+<div style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #A1A7AF"><span class="lbl" style="font-size: 10px">Details</span><span>{{r.full}}</span><span class="mono" style="font-size: 12px">{{r.meta}}</span></div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{ false }}">
+<div style="margin: 18px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 24px; border: 1px dashed #2C3138; border-radius: 6px; text-align: center">
+<span style="font-size: 15px">No staff action matches these filters.</span>
+<button type="button" class="btn-s" onClick="{{clearAll}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Clear filters</button>
+</div>
+</sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 18px">
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{footer}}</span>
+<button type="button" class="btn-s" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Show more</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{tab.ledger}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 16px 18px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 15px; font-weight: 600">Check ledger</span>
+<span style="font-size: 13px; color: #A1A7AF">Adds up every player's entries and compares them with balances and held bids. Read-only, about 20 s.</span>
+</div>
+<button type="button" class="btn-s" onClick="{{runCheck}}" disabled="{{check.busy}}" style="display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer"><sc-if value="{{check.busy}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 12px; height: 12px; border: 2px solid #4A5059; border-top-color: #ECEDEF; border-radius: 50%; animation: mint-spin .8s linear infinite"></span></sc-if>{{check.label}}</button>
+<sc-if value="{{check.ok}}" hint-placeholder-val="{{ true }}"><span role="status" style="flex-basis: 100%; display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid #1A1D22; font-size: 14px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Ledger OK: <span class="mono">1,284</span> players, <span class="mono">48,210</span> entries <span class="mono" style="font-size: 12px; color: #858B94">· checked {{check.when}}</span></span></sc-if>
+<sc-if value="{{check.bad}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="flex-basis: 100%; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid #1A1D22">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #C8382F"></span>2 mismatches out of 1,284 players</span>
+<span style="font-size: 13px"><a href="Admin-Players.dc.html">Guest #91c0</a> <span style="color: #A1A7AF">balance</span> <span class="mono">250 CR</span><span style="color: #A1A7AF">, entries add up to</span> <span class="mono">500 CR</span></span>
+<span style="font-size: 13px"><a href="Admin-Player.dc.html">lou</a> <span style="color: #A1A7AF">holds</span> <span class="mono">1,200 CR</span> <span style="color: #A1A7AF">in bids, open bids add up to</span> <span class="mono">0 CR</span></span>
+</div>
+</sc-if>
+</div>
+<div style="position: relative; max-width: 560px">
+<label for="lq" class="sr">Search the ledger</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="lq" type="text" class="field" placeholder="Player, entry ID or type (case_open, recycle…)" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 14px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+</div>
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<div role="table" aria-label="Ledger" style="min-width: 900px">
+<div role="row" style="display: grid; grid-template-columns: 90px 120px 110px 140px 120px 120px minmax(0, 1fr); align-items: center; min-height: 44px; padding: 0 18px; border-bottom: 1px solid #1C1F24; background: #0D0E11"><span role="columnheader" class="lbl" style="font-size: 10px">Entry</span><span role="columnheader" class="lbl" style="font-size: 10px">Time</span><span role="columnheader" class="lbl" style="font-size: 10px">Player</span><span role="columnheader" class="lbl" style="font-size: 10px">Type</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right">Amount</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right">Balance</span><span role="columnheader" class="lbl" style="font-size: 10px; padding-left: 24px">Details</span></div>
+<sc-for list="{{ledger}}" as="l" hint-placeholder-count="8">
+<div role="row" class="row" style="display: grid; grid-template-columns: 90px 120px 110px 140px 120px 120px minmax(0, 1fr); align-items: center; min-height: 52px; padding: 0 18px; border-bottom: 1px solid #1A1D22; font-size: 14px">
+<span role="cell" class="mono" style="font-size: 12px; color: #858B94">{{l.id}}</span><span role="cell" class="mono" style="font-size: 13px; color: #A1A7AF">{{l.time}}</span><span role="cell"><a href="Admin-Player.dc.html">{{l.player}}</a></span><span role="cell" class="mono" style="font-size: 13px">{{l.type}}</span><span role="cell" class="mono" style="text-align: right">{{l.amount}}</span><span role="cell" class="mono" style="text-align: right; color: #A1A7AF">{{l.balance}}</span>
+<span role="cell" style="padding-left: 24px; display: flex; align-items: center; gap: 8px; color: #A1A7AF"><sc-if value="{{l.flag}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="flex: none; width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span></sc-if>{{l.details}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{tab.jobs}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 16px">
+<sc-for list="{{jobs}}" as="j" hint-placeholder-count="5">
+<article style="display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 16px; font-weight: 600">{{j.name}}</h3><span class="mono" style="font-size: 12px; color: #A1A7AF">{{j.cron}}</span></div>
+<span class="mono" style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 2px; font-size: 11px; {{j.chip}}"><sc-if value="{{j.warn}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span></sc-if>{{j.status}}</span>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px">
+<div><dt style="font-size: 12px; color: #A1A7AF">Last run</dt><dd class="mono" style="margin: 2px 0 0; font-size: 13px">{{j.last}}</dd></div>
+<div><dt style="font-size: 12px; color: #A1A7AF">Result</dt><dd class="mono" style="margin: 2px 0 0; font-size: 13px">{{j.result}}</dd></div>
+<div><dt style="font-size: 12px; color: #A1A7AF">Duration</dt><dd class="mono" style="margin: 2px 0 0; font-size: 13px">{{j.dur}}</dd></div>
+</dl>
+<sc-if value="{{j.hasNote}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 13px; line-height: 1.5; color: #A1A7AF">{{j.note}} <sc-if value="{{j.hasLink}}" hint-placeholder-val="{{ false }}"><a href="{{j.href}}">{{j.link}}</a></sc-if></p></sc-if>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #1A1D22">
+<span class="mono" style="font-size: 11px; color: #858B94">Next {{j.next}}</span>
+<button type="button" class="btn-s" onClick="{{j.run}}" disabled="{{j.disabled}}" title="{{j.hint}}" style="display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer"><sc-if value="{{j.busy}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 10px; height: 10px; border: 2px solid #4A5059; border-top-color: #ECEDEF; border-radius: 50%; animation: mint-spin .8s linear infinite"></span></sc-if>{{j.runLabel}}</button>
+</div>
+</article>
+</sc-for>
+</div>
+<sc-if value="{{cantRun}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 11px; color: #858B94">Run now: Admins only.</span></sc-if>
+</sc-if>
+
+<sc-if value="{{tab.errors}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<section aria-labelledby="ec-t" style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="ec-t" class="lbl" style="margin: 0">// Top error codes · 24 h</h2>
+<sc-for list="{{codes}}" as="c" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px"><span class="mono">{{c.code}}</span><span class="mono">{{c.n}}</span></span>
+<span aria-hidden="true" style="height: 4px; background: #1E2227"><span style="display: block; height: 4px; width: {{c.w}}; background: {{c.color}}"></span></span>
+<span style="font-size: 12px; color: #858B94">{{c.hint}}</span>
+</div>
+</sc-for>
+</section>
+<section aria-labelledby="se-t" style="flex: 2 1 560px; min-width: 0; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="se-t" class="lbl" style="margin: 0; padding: 18px 20px 12px">// Latest server errors</h2>
+<sc-for list="{{errors}}" as="e" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 20px; border-top: 1px solid #1A1D22">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 13px"><span class="mono" style="color: #A1A7AF">{{e.time}}</span><span class="mono" style="font-weight: 600">{{e.code}}</span><span class="mono" style="font-size: 12px; color: #858B94">{{e.route}}</span><span class="mono" style="margin-left: auto; font-size: 12px; color: #A1A7AF">×{{e.count}}</span></span>
+<span style="font-size: 14px">{{e.msg}}</span>
+<sc-if value="{{e.hasLink}}" hint-placeholder-val="{{ false }}"><a href="{{e.href}}" style="align-self: flex-start; font-size: 12px; color: #A1A7AF">{{e.link}}</a></sc-if>
+</div>
+</sc-for>
+</section>
+</div>
+</sc-if>
+</div>
+</main>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tab":{"editor":"enum","options":["log","ledger","jobs","errors"],"default":"log","section":"State"},"check":{"editor":"enum","options":["ok","mismatch"],"default":"ok","section":"State"},"role":{"editor":"enum","options":["admin","moderator","viewer"],"default":"admin","section":"State"},"$preview":{"width":1440,"height":1200}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+// time, staff, action, target, target link, change, reason, before, after, meta
+const LOG = [
+  ['Oct 23 14:10', 'mathys', 'credits.remove', 'vex', 'Admin-Player.dc.html', '−5,000 CR', 'duplicate refund', 'balance   9,870 CR\nheld      1,200 CR', 'balance   4,870 CR\nheld      1,200 CR', 'Auction #8812 was refunded on Oct 22, then again at 14:05 (see Errors). Removed the second refund.', 'ledger #48211 · request 7f3a9c'],
+  ['Oct 23 11:20', 'mathys', 'item.move', '6 items', 'Admin-Items.dc.html', 'nyx → 4 accounts', 'returned items taken in a scam', 'owner     nyx\nitems     6 · 18,500 CR', 'owner     their 4 previous owners\nitems     6 · 18,500 CR', 'Items received by nyx in offer #2240 went back to the accounts they came from.', 'ledger #48170–48175'],
+  ['Oct 23 11:02', 'lea', 'player.ban', 'nyx', 'Admin-Player.dc.html', '7 days', 'scam attempt in trades', 'status    active\nsessions  1', 'status    banned until Oct 30, 11:02\nsessions  0 (revoked)\nlisting   AWP | Duality cancelled, bid refunded\noffers    #2244 cancelled', 'nyx sees: “You’re banned until Oct 30. Reason: scam attempt in trades.”', 'request 2b81d0'],
+  ['Oct 22 18:45', 'mathys', 'item.move', '000481907', 'Admin-Items.dc.html', 'vex → kenji', 'support ticket #58', 'owner     vex\nstatus    In trade (offer #2236)', 'owner     kenji\nstatus    Available', 'kenji paid 15,000 CR in offer #2236 but the knife never arrived.', 'ledger #47902'],
+  ['Oct 22 09:30', 'mathys', 'case.toggle', 'Fever Case', 'Admin-Catalog.dc.html', 'active → off', 'broken images', 'active    true', 'active    false', 'MP9 | Nexus and Zeus x27 | Tosai have no image.', 'request 91ce44'],
+  ['Oct 21 20:14', 'lea', 'player.rename', 'player_8841', 'Admin-Player.dc.html', 'name reset', 'offensive name', 'name      [hidden, offensive]', 'name      player_8841', 'They can pick a new name at next sign-in.', 'report #311'],
+  ['Oct 20 09:12', 'mathys', 'catalog.import', 'a1b2c3d', 'Admin-Catalog.dc.html', '+1 case, +17 skins', 'monthly import', 'commit    9f31e02\ncases     41', 'commit    a1b2c3d\ncases     42', 'Dry run checked at 09:05.', 'request 0d7e12'],
+  ['Oct 20 09:00', 'mathys', 'credits.add', 'vex', 'Admin-Player.dc.html', '+1,000 CR', 'compensation, outage', 'balance   2,243 CR', 'balance   3,243 CR', 'Oct 19 outage: case openings failed for 40 min.', 'ledger #46833'],
+  ['Oct 19 16:40', 'mathys', 'economy.update', 'recycle.covert', 'Admin-Economy.dc.html', '2,000 → 2,500 CR', 'covert recycle felt too low', 'recycle.covert   2,000 CR\navg return/case  108 CR', 'recycle.covert   2,500 CR\navg return/case  113 CR', 'Simulator: average return per case 108 → 113 CR.', 'request 5a0b77'],
+  ['Oct 19 10:05', 'lea', 'auction.cancel', '#8790', 'Admin-Market.dc.html', 'item back to seller', 'seller asked, wrong price', 'status    live · 2 bids\nleading   kenji 610 CR', 'status    cancelled\nrefunded  kenji 610 CR', 'lou listed AWP | Duality at 60 CR instead of 600 CR.', 'request c3d201']
+];
+const LEDGER = [
+  ['#48211', 'Oct 23 14:10', 'vex', 'admin_remove', '−5,000 CR', '4,870 CR', 'by mathys · duplicate refund', false],
+  ['#48209', 'Oct 23 14:06', 'kenji', 'bid_hold', '−1,380 CR', '1,215 CR', 'AK-47 | Redline · auction #8820', false],
+  ['#48208', 'Oct 23 14:05', 'vex', 'bid_refund', '+5,000 CR', '9,870 CR', 'auction #8812 · already refunded Oct 22', true],
+  ['#48204', 'Oct 23 14:02', 'vex', 'case_open', '−250 CR', '4,870 CR', 'Revolution Case', false],
+  ['#48199', 'Oct 23 13:58', 'Guest #4f2a', 'case_open', '−250 CR', '250 CR', 'Kilowatt Case', false],
+  ['#48195', 'Oct 23 13:51', 'lou', 'recycle', '+120 CR', '957 CR', 'MAC-10 | Sakkaku (MW)', false],
+  ['#48190', 'Oct 23 13:40', 'vex', 'recycle', '+500 CR', '5,120 CR', 'AWP | Redline (FT)', false],
+  ['#48186', 'Oct 23 13:22', 'kenji', 'trade_in', '+900 CR', '2,595 CR', 'offer #2239 from lou', false]
+];
+const JOBS = [
+  ['Guest purge', 'daily 04:00 UTC', 'Oct 23 04:00', 'OK · 37 deleted', '2.1 s', 'Oct 24 04:00', '', '', false],
+  ['Trade expiry', 'daily 03:00 UTC', 'Oct 23 03:00', 'OK · 4 expired', '0.4 s', 'Oct 24 03:00', 'Oct 19 run left 1 item locked.', 'MP7 | Skulls 000479555', false],
+  ['Auction settlement', 'every 5 min · report 03:30 UTC', 'Oct 23 14:10', '21 settled · 1 skipped', '0.2 s', '14:15', 'Skipped auction #8803 twice: the item was locked by another offer.', 'Open #8803', true],
+  ['Leaderboard snapshot', 'daily 00:00 UTC', 'Oct 23 00:00', 'OK · 1,284 players', '1.3 s', 'Oct 24 00:00', '', '', false],
+  ['Catalog image check', 'daily 05:00 UTC', 'Oct 23 05:00', '2 broken images', '6.8 s', 'Oct 24 05:00', 'Fever Case: MP9 | Nexus, Zeus x27 | Tosai.', 'Open the catalog', true]
+];
+const CODES = [['insufficient_balance', 82, 'Normal: players trying to open a case without enough CR.'], ['items_unavailable', 14, 'Item already listed, traded or recycled.'], ['offer_expired', 9, 'Accepting an offer after its expiry.'], ['rate_limited', 6, 'More than 10 openings in 10 s.'], ['duplicate_refund', 1, 'A refund applied twice. Always worth a look.']];
+const ERRS = [
+  ['Oct 23 14:05', 'duplicate_refund', 'POST /auctions/8812/refund', 1, 'Refund for auction #8812 applied twice to vex (+5,000 CR).', 'Fixed by mathys at 14:10', 'Admin-Logs.dc.html'],
+  ['Oct 23 09:41', 'discord_timeout', 'GET /auth/discord/callback', 3, 'Discord didn’t answer in 10 s. Players saw “Couldn’t reach Discord, try again”.', '', ''],
+  ['Oct 23 05:00', 'image_404', 'job · catalog image check', 2, 'Fever Case: 2 skin images return 404.', 'Open Fever Case', 'Admin-Catalog.dc.html'],
+  ['Oct 22 17:58', 'trade_partial', 'POST /offers/2236/accept', 1, 'kenji’s 15,000 CR moved but the knife didn’t: the transfer wasn’t atomic.', 'Fixed by mathys · support ticket #58', 'Admin-Items.dc.html']
+];
+const AREA = { credits: 'credits.', item: 'item.', player: 'player.', case: ['case.', 'catalog.'], economy: 'economy.', auction: ['auction.', 'offer.'] };
+const ALABEL = { credits: 'credits.*', item: 'item.*', player: 'player.*', case: 'case.* and catalog.*', economy: 'economy.*', auction: 'auction.* and offer.*' };
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: undefined, open: 0, q: '', staff: 'all', action: 'all', check: undefined, running: {}, ran: {}, toast: '' };
+  }
+  componentDidUpdate(prev) {
+    if (prev.tab !== this.props.tab || prev.check !== this.props.check || prev.role !== this.props.role) this.setState({ tab: undefined, check: undefined, toast: '' });
+  }
+  renderVals() {
+    const st = this.state;
+    const sh = SHELL(this.props.role, 'logs');
+    const tab = st.tab || this.props.tab || 'log';
+    const tabs = [['log', 'Admin log', false], ['ledger', 'Ledger', true], ['jobs', 'Jobs', true], ['errors', 'Errors', true]].map((t) => ({
+      label: t[1], later: t[2], on: tab === t[0], pick: () => this.setState({ tab: t[0] }),
+      style: tab === t[0] ? 'color: #ECEDEF; border-bottom: 2px solid #ECEDEF' : 'color: #A1A7AF; border-bottom: 2px solid transparent'
+    }));
+    const q = st.q.trim().toLowerCase();
+    const filtered = LOG.map((r, i) => ({ r, i })).filter(({ r }) => {
+      if (st.staff !== 'all' && r[1] !== st.staff) return false;
+      if (st.action !== 'all') { const a = [].concat(AREA[st.action]); if (!a.some((p) => r[2].indexOf(p) === 0)) return false; }
+      if (q && (r[3] + ' ' + r[5]).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    const rows = filtered.map(({ r, i }) => ({
+      time: r[0], staff: r[1], action: r[2], target: r[3], href: r[4], targetClass: '', change: r[5], reason: r[6],
+      before: r[7], after: r[8], full: r[9], meta: r[10], open: st.open === i, rot: st.open === i ? 'rotate(90deg)' : 'none',
+      groupStyle: st.open === i ? 'background: #111316' : '',
+      aria: (st.open === i ? 'Hide' : 'Show') + ' before and after for ' + r[2] + ' on ' + r[3],
+      toggle: () => this.setState({ open: st.open === i ? -1 : i })
+    }));
+    const chips = [];
+    if (st.staff !== 'all') chips.push({ label: 'Staff: ' + st.staff, aria: 'Remove filter staff ' + st.staff, remove: () => this.setState({ staff: 'all' }) });
+    if (st.action !== 'all') chips.push({ label: 'Action: ' + ALABEL[st.action], aria: 'Remove action filter', remove: () => this.setState({ action: 'all' }) });
+    if (q) chips.push({ label: 'Target: ' + st.q, aria: 'Remove target filter', remove: () => this.setState({ q: '' }) });
+    const checkState = st.check || this.props.check || 'ok';
+    const isAdmin = sh.rank >= 2;
+    const jobs = JOBS.map((j, i) => ({
+      name: j[0], cron: j[1], last: st.ran[i] ? 'Oct 23 14:12' : j[2], result: st.ran[i] ? 'OK · just now' : j[3], dur: j[4], next: j[5],
+      note: j[6], link: j[7], hasNote: !!j[6], hasLink: !!j[7], href: i === 4 ? 'Admin-Catalog.dc.html' : i === 2 ? 'Admin-Market.dc.html' : 'Admin-Items.dc.html', warn: j[8] && !st.ran[i],
+      status: st.running[i] ? 'Running' : (j[8] && !st.ran[i]) ? 'Warning' : 'OK',
+      chip: (j[8] && !st.ran[i]) ? 'border: 1px solid #2C3138; color: #ECEDEF' : 'border: 1px solid #2C3138; color: #A1A7AF',
+      busy: !!st.running[i], runLabel: st.running[i] ? 'Running…' : 'Run now',
+      disabled: !isAdmin || !!st.running[i], hint: isAdmin ? '' : 'Admins only',
+      run: () => {
+        const running = Object.assign({}, this.state.running); running[i] = true;
+        this.setState({ running });
+        setTimeout(() => {
+          const r2 = Object.assign({}, this.state.running); delete r2[i];
+          const ran = Object.assign({}, this.state.ran); ran[i] = true;
+          this.setState({ running: r2, ran, toast: 'Ran ' + j[0].toLowerCase() + ' · logged' });
+        }, 1600);
+      }
+    }));
+    const max = CODES[0][1];
+    return Object.assign(sh, {
+      tabs, tab: { log: tab === 'log', ledger: tab === 'ledger', jobs: tab === 'jobs', errors: tab === 'errors' },
+      q: st.q, hasQ: !!st.q, onQ: (e) => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }),
+      onStaff: (e) => this.setState({ staff: e.target.value }), onAction: (e) => this.setState({ action: e.target.value }),
+      hasChips: chips.length > 0, chips, clearAll: () => this.setState({ q: '', staff: 'all', action: 'all' }),
+      rows, noRows: rows.length === 0,
+      footer: chips.length ? rows.length + ' matching entries' : '1–10 of 1,906 entries · kept forever',
+      check: {
+        busy: checkState === 'running', ok: checkState === 'ok', bad: checkState === 'mismatch',
+        label: checkState === 'running' ? 'Checking…' : 'Check ledger', when: st.check ? 'just now' : 'today 04:12'
+      },
+      runCheck: () => { this.setState({ check: 'running' }); setTimeout(() => this.setState({ check: this.props.check === 'mismatch' ? 'mismatch' : 'ok' }), 1800); },
+      ledger: LEDGER.map((l) => ({ id: l[0], time: l[1], player: l[2], type: l[3], amount: l[4], balance: l[5], details: l[6], flag: l[7] })),
+      jobs, cantRun: !isAdmin,
+      codes: CODES.map((c) => ({ code: c[0], n: String(c[1]), hint: c[2], w: Math.max(2, c[1] / max * 100).toFixed(1) + '%', color: c[0] === 'duplicate_refund' ? '#C8382F' : '#A1A7AF' })),
+      errors: ERRS.map((e) => ({ time: e[0], code: e[1], route: e[2], count: String(e[3]), msg: e[4], link: e[5], href: e[6] || '#', hasLink: !!e[5] })),
+      hasToast: !!st.toast, toast: st.toast
+    });
+  }
+}
+</script>
+</body>
+</html>

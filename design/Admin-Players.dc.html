@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Players</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.chip:hover{border-color:#4A5059}
+.row:hover{background:#15171B}
+.th:hover{color:#ECEDEF}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+@keyframes mint-shimmer{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">M</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">mathys</span><span class="tag">Admin</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 64px; display: flex; flex-direction: column; gap: 20px">
+
+<header style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">// Players</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Players</h1>
+<p class="mono" style="margin: 0; font-size: 13px; color: #A1A7AF">1,284 players · 412 accounts · 872 guests · all times UTC</p>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px">
+<label style="position: relative; flex: 1 1 280px; max-width: 380px; display: block">
+<span class="sr">Filter by name or Discord ID</span>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input type="search" class="field" value="{{query}}" onChange="{{onQuery}}" placeholder="Name or Discord ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 14px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+</label>
+<label style="display: flex; flex-direction: column; gap: 6px"><span class="lbl" style="font-size: 10px">Type</span><span style="position: relative; display: block"><select class="field" value="{{type}}" onChange="{{onType}}" style="appearance: none; -webkit-appearance: none; height: 40px; padding: 0 34px 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer"><option value="all">All</option><option value="account">Accounts</option><option value="guest">Guests</option></select><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 12px; top: 14px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg></span></label>
+<label style="display: flex; flex-direction: column; gap: 6px"><span class="lbl" style="font-size: 10px">Status</span><span style="position: relative; display: block"><select class="field" value="{{status}}" onChange="{{onStatus}}" style="appearance: none; -webkit-appearance: none; height: 40px; padding: 0 34px 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer"><option value="all">All</option><option value="active">Active</option><option value="banned">Banned</option></select><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 12px; top: 14px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg></span></label>
+<label style="display: flex; flex-direction: column; gap: 6px"><span class="lbl" style="font-size: 10px">Joined</span><span style="position: relative; display: block"><select class="field" value="{{joined}}" onChange="{{onJoined}}" style="appearance: none; -webkit-appearance: none; height: 40px; padding: 0 34px 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer"><option value="any">Any time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 12px; top: 14px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg></span></label>
+<label style="display: flex; flex-direction: column; gap: 6px; margin-left: auto"><span class="lbl" style="font-size: 10px">Sort</span><span style="position: relative; display: block"><select class="field" value="{{sort}}" onChange="{{onSort}}" style="appearance: none; -webkit-appearance: none; height: 40px; padding: 0 34px 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer"><option value="seen">Last seen</option><option value="balance">Balance</option><option value="value">Inventory value</option><option value="joined">Joined</option></select><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="position: absolute; right: 12px; top: 14px; pointer-events: none; fill: none; stroke: #A1A7AF; stroke-width: 2"><path d="M6 9l6 6 6-6"></path></svg></span></label>
+</div>
+
+<sc-if value="{{hasChips}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="1">
+<button type="button" class="chip" aria-label="Remove filter {{c.label}}" onClick="{{c.remove}}" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; background: #121417; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">{{c.label}}<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: #A1A7AF; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</sc-for>
+<button type="button" onClick="{{clearFilters}}" style="height: 32px; padding: 0 6px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px">Clear filters</button>
+</div>
+</sc-if>
+
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{ true }}">
+<div role="region" aria-label="Selection" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 10px 12px 10px 18px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<span style="font-size: 14px; font-weight: 600">{{selLabel}}</span>
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{selValue}}</span>
+<span style="flex: 1 1 0"></span>
+<sc-if value="{{notConfirming}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{clearSel}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Clear</button>
+<button type="button" class="btn-d" onClick="{{askDelete}}" style="height: 40px; padding: 0 16px; border: 1px solid #F27D7D; border-radius: 2px; background: transparent; color: #F27D7D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{deleteLabel}}</button>
+</sc-if>
+<sc-if value="{{confirming}}" hint-placeholder-val="{{ false }}">
+<label style="display: flex; align-items: center; gap: 8px; flex: 1 1 260px"><span style="font-size: 13px; color: #A1A7AF; white-space: nowrap">Reason</span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="Shown in the admin log" style="box-sizing: border-box; flex: 1; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+<button type="button" onClick="{{cancelDelete}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-d" onClick="{{deleteGuests}}" disabled="{{noReason}}" style="height: 40px; padding: 0 16px; border: 1px solid #F27D7D; border-radius: 2px; background: transparent; color: #F27D7D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{deleteLabel}} for good</button>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 28px; border: 1px solid #2C3138; border-radius: 6px; background: #0E1013">
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 16px; font-weight: 600; color: #F27D7D">Couldn't load players</span><span style="font-size: 14px; color: #A1A7AF">The database didn't answer within 10 s (players.list timeout). Nothing was changed.</span></div>
+<button type="button" class="btn-s" onClick="{{retry}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Retry</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 56px 24px; border: 1px dashed #2C3138; border-radius: 6px; text-align: center">
+<span style="font-size: 15px">No players match these filters.</span>
+<button type="button" class="btn-s" onClick="{{clearFilters}}" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Clear filters</button>
+</div>
+</sc-if>
+
+<sc-if value="{{showTable}}" hint-placeholder-val="{{ true }}">
+<div style="overflow-x: auto; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div role="table" aria-label="Players" aria-busy="{{isLoading}}" style="min-width: 1100px; display: flex; flex-direction: column">
+<div role="row" style="display: grid; grid-template-columns: 52px minmax(0, 1.7fr) 110px repeat(2, minmax(0, 1fr)) 90px 96px 110px 150px; align-items: center; min-height: 44px; border-bottom: 1px solid #1C1F24; background: #0D0E11">
+<span role="columnheader"><span class="sr">Select</span></span>
+<span role="columnheader" class="lbl" style="font-size: 10px">Player</span>
+<span role="columnheader" class="lbl" style="font-size: 10px">Type</span>
+<sc-for list="{{heads}}" as="h" hint-placeholder-count="5">
+<span role="columnheader" aria-sort="{{h.aria}}" style="display: flex; justify-content: {{h.justify}}; padding: 0 12px"><button type="button" class="th lbl" onClick="{{h.pick}}" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0; border: 0; background: none; font-size: 10px; cursor: pointer; {{h.style}}">{{h.label}}<span aria-hidden="true">{{h.arrow}}</span></button></span>
+</sc-for>
+<span role="columnheader" class="lbl" style="font-size: 10px; padding-left: 12px">Status</span>
+</div>
+
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{skeleton}}" as="s" hint-placeholder-count="8">
+<div role="row" class="anim" style="display: grid; grid-template-columns: 52px minmax(0, 1.7fr) 110px repeat(2, minmax(0, 1fr)) 90px 96px 110px 150px; align-items: center; min-height: 52px; border-bottom: 1px solid #1A1D22; animation: mint-shimmer 1.4s ease-in-out infinite">
+<span></span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 28px; height: 28px; border-radius: 50%; background: #121417"></span><span style="width: {{s.w}}px; height: 12px; border-radius: 2px; background: #121417"></span></span>
+<span style="width: 60px; height: 12px; border-radius: 2px; background: #121417"></span>
+<span style="justify-self: end; margin-right: 12px; width: 70px; height: 12px; border-radius: 2px; background: #121417"></span>
+<span style="justify-self: end; margin-right: 12px; width: 80px; height: 12px; border-radius: 2px; background: #121417"></span>
+<span style="justify-self: end; margin-right: 12px; width: 30px; height: 12px; border-radius: 2px; background: #121417"></span>
+<span style="margin-left: 12px; width: 50px; height: 12px; border-radius: 2px; background: #121417"></span>
+<span style="margin-left: 12px; width: 70px; height: 12px; border-radius: 2px; background: #121417"></span>
+<span style="margin-left: 12px; width: 60px; height: 12px; border-radius: 2px; background: #121417"></span>
+</div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{isReady}}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+<div role="row" class="row" style="position: relative; display: grid; grid-template-columns: 52px minmax(0, 1.7fr) 110px repeat(2, minmax(0, 1fr)) 90px 96px 110px 150px; align-items: center; min-height: 52px; border-bottom: 1px solid #1A1D22; {{r.rowStyle}}">
+<span role="cell" style="position: relative; z-index: 2; display: grid; place-items: center">
+<sc-if value="{{r.selectable}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-pressed="{{r.selected}}" aria-label="Select {{r.name}}" onClick="{{r.toggle}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center"><span aria-hidden="true" style="width: 18px; height: 18px; box-sizing: border-box; border-radius: 2px; display: grid; place-items: center; {{r.check}}"><sc-if value="{{r.selected}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: #0A0B0D; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></span></button>
+</sc-if>
+</span>
+<span role="cell" style="display: flex; align-items: center; gap: 10px; min-width: 0">
+<span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 12px; font-weight: 600; color: #A1A7AF">{{r.initial}}</span>
+<span style="min-width: 0; display: flex; flex-direction: column; gap: 1px"><a href="Admin-Player.dc.html" class="stretch" style="font-size: 14px; font-weight: 600; color: #ECEDEF; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</a><span class="mono" style="font-size: 11px; color: #858B94">{{r.discord}}</span></span>
+</span>
+<span role="cell"><span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 2px; font-size: 11px; {{r.typeStyle}}">{{r.type}}</span></span>
+<span role="cell" class="mono" style="padding: 0 12px; font-size: 13px; text-align: right">{{r.balance}}</span>
+<span role="cell" class="mono" style="padding: 0 12px; font-size: 13px; text-align: right">{{r.value}}</span>
+<span role="cell" class="mono" style="padding: 0 12px; font-size: 13px; text-align: right">{{r.cases}}</span>
+<span role="cell" class="mono" style="padding: 0 12px; font-size: 12px; color: #A1A7AF">{{r.joined}}</span>
+<span role="cell" style="padding: 0 12px; font-size: 13px; color: #A1A7AF">{{r.seen}}</span>
+<span role="cell" style="padding: 0 12px">
+<sc-if value="{{r.online}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #ECEDEF"></span>Online</span></sc-if>
+<sc-if value="{{r.banned}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border: 1px solid #F27D7D; border-radius: 2px; font-size: 11px; color: #F27D7D">Banned · 7 d</span></sc-if>
+<sc-if value="{{r.flagged}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #C8382F"></span>Flagged</span></sc-if>
+</span>
+</div>
+</sc-for>
+</sc-if>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span class="mono" style="font-size: 12px; color: #858B94">{{footer}}</span>
+<button type="button" class="btn-s" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Show more</button>
+</div>
+</sc-if>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="align-self: center; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["ready","loading","empty","error"],"default":"ready","section":"State"},"$preview":{"width":1440,"height":1100}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+// id, name, discord, type, balance, value, cases, joined (day of Oct), last seen (min), seen label, status
+const PLAYERS = [
+  [1, 'vex', '284716593820471296', 'account', 4870, 34269, 312, 3, 2, '2 min ago', 'online'],
+  [2, 'kenji', '301884920157736961', 'account', 1215, 8940, 97, 5, 60, '1 h ago', 'flagged'],
+  [3, 'lou', '412093385716224000', 'account', 957, 5120, 64, 9, 1440, 'yesterday', ''],
+  [4, 'nyx', '993021547810034688', 'account', 0, 310, 18, 21, 4320, '3 d ago', 'banned'],
+  [5, 'Guest #4f2a', '', 'guest', 250, 120, 3, 23, 5, '5 min ago', 'online'],
+  [6, 'rhea', '356107722894110721', 'account', 2340, 12880, 141, 4, 20, '20 min ago', 'online'],
+  [7, 'ash', '520774198036512768', 'account', 610, 4075, 52, 11, 240, '4 h ago', ''],
+  [8, 'Guest #91c0', '', 'guest', 1000, 0, 0, 23, 12, '12 min ago', ''],
+  [9, 'tomb', '611902846113075200', 'account', 85, 1960, 30, 14, 2880, '2 d ago', ''],
+  [10, 'Guest #2b7e', '', 'guest', 500, 60, 2, 22, 1500, 'yesterday', ''],
+  [11, 'dune', '238841650977280000', 'account', 3105, 19400, 205, 6, 6, '6 min ago', 'online'],
+  [12, 'Guest #e310', '', 'guest', 750, 30, 3, 21, 2900, '2 d ago', '']
+];
+function fmt(n) { return n.toLocaleString('en-US'); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { query: '', type: 'all', status: 'all', joined: '30', sort: 'seen', dir: 'asc', selected: [8, 12], deleted: [], toast: '', retried: false };
+  }
+  componentDidUpdate(prev) { if (prev.state !== this.props.state) this.setState({ retried: false }); }
+  renderVals() {
+    const st = this.state;
+    const mode = st.retried ? 'ready' : (this.props.state || 'ready');
+    const nav = ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === 'players' ? 'page' : undefined, style: n[0] === 'players' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' }));
+    const q = st.query.trim().toLowerCase();
+    let list = PLAYERS.filter((p) => st.deleted.indexOf(p[0]) < 0 &&
+      (st.type === 'all' || p[3] === st.type) &&
+      (st.status === 'all' || (st.status === 'banned' ? p[10] === 'banned' : p[10] !== 'banned')) &&
+      (st.joined === 'any' || 23 - p[7] <= parseInt(st.joined, 10)) &&
+      (!q || p[1].toLowerCase().indexOf(q) >= 0 || p[2].indexOf(q) >= 0));
+    const keyIdx = { seen: 8, balance: 4, value: 5, joined: 7 }[st.sort];
+    const defaultDir = st.sort === 'seen' ? 'asc' : 'desc';
+    const dir = st.dir || defaultDir;
+    list = list.slice().sort((a, b) => (dir === 'asc' ? 1 : -1) * (a[keyIdx] - b[keyIdx]));
+    if (mode === 'empty') list = [];
+    const rows = list.map((p) => {
+      const selected = st.selected.indexOf(p[0]) >= 0;
+      const guest = p[3] === 'guest';
+      return {
+        name: p[1], initial: guest ? 'G' : p[1][0].toUpperCase(), discord: guest ? 'guest · no Discord' : p[2],
+        type: guest ? 'Guest' : 'Account',
+        typeStyle: guest ? 'border: 1px dashed #4A5059; color: #A1A7AF' : 'border: 1px solid #2C3138; color: #ECEDEF',
+        balance: fmt(p[4]) + ' CR', value: fmt(p[5]) + ' CR', cases: fmt(p[6]), joined: 'Oct ' + p[7], seen: p[9],
+        online: p[10] === 'online', banned: p[10] === 'banned', flagged: p[10] === 'flagged',
+        selectable: guest, selected,
+        rowStyle: selected ? 'background: #121417' : '',
+        check: selected ? 'background: #ECEDEF; border: 1px solid #ECEDEF' : 'border: 1px solid #4A5059',
+        toggle: () => this.setState({ selected: selected ? st.selected.filter((x) => x !== p[0]) : st.selected.concat([p[0]]), toast: '' })
+      };
+    });
+    const sel = PLAYERS.filter((p) => st.selected.indexOf(p[0]) >= 0 && st.deleted.indexOf(p[0]) < 0);
+    const chips = [];
+    if (st.type !== 'all') chips.push({ label: 'Type: ' + (st.type === 'guest' ? 'Guests' : 'Accounts'), remove: () => this.setState({ type: 'all' }) });
+    if (st.status !== 'all') chips.push({ label: 'Status: ' + (st.status === 'banned' ? 'Banned' : 'Active'), remove: () => this.setState({ status: 'all' }) });
+    if (st.joined !== 'any') chips.push({ label: 'Joined: last ' + st.joined + ' days', remove: () => this.setState({ joined: 'any' }) });
+    if (q) chips.push({ label: '“' + st.query + '”', remove: () => this.setState({ query: '' }) });
+    const heads = [['balance', 'Balance', 'flex-end'], ['value', 'Inventory value', 'flex-end'], ['cases', 'Cases', 'flex-end'], ['joined', 'Joined', 'flex-start'], ['seen', 'Last seen', 'flex-start']].map((h) => {
+      const sortable = h[0] !== 'cases';
+      const on = st.sort === h[0];
+      return {
+        label: h[1], justify: h[2],
+        arrow: on ? (dir === 'asc' ? '↑' : '↓') : '',
+        aria: on ? (dir === 'asc' ? 'ascending' : 'descending') : 'none',
+        style: on ? 'color: #ECEDEF' : 'color: #858B94',
+        pick: () => { if (!sortable) return; this.setState(on ? { dir: dir === 'asc' ? 'desc' : 'asc' } : { sort: h[0], dir: '' }); }
+      };
+    });
+    return {
+      nav, rows, chips, heads,
+      query: st.query, type: st.type, status: st.status, joined: st.joined, sort: st.sort,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      onType: (e) => this.setState({ type: e.target.value }),
+      onStatus: (e) => this.setState({ status: e.target.value }),
+      onJoined: (e) => this.setState({ joined: e.target.value }),
+      onSort: (e) => this.setState({ sort: e.target.value, dir: '' }),
+      clearFilters: () => this.setState({ query: '', type: 'all', status: 'all', joined: 'any', retried: true }),
+      hasChips: chips.length > 0,
+      isLoading: mode === 'loading', isError: mode === 'error', isReady: mode !== 'loading',
+      isEmpty: mode !== 'loading' && mode !== 'error' && rows.length === 0,
+      showTable: mode !== 'error' && !(mode !== 'loading' && rows.length === 0),
+      retry: () => this.setState({ retried: true }),
+      skeleton: [180, 120, 150, 110, 170, 130, 160, 140].map((w) => ({ w })),
+      hasSel: sel.length > 0 && mode === 'ready',
+      selLabel: sel.length + (sel.length > 1 ? ' guests selected' : ' guest selected'),
+      selValue: 'holding ' + fmt(sel.reduce((a, p) => a + p[4], 0)) + ' CR and ' + fmt(sel.reduce((a, p) => a + p[6], 0)) + ' opened cases',
+      deleteLabel: sel.length > 1 ? 'Delete ' + sel.length + ' guests' : 'Delete guest',
+      clearSel: () => this.setState({ selected: [] }),
+      confirming: !!st.confirm, notConfirming: !st.confirm,
+      reason: st.reason || '', noReason: !(st.reason || '').trim(),
+      onReason: (e) => this.setState({ reason: e.target.value }),
+      askDelete: () => this.setState({ confirm: true, reason: '' }),
+      cancelDelete: () => this.setState({ confirm: false }),
+      deleteGuests: () => this.setState({ deleted: st.deleted.concat(sel.map((p) => p[0])), selected: [], confirm: false, toast: 'Deleted ' + sel.length + (sel.length > 1 ? ' guests' : ' guest') + ' · logged' }),
+      hasToast: !!st.toast, toast: st.toast,
+      footer: rows.length ? '1–' + rows.length + ' of ' + (chips.length ? rows.length : '1,284') : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

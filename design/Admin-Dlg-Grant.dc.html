@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Grant item</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<a href="Admin-Players.dc.html" class="mono" style="align-self: flex-start; font-size: 12px; color: #A1A7AF; text-decoration: none">← Players</a>
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 20px">
+<div style="display: flex; align-items: center; gap: 20px">
+<span aria-hidden="true" style="flex: none; width: 80px; height: 80px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 30px; font-weight: 600">V</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<h1 style="margin: 0; font-size: 40px; line-height: 1; font-weight: 600; letter-spacing: -0.02em">{{bg.name}}</h1>
+<span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px">Account</span>
+<sc-if value="{{bg.online}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #ECEDEF"></span>Online</span></sc-if>
+<sc-if value="{{bg.banned}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border: 1px solid #F27D7D; border-radius: 2px; font-size: 11px; color: #F27D7D">{{bg.bannedChip}}</span></sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: #A1A7AF"><span class="mono" style="color: #ECEDEF">284716593820471296</span><span>Joined Oct 3, 18:20</span><span>Last seen {{bg.seen}}</span></div>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px">
+<sc-for list="{{bg.actions}}" as="a" hint-placeholder-count="5">
+<sc-if value="{{a.isLink}}" hint-placeholder-val="{{ true }}"><a href="{{a.href}}" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 2px; text-decoration: none; font-size: 13px; font-weight: 500; {{a.style}}">{{a.label}}</a></sc-if>
+<sc-if value="{{a.isButton}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{a.go}}" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 2px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; {{a.style}}">{{a.label}}</button></sc-if>
+</sc-for>
+</div>
+</header>
+<sc-if value="{{bg.banned}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 14px 18px; border: 1px solid #F27D7D; border-radius: 4px; background: rgba(242,125,125,0.06)"><span style="flex: 1 1 400px; font-size: 14px"><strong style="color: #F27D7D">{{bg.bannedBand}}</strong> <span style="color: #A1A7AF">· by {{staffName}} · Reason: {{bg.banReason}}</span></span><button type="button" class="btn-s" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Unban</button></div>
+</sc-if>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden">
+<sc-for list="{{bg.stats}}" as="s" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column-reverse; gap: 6px; padding: 16px 18px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">{{s.k}}</dt><dd class="mono" style="margin: 0; font-size: 20px; font-weight: 500">{{s.v}}</dd></div>
+</sc-for>
+</dl>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 24px; border-bottom: 1px solid #1C1F24"><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Inventory</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Openings</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Trades</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Market</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Friends</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #ECEDEF; border-bottom: 2px solid #ECEDEF; margin-bottom: -1px">Ledger</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Sessions</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Notes</span></div>
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<sc-for list="{{bg.ledger}}" as="l" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: 130px 140px 120px 120px minmax(0, 1fr); align-items: center; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #1A1D22; font-size: 13px"><span class="mono" style="color: #A1A7AF; font-size: 12px">{{l.a}}</span><span class="mono" style="font-size: 12px">{{l.b}}</span><span class="mono" style="text-align: right">{{l.c}}</span><span class="mono" style="text-align: right; color: #A1A7AF">{{l.d}}</span><span style="padding-left: 20px; color: #A1A7AF">{{l.e}}</span></div>
+</sc-for>
+</div>
+</div>
+</main>
+<sc-if value="{{dlgOpen}}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" onClick="{{closeDlg}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(5,6,8,0.72)"></div>
+<div role="dialog" aria-modal="true" aria-labelledby="dlg-t" style="position: absolute; left: 50%; top: 56px; z-index: 31; transform: translateX(-50%); width: min(560px, calc(100% - 32px)); max-height: calc(100% - 96px); box-sizing: border-box; display: flex; flex-direction: column; background: #0E1013; border: 1px solid #2C3138; border-radius: 6px; box-shadow: 0 32px 80px rgba(0,0,0,0.6)">
+<div class="dscroll" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding: 18px 28px 24px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="lbl">{{dlgLabel}}</span><button type="button" aria-label="Close" onClick="{{closeDlg}}" style="width: 44px; height: 44px; margin-right: -12px; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<h2 id="dlg-t" style="margin: -6px 0 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em">{{dlgTitle}}</h2>
+
+<div style="position: relative; display: flex; flex-direction: column; gap: 6px">
+<label for="sk" style="font-size: 13px; color: #A1A7AF">Skin</label>
+<div style="position: relative">
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="sk" type="text" role="combobox" aria-expanded="{{showSug}}" aria-controls="sk-list" class="field" value="{{query}}" onChange="{{onQuery}}" onFocus="{{openSug}}" placeholder="Weapon or skin name" autocomplete="off" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 14px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px">
+</div>
+<sc-if value="{{showSug}}" hint-placeholder-val="{{ false }}">
+<div id="sk-list" role="listbox" aria-label="Skins" style="position: absolute; left: 0; right: 0; top: 74px; z-index: 5; padding: 6px; border: 1px solid #2C3138; border-radius: 4px; background: #121417; box-shadow: 0 20px 48px rgba(0,0,0,0.6)">
+<sc-for list="{{sug}}" as="s" hint-placeholder-count="4">
+<button type="button" role="option" aria-selected="{{s.on}}" onClick="{{s.pick}}" style="position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 6px 10px; border: 0; border-radius: 2px; background: {{s.bg}}; color: #ECEDEF; font: inherit; text-align: left; cursor: pointer; overflow: hidden">
+<span style="position: relative; flex: none; width: 72px; height: 40px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(closest-side, {{s.glow}}, rgba(0,0,0,0))"></span><svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 64px; fill: {{s.fill}}"><path d="{{s.art}}"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500">{{s.name}}</span><span style="font-size: 12px; color: {{s.text}}">{{s.rarity}}</span></span>
+<span aria-hidden="true" style="position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; background: {{s.color}}"></span>
+</button>
+</sc-for>
+<sc-if value="{{noSug}}" hint-placeholder-val="{{ false }}"><span style="display: block; padding: 14px 10px; font-size: 13px; color: #A1A7AF">No skin matches “{{query}}”.</span></sc-if>
+</div>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #A1A7AF">Wear</span>
+<div role="radiogroup" aria-label="Wear" style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{wears}}" as="w" hint-placeholder-count="5">
+<button type="button" role="radio" aria-checked="{{w.on}}" onClick="{{w.pick}}" title="{{w.range}}" style="height: 40px; min-width: 56px; padding: 0 12px; border-radius: 2px; font-family: 'JetBrains Mono', monospace; font-size: 13px; cursor: pointer; {{w.style}}">{{w.code}}</button>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<label style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Float <span style="color: #858B94">· {{wearRange}}</span></span><input type="text" class="field mono" value="{{float}}" onChange="{{onFloat}}" aria-invalid="{{floatBad}}" style="box-sizing: border-box; width: 100%; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid {{floatBorder}}; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 15px"></label>
+<label style="flex: 0 0 96px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Pattern</span><input type="text" class="field mono" value="{{pattern}}" onChange="{{onPattern}}" placeholder="Random" style="box-sizing: border-box; width: 100%; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 15px"></label>
+<div style="flex: 0 0 112px; display: flex; flex-direction: column; gap: 6px"><span id="st-l" style="font-size: 13px; color: #A1A7AF">StatTrak™</span><span style="height: 44px; display: flex; align-items: center; gap: 10px"><button type="button" role="switch" class="sw" aria-checked="{{st}}" aria-labelledby="st-l" onClick="{{toggleSt}}"></button><span class="mono" style="font-size: 12px; color: #A1A7AF">{{stText}}</span></span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: -4px">
+<div style="position: relative; display: flex; height: 6px; gap: 2px">
+<span style="flex: 7; background: #3FB950"></span><span style="flex: 8; background: #9BC53D"></span><span style="flex: 23; background: #E3B341"></span><span style="flex: 7; background: #F0883E"></span><span style="flex: 55; background: #F05D52"></span>
+<span aria-hidden="true" style="position: absolute; top: -5px; left: {{floatPct}}; width: 2px; height: 16px; margin-left: -1px; background: #ECEDEF"></span>
+</div>
+<sc-if value="{{floatBad}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 13px; color: #F27D7D">{{floatErr}}</span></sc-if>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding: 14px; border: 1px solid #1C1F24; border-radius: 4px; background: #0A0B0D">
+<div style="position: relative; flex: none; width: 196px; display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013; overflow: hidden">
+<span style="position: relative; height: 80px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 8% 10%; background: radial-gradient(closest-side, {{card.glow}}, rgba(0,0,0,0))"></span><svg role="img" aria-label="{{card.name}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 78%; fill: {{card.fill}}"><path d="{{card.art}}"></path></svg>
+<sc-if value="{{st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="position: absolute; right: 8px; top: 8px; padding: 1px 5px; background: #ECEDEF; color: #0A0B0D; font-size: 9px; font-weight: 600">ST™</span></sc-if></span>
+<span style="display: flex; flex-direction: column; gap: 2px; padding: 8px 12px 10px"><span style="font-size: 11px; color: #A1A7AF">{{card.weapon}}</span><span style="font-size: 14px; font-weight: 600">{{card.skin}}</span><span style="display: flex; justify-content: space-between; margin-top: 4px"><span class="mono" style="font-size: 11px; color: #A1A7AF">{{card.wear}}</span><span class="mono" style="font-size: 11px">{{card.value}}</span></span></span>
+<span aria-hidden="true" style="height: 3px; background: {{card.color}}"></span>
+</div>
+<div style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.5; color: #A1A7AF">
+<span class="lbl" style="font-size: 10px">Preview</span>
+<span>Lands in vex's inventory as <span style="color: #ECEDEF">Available</span>, with a new 9-digit ID. Origin shows “Granted by mathys”.</span>
+<span>Inventory value <span class="mono" style="color: #ECEDEF">34,269 → {{invAfter}} CR</span></span>
+</div>
+</div>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Reason <span style="color: #858B94">· required, shown in the admin log</span></span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="e.g. support ticket #61, lost drop" style="box-sizing: border-box; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+</div>
+<div style="flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 28px; border-top: 1px solid #1C1F24">
+<span class="mono" style="margin-right: auto; font-size: 11px; color: #858B94">Logged as {{staffName}}</span>
+<button type="button" class="btn-s" onClick="{{closeDlg}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="{{goClass}}" onClick="{{go}}" disabled="{{cantGo}}" style="height: 44px; padding: 0 20px; border-radius: 2px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; {{goStyle}}">{{goLabel}}</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"step":{"editor":"enum","options":["filled","search"],"default":"filled","section":"State"},"$preview":{"width":1440,"height":900}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+const VEX_LEDGER = [['Oct 23 14:10', 'admin_remove', '−5,000 CR', '4,870 CR', 'by mathys · duplicate refund'], ['Oct 23 14:05', 'bid_refund', '+5,000 CR', '9,870 CR', 'auction #8812, refunded twice'], ['Oct 23 14:02', 'case_open', '−250 CR', '4,870 CR', 'Revolution Case'], ['Oct 23 13:40', 'recycle', '+500 CR', '5,120 CR', 'AWP | Redline (FT)']];
+function VEXBG(current, reopen, over) {
+  const o = over || {};
+  const defs = [['credits', 'Adjust credits', 'Admin-Dlg-Credits.dc.html', 's'], ['grant', 'Grant item', 'Admin-Dlg-Grant.dc.html', 's'], ['reset', 'Reset free case', 'Admin-Player.dc.html', 's'], ['signout', 'Sign out everywhere', 'Admin-Player.dc.html', 's'], ['ban', 'Ban', 'Admin-Dlg-Ban.dc.html', 'd'], ['delete', '⋯', 'Admin-Dlg-Delete.dc.html', 's']];
+  const ledger = (o.ledgerTop ? [o.ledgerTop] : []).concat(VEX_LEDGER).slice(0, 4);
+  return {
+    name: o.name || 'vex', online: !o.banned && !o.deleted, banned: !!o.banned, bannedChip: o.bannedChip || '', bannedBand: o.bannedBand || '', banReason: o.banReason || '', seen: o.banned ? 'just now · signed out' : '2 min ago',
+    actions: defs.map((d) => ({ label: d[0] === 'ban' && o.banned ? 'Unban' : d[1], href: d[2], isLink: d[0] !== current, isButton: d[0] === current, go: reopen, style: d[3] === 'd' && !o.banned ? 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D' : 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF' })),
+    stats: [['Balance', o.balance || '4,870 CR'], ['Held in bids', o.held || '1,200 CR'], ['Inventory value', o.inv || '34,269 CR'], ['Cases opened', '312'], ['Trades completed', '14'], ['Albums', '23%']].map((s) => ({ k: s[0], v: s[1] })),
+    ledger: ledger.map((l) => ({ a: l[0], b: l[1], c: l[2], d: l[3], e: l[4] }))
+  };
+}
+
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const CASE_ART = 'M38 34H202A8 8 0 0 1 210 42V96A8 8 0 0 1 202 104H38A8 8 0 0 1 30 96V42A8 8 0 0 1 38 34Z M98 18H142V34H134V25H106V34H98Z M30 58H210V61H30Z M120 66L132 78L120 90L108 78Z M52 44H68V50H52Z M172 44H188V50H172Z';
+const RAR = {
+  milspec: ['#4B69FF', 'rgba(75,105,255,0.30)', '#8197FF', 'Mil-Spec'],
+  restricted: ['#8847FF', 'rgba(136,71,255,0.32)', '#A983FF', 'Restricted'],
+  classified: ['#D32CE6', 'rgba(211,44,230,0.30)', '#E57AF0', 'Classified'],
+  covert: ['#EB4B4B', 'rgba(235,75,75,0.32)', '#F27D7D', 'Covert'],
+  gold: ['#E4AE39', 'rgba(228,174,57,0.36)', '#ECC163', '★ Rare special']
+};
+
+// weapon, skin, rarity, art, value by wear FN/MW/FT/WW/BS
+const SKINS = [
+  ['AK-47', 'Redline', 'classified', 'rifle', [2900, 1700, 1380, 1200, 1050]],
+  ['AWP', 'Redline', 'classified', 'sniper', [3100, 1800, 1450, 1250, 1100]],
+  ['AK-47', 'Inheritance', 'covert', 'rifle', [4200, 3000, 2500, 2300, 2200]],
+  ['AWP', 'Chrome Cannon', 'covert', 'sniper', [8200, 6000, 4800, 4300, 4100]],
+  ['M4A4', 'Temukau', 'covert', 'rifle', [4400, 3100, 2600, 2400, 2300]],
+  ['MP7', 'Skulls', 'milspec', 'smg', [45, 38, 34, 32, 30]],
+  ['★ Karambit', 'Fade', 'gold', 'knife', [15600, 15600, 15600, 15600, 15600]],
+  ['Glock-18', 'Block-18', 'restricted', 'pistol', [260, 180, 150, 140, 130]]
+];
+const WEARS = [['FN', 'Factory New', 0, 0.07], ['MW', 'Minimal Wear', 0.07, 0.15], ['FT', 'Field-Tested', 0.15, 0.38], ['WW', 'Well-Worn', 0.38, 0.45], ['BS', 'Battle-Scarred', 0.45, 1]];
+const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const START = { filled: { query: 'AK-47 | Redline', sel: 0, sug: false }, search: { query: 'redline', sel: 0, sug: true } };
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const s = START[props.step] || START.filled;
+    this.state = { query: s.query, sel: s.sel, sug: s.sug, wear: 2, float: '0.238104771', pattern: '', st: false, reason: '', open: true, done: null, toast: '' };
+  }
+  componentDidUpdate(prev) {
+    if (prev.step !== this.props.step) { const s = START[this.props.step] || START.filled; this.setState({ query: s.query, sel: s.sel, sug: s.sug, open: true, done: null, toast: '' }); }
+  }
+  renderVals() {
+    const st = this.state;
+    const sh = SHELL('admin', 'players');
+    const q = st.query.trim().toLowerCase();
+    const matches = SKINS.map((s, i) => ({ s, i })).filter(({ s }) => !q || (s[0] + ' | ' + s[1]).toLowerCase().indexOf(q) >= 0).slice(0, 5);
+    const sk = st.sel !== null ? SKINS[st.sel] : null;
+    const w = WEARS[st.wear];
+    const f = parseFloat(st.float);
+    const floatBad = isNaN(f) || f < w[2] || f >= w[3] + (st.wear === 4 ? 0.0001 : 0);
+    const floatErr = isNaN(f) ? 'Type a float between 0 and 1.' : w[0] + ' floats go from ' + w[2].toFixed(2) + ' to ' + w[3].toFixed(2) + '. Pick another wear or change the float.';
+    const value = sk ? sk[4][st.wear] * (st.st ? 2 : 1) : 0;
+    const r = sk ? RAR[sk[2]] : RAR.milspec;
+    const name = sk ? sk[0] + ' | ' + sk[1] : '';
+    const done = st.done;
+    const bg = VEXBG('grant', () => this.setState({ open: true, reason: '' }), done ? { inv: done.inv } : {});
+    const f4 = isNaN(f) ? '—' : f.toFixed(4);
+    return Object.assign(sh, {
+      bg, dlgOpen: st.open, closeDlg: () => this.setState({ open: false }),
+      dlgLabel: '// Grant item', dlgTitle: sk ? 'Grant ' + name + ' to vex' : 'Grant an item to vex',
+      query: st.query, onQuery: (e) => this.setState({ query: e.target.value, sug: true }), openSug: () => this.setState({ sug: true }),
+      showSug: st.sug, noSug: matches.length === 0,
+      sug: matches.map(({ s, i }) => {
+        const rr = RAR[s[2]];
+        return { name: s[0] + ' | ' + s[1], rarity: rr[3], color: rr[0], text: rr[2], glow: rr[1], art: ART[s[3]], fill: s[2] === 'gold' ? '#EFE6D2' : '#D3D6DB', on: st.sel === i, bg: st.sel === i ? '#1A1D22' : 'transparent', pick: () => this.setState({ sel: i, query: s[0] + ' | ' + s[1], sug: false }) };
+      }),
+      wears: WEARS.map((x, i) => ({ code: x[0], range: x[1] + ': ' + x[2].toFixed(2) + ' to ' + x[3].toFixed(2), on: st.wear === i, style: st.wear === i ? 'border: 1px solid #ECEDEF; background: #ECEDEF; color: #0A0B0D' : 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF', pick: () => this.setState({ wear: i, float: ((x[2] + Math.min(x[3], 0.6)) / 2).toFixed(9) }) })),
+      wearRange: w[0] + ' is ' + w[2].toFixed(2) + ' to ' + w[3].toFixed(2),
+      float: st.float, onFloat: (e) => this.setState({ float: e.target.value }), floatBad, floatErr, floatBorder: floatBad ? '#F27D7D' : '#2C3138',
+      floatPct: (isNaN(f) ? 0 : Math.min(1, Math.max(0, f)) * 100).toFixed(2) + '%',
+      pattern: st.pattern, onPattern: (e) => this.setState({ pattern: e.target.value.replace(/[^0-9]/g, '').slice(0, 3) }),
+      st: st.st, toggleSt: () => this.setState({ st: !st.st }), stText: st.st ? 'On · value ×2' : 'Off',
+      card: { name, weapon: sk ? sk[0] : '', skin: sk ? sk[1] : 'Pick a skin', wear: w[0] + ' · ' + f4, value: fmt(value) + ' CR', color: r[0], glow: r[1], art: sk ? ART[sk[3]] : '', fill: sk && sk[2] === 'gold' ? '#EFE6D2' : '#D3D6DB' },
+      invAfter: fmt(34269 + value),
+      reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }),
+      goLabel: sk ? 'Grant ' + name : 'Grant item', goClass: 'btn-p', goStyle: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+      cantGo: !sk || floatBad || !st.reason.trim(),
+      go: () => {
+        if (!sk || floatBad || !st.reason.trim()) return;
+        this.setState({ open: false, done: { inv: fmt(34269 + value) + ' CR' }, toast: 'Granted ' + name + ' (' + w[0] + ' ' + f4 + ') to vex · logged' });
+      },
+      hasToast: !!st.toast, toast: st.toast
+    });
+  }
+}
+</script>
+</body>
+</html>

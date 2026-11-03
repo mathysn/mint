@@ -1,0 +1,178 @@
+/* Search box (SearchField, SkinSearch): icon, clear button, suggestion panel. */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.icon {
+  position: absolute;
+  left: 14px;
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+  transition: stroke 120ms ease;
+}
+.input {
+  width: 100%;
+  height: 44px;
+  padding: 0 40px 0 40px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 120ms ease;
+}
+.input::placeholder {
+  color: var(--text-3);
+}
+.input::-webkit-search-cancel-button,
+.input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.input:hover {
+  border-color: var(--border-hover);
+}
+.input:focus,
+.input:focus-visible {
+  outline: none;
+  border-color: var(--text-2);
+}
+.box:focus-within .icon {
+  stroke: var(--text);
+}
+.open .input {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.clear {
+  position: absolute;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+}
+.clear:hover {
+  color: var(--text);
+}
+.clear svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* Suggestions under the field. */
+.panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  border: 1px solid var(--text-2);
+  border-top-color: var(--separator);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  background: var(--surface-raised);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+  animation: mint-fade var(--dur-fast) var(--ease-out) both;
+}
+.panel[data-closing] {
+  animation: mint-fade-out var(--dur-fast) var(--ease-in-out) both;
+  pointer-events: none;
+}
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 4px 14px 4px 12px;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) ease;
+}
+.rowActive {
+  background: var(--nav-hover);
+}
+.bar {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+}
+.art {
+  position: relative;
+  flex: none;
+  width: 80px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+}
+.art img {
+  position: relative;
+  max-width: 76px;
+  max-height: 48px;
+}
+.text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.weapon {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.detail {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.finish {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.text mark {
+  background: none;
+  color: var(--text);
+  font-weight: 600;
+}
+.count {
+  flex: none;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.empty {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--text-3);
+}

@@ -1,0 +1,82 @@
+# Mint on one server: Postgres, the app (API + game + scheduler) and, if ports 80/443 are free,
+# Caddy for HTTPS. Settings come from .env next to this file (copy .env.production.example).
+# Usage: deploy/deploy.sh. Never publishes Postgres; the app only listens on 127.0.0.1.
+name: mint
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mint
+      POSTGRES_DB: mint
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./deploy/postgres.conf:/etc/postgresql/postgresql.conf:ro
+    shm_size: 128mb
+    mem_limit: ${PG_MEM_LIMIT:-640m}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mint -d mint']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    networks: [internal]
+
+  app:
+    build:
+      context: .
+      args:
+        VITE_DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
+        VITE_CONTACT_EMAIL: ${CONTACT_EMAIL:-}
+    image: mint-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://mint:${POSTGRES_PASSWORD}@postgres:5432/mint
+      DATABASE_URL_UNPOOLED: postgres://mint:${POSTGRES_PASSWORD}@postgres:5432/mint
+      DB_POOL_MAX: '10'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: ${APP_MEM_LIMIT:-512m}
+    # Reachable from this machine only: for an existing nginx, or for checks with curl.
+    ports:
+      - '127.0.0.1:${APP_PORT:-3080}:3000'
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    networks: [internal, web]
+
+  # Only when nothing else uses ports 80/443: COMPOSE_PROFILES=caddy in .env.
+  caddy:
+    image: caddy:2-alpine
+    profiles: [caddy]
+    restart: unless-stopped
+    environment:
+      MINT_DOMAIN: ${MINT_DOMAIN:?Set MINT_DOMAIN in .env}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    mem_limit: 128m
+    depends_on: [app]
+    networks: [web]
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
+
+networks:
+  internal:
+    internal: true
+  web:

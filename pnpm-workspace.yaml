@@ -1,0 +1,9 @@
+# Packages allowed to run install scripts (pnpm refuses the others).
+# The embedded-postgres binaries are only used by `pnpm db:local`; Vercel builds on linux-x64.
+allowBuilds:
+  '@embedded-postgres/windows-x64': true
+  '@embedded-postgres/linux-x64': true
+  '@embedded-postgres/linux-arm64': true
+  '@embedded-postgres/darwin-arm64': true
+  '@embedded-postgres/darwin-x64': true
+  esbuild: true

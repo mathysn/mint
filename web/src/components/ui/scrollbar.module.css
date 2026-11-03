@@ -1,0 +1,70 @@
+/* Overlay scrollbar: a thin thumb drawn over the content, never in the layout. */
+.track {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  bottom: 3px;
+  width: 12px;
+  z-index: 3;
+  pointer-events: none;
+}
+.fixed {
+  position: fixed;
+  z-index: 40;
+}
+.aboveTabs {
+  bottom: calc(var(--tabbar) + 3px);
+}
+/* Nothing to scroll. Hidden, not removed: the track must keep its height to be measured. */
+.track[data-off] {
+  visibility: hidden;
+}
+.track[data-off] .thumb {
+  pointer-events: none;
+}
+.thumb {
+  position: absolute;
+  top: 0;
+  right: 3px;
+  width: 6px;
+  min-height: 28px;
+  border-radius: 3px;
+  background: var(--border-strong);
+  opacity: 0;
+  transition:
+    opacity 240ms ease,
+    width 120ms ease,
+    background-color 120ms ease;
+  touch-action: none;
+  cursor: default;
+}
+.track[data-visible] .thumb,
+.track[data-dragging] .thumb {
+  opacity: 1;
+  pointer-events: auto;
+}
+.thumb:hover,
+.track[data-dragging] .thumb {
+  width: 8px;
+  background: var(--border-hover);
+}
+
+/* ScrollArea: positioned frame + the scrolling element inside it. */
+.area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.viewport {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+}

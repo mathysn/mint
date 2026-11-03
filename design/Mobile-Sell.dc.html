@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — List on market (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.sr{position:absolute;width:1px;height:1px;opacity:0;margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<div style="position: absolute; left: 0; right: 0; top: 0; bottom: 160px; overflow-y: auto; box-sizing: border-box; padding-top: 50px">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 8px">
+<a href="Mobile-Item.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Cancel</a>
+</header>
+
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 8px 20px 24px">
+<h1 style="margin: 0; font-size: 28px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">List on market</h1>
+
+<div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 12px 12px 10px; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013; overflow: hidden">
+<span style="position: relative; flex: none; width: 92px; height: 56px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(closest-side, rgba(235,75,75,0.32), rgba(0,0,0,0))"></span><svg role="img" aria-label="AWP | Chrome Cannon (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 100%; fill: #DADDE2"><path d="{{art}}"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #A1A7AF">AWP · StatTrak™</span><span style="font-size: 16px; font-weight: 600">Chrome Cannon</span><span class="mono" style="font-size: 11px; color: #A1A7AF">MW 0.0934 · avg sale 7,217 CR</span></span>
+<span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #EB4B4B"></span>
+</div>
+
+<label style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 15px; font-weight: 600">Starting price</span>
+<span style="position: relative; display: block"><input type="number" class="mono" value="6500" style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 48px 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font-size: 19px"><span class="mono" style="position: absolute; right: 14px; top: 17px; font-size: 13px; color: #A1A7AF">CR</span></span>
+<span style="font-size: 12px; color: #A1A7AF">Each bid must beat the last by 5%.</span>
+</label>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label style="display: flex; align-items: center; gap: 12px; min-height: 44px"><input type="checkbox" defaultChecked="{{ true }}" style="width: 20px; height: 20px; margin: 0; accent-color: #ECEDEF"><span style="font-size: 15px; font-weight: 600">Buy-now price</span><span style="font-size: 12px; color: #A1A7AF">Optional</span></label>
+<span style="position: relative; display: block"><input type="number" class="mono" aria-label="Buy-now price" value="9000" style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 48px 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font-size: 19px"><span class="mono" style="position: absolute; right: 14px; top: 17px; font-size: 13px; color: #A1A7AF">CR</span></span>
+</div>
+
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="padding: 0; margin-bottom: 8px; font-size: 15px; font-weight: 600">Duration</legend>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<label style="position: relative; display: grid; place-items: center; height: 48px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013"><input type="radio" class="sr" name="m-duration"><span class="mono" style="font-size: 16px">24 h</span></label>
+<label style="position: relative; display: grid; place-items: center; height: 48px; border: 1px solid #ECEDEF; border-radius: 2px; background: #ECEDEF; color: #0A0B0D"><input type="radio" class="sr" name="m-duration" defaultChecked="{{ true }}"><span class="mono" style="font-size: 16px; font-weight: 600">48 h</span></label>
+</div>
+</fieldset>
+
+<section aria-labelledby="ms-sum" style="display: flex; flex-direction: column; padding: 14px 16px 4px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="ms-sum" class="lbl" style="margin: 0 0 6px">// What you get</h2>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #1A1D22; font-size: 14px"><span style="color: #A1A7AF">At the starting price</span><span class="mono">6,175 CR</span></div>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #1A1D22; font-size: 14px"><span style="color: #A1A7AF">Bought now</span><span class="mono">8,550 CR</span></div>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #1A1D22; font-size: 12px; color: #858B94"><span>5% fee from the final price</span><span class="mono">−325 CR</span></div>
+<div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #1A1D22; font-size: 12px; color: #858B94"><span>Recycling instead</span><span class="mono">6,000 CR</span></div>
+</section>
+</div>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 84px; z-index: 5; box-sizing: border-box; height: 76px; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 10px 16px; background: #0A0B0D; border-top: 1px solid #1C1F24">
+<button type="button" style="height: 48px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">List for 48 h</button>
+</div>
+
+<nav aria-label="Main" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 6px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #0D0E11; border-top: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<a href="{{t.href}}" aria-current="{{t.current}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; text-decoration: none; font-size: 11px; font-weight: 500; color: {{t.color}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg>
+<span>{{t.label}}</span>
+</a>
+</sc-for>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+const TABS = [
+  ['home', 'Home', 'Mobile-Home.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Mobile-Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Mobile-Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Mobile-Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['more', 'More', 'Mobile-More.dc.html', 'M4 6h16M4 12h16M4 18h16']
+];
+const SNIPER = 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z';
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      art: SNIPER,
+      tabs: TABS.map((t) => ({ label: t[1], href: t[2], icon: t[3], current: t[0] === 'inventory' ? 'page' : undefined, color: t[0] === 'inventory' ? '#ECEDEF' : '#858B94' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

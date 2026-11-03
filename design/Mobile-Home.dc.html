@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Home (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.hscroll{scrollbar-width:none}.hscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<div style="position: absolute; left: 0; right: 0; top: 0; bottom: 84px; overflow-y: auto; box-sizing: border-box; padding-top: 50px">
+
+<header style="display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 20px">
+<a href="Mobile-Home.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 10px; height: 44px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 14px; height: 14px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 14px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<span class="mono" style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; font-size: 13px">{{balance}} <span style="color: #A1A7AF">CR</span></span>
+</header>
+
+<div role="status" style="display: flex; align-items: center; gap: 10px; margin: 4px 20px 0; padding: 10px 12px; border: 1px solid #1C1F24; border-radius: 4px; background: #0D0E11; font-size: 12px">
+<span class="lbl" style="flex: none; font-size: 10px; color: #E4AE39">★ Drop</span>
+<span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><strong>nyx</strong> <span style="color: #A1A7AF">unboxed</span> <span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span></span>
+<span class="mono" style="flex: none; font-size: 11px; color: #858B94">2m</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 20px 20px 32px">
+
+<section aria-labelledby="m-hero" style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow: hidden">
+<div style="position: relative; height: 210px; display: grid; place-items: center; background: radial-gradient(closest-side at 50% 52%, rgba(236,237,239,0.10), rgba(236,237,239,0)); border-bottom: 1px solid #1C1F24">
+<span aria-hidden="true" style="position: absolute; left: 16px; top: 16px; width: 16px; height: 16px; border-left: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 16px; top: 16px; width: 16px; height: 16px; border-right: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; left: 16px; bottom: 16px; width: 16px; height: 16px; border-left: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 16px; bottom: 16px; width: 16px; height: 16px; border-right: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span class="lbl" style="position: absolute; left: 28px; top: 28px; font-size: 10px">Kilowatt Case</span>
+<span class="lbl" style="position: absolute; right: 28px; top: 28px; font-size: 10px">Free</span>
+<svg role="img" aria-label="Kilowatt Case (placeholder art)" viewBox="0 0 240 120" style="width: 62%; fill: #D7DADF; fill-rule: evenodd"><path d="{{caseArt}}"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 22px 20px 20px">
+<span class="lbl">// Daily drop</span>
+<h1 id="m-hero" style="margin: 0; font-size: 32px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Your free case is ready.</h1>
+<a href="Mobile-Opening.dc.html" style="display: flex; align-items: center; justify-content: center; height: 52px; margin-top: 4px; background: #ECEDEF; color: #0A0B0D; text-decoration: none; font-size: 16px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Open free case</a>
+<span class="mono" style="font-size: 11px; color: #858B94; text-align: center">1 free case every 24 h · plus 250 CR daily</span>
+</div>
+</section>
+
+<sc-if value="{{guest}}" hint-placeholder-val="{{ true }}">
+<section aria-labelledby="m-guest" style="display: flex; flex-direction: column; gap: 12px; padding: 18px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; gap: 12px; align-items: center">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; color: #A1A7AF">?</span>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="m-guest" style="margin: 0; font-size: 15px; font-weight: 600">Playing as guest</h2>
+<span style="font-size: 13px; color: #A1A7AF">Sign in so your items are still here tomorrow.</span>
+</div>
+</div>
+<a href="Mobile-Connect.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 15px; font-weight: 500">Continue with Discord</a>
+</section>
+</sc-if>
+
+<sc-if value="{{signedIn}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="m-feed" style="display: flex; flex-direction: column; gap: 4px; padding: 18px 20px 8px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px"><h2 id="m-feed" style="margin: 0; font-size: 16px; font-weight: 600">Friends' activity</h2><span class="lbl">// Feed</span></div>
+<sc-for list="{{feed}}" as="f" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #1A1D22">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 12px; font-weight: 600; color: #A1A7AF">{{f.initial}}</span>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><strong>{{f.user}}</strong> <span style="color: #A1A7AF">{{f.verb}}</span></span>
+<span style="font-size: 13px; font-weight: 600; color: {{f.text}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.item}}</span>
+</div>
+<span class="mono" style="flex: none; font-size: 11px; color: #858B94">{{f.time}}</span>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<section aria-labelledby="m-today" style="display: flex; flex-direction: column; padding: 18px 20px 6px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="m-today" class="lbl" style="margin: 0 0 10px">Today</h2>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid #1A1D22; font-size: 14px"><span style="color: #A1A7AF">Daily reward</span><span class="mono">+250 CR · claimed</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid #1A1D22; font-size: 14px"><span style="color: #A1A7AF">Next reward</span><span class="mono">23:14:07</span></div>
+</section>
+
+<section aria-labelledby="m-cases" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="m-cases" style="margin: 0; font-size: 16px; font-weight: 600">Cases</h2><a href="Mobile-Cases.dc.html" style="font-size: 14px; color: #A1A7AF">View all</a></div>
+<div class="hscroll" style="display: flex; gap: 12px; overflow-x: auto; margin: 0 -20px; padding: 0 20px">
+<sc-for list="{{cases}}" as="c" hint-placeholder-count="4">
+<a href="Mobile-Opening.dc.html" style="flex: none; width: 150px; display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013; color: #ECEDEF; text-decoration: none; overflow: hidden">
+<span style="height: 96px; display: grid; place-items: center; background: radial-gradient(closest-side, rgba(236,237,239,0.07), rgba(236,237,239,0))"><svg aria-hidden="true" viewBox="0 0 240 120" style="width: 66%; fill: #BFC3C9; fill-rule: evenodd"><path d="{{caseArt}}"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; border-top: 1px solid #1A1D22"><span style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.name}}</span><span class="mono" style="font-size: 12px; color: #A1A7AF">250 CR</span></span>
+</a>
+</sc-for>
+</div>
+</section>
+
+</div>
+</div>
+
+<nav aria-label="Main" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 6px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #0D0E11; border-top: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<a href="{{t.href}}" aria-current="{{t.current}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; text-decoration: none; font-size: 11px; font-weight: 500; color: {{t.color}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg>
+<span>{{t.label}}</span>
+</a>
+</sc-for>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"signedIn":{"editor":"boolean","default":false,"section":"State"},"$preview":{"width":390,"height":844}}'>
+const CASE_ART = 'M38 34H202A8 8 0 0 1 210 42V96A8 8 0 0 1 202 104H38A8 8 0 0 1 30 96V42A8 8 0 0 1 38 34Z M98 18H142V34H134V25H106V34H98Z M30 58H210V61H30Z M120 66L132 78L120 90L108 78Z M52 44H68V50H52Z M172 44H188V50H172Z';
+const TABS = [
+  ['home', 'Home', 'Mobile-Home.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Mobile-Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Mobile-Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Mobile-Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['more', 'More', 'Mobile-More.dc.html', 'M4 6h16M4 12h16M4 18h16']
+];
+class Component extends DCLogic {
+  renderVals() {
+    const signedIn = this.props.signedIn ?? false;
+    return {
+      signedIn, guest: !signedIn,
+      balance: signedIn ? '4,870' : '1,250',
+      caseArt: CASE_ART,
+      tabs: TABS.map((t) => ({ label: t[1], href: t[2], icon: t[3], current: t[0] === 'home' ? 'page' : undefined, color: t[0] === 'home' ? '#ECEDEF' : '#858B94' })),
+      feed: [
+        { initial: 'K', user: 'kenji', verb: 'unboxed', item: 'AK-47 | Head Shot', text: '#F27D7D', time: '12m' },
+        { initial: 'L', user: 'lou', verb: 'sold for 3,400 CR', item: 'M4A1-S | Black Lotus', text: '#E57AF0', time: '1h' },
+        { initial: 'R', user: 'rhea', verb: 'traded up to', item: 'USP-S | Jawbreaker', text: '#E57AF0', time: '3h' }
+      ],
+      cases: [{ name: 'Fever Case' }, { name: 'Gallery Case' }, { name: 'Kilowatt Case' }, { name: 'Revolution Case' }]
+    };
+  }
+}
+</script>
+</body>
+</html>

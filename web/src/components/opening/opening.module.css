@@ -1,0 +1,522 @@
+/* ── Odds strip (shared by every case) ── */
+.odds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  overflow: hidden;
+}
+.oddsCell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px 20px;
+  border-right: 1px solid var(--separator);
+}
+.oddsBar {
+  width: 28px;
+  height: 3px;
+}
+.oddsName {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.oddsPct {
+  font-size: 22px;
+  font-weight: 500;
+}
+.oddsMobile {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -20px;
+  padding: 0 20px;
+}
+.oddsMobile .oddsCell {
+  flex: none;
+  min-width: 108px;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.oddsMobile .oddsBar {
+  width: 22px;
+}
+.oddsMobile .oddsName {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.oddsMobile .oddsPct {
+  font-size: 17px;
+}
+
+/* ── Rarity group (What's inside) ── */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.groupSquare {
+  width: 10px;
+  height: 10px;
+  flex: none;
+}
+.groupName {
+  font-size: 14px;
+  font-weight: 600;
+}
+.groupLine {
+  flex: 1;
+  height: 1px;
+  background: var(--separator);
+}
+.groupGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr));
+  gap: 12px;
+}
+.mobile.group {
+  gap: 10px;
+}
+.mobile .groupHead {
+  gap: 8px;
+}
+.mobile .groupSquare {
+  width: 8px;
+  height: 8px;
+}
+.mobile .groupName {
+  font-size: 13px;
+}
+.mobile .groupGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* ── Stage + roulette ── */
+.stage {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+  background: var(--surface);
+}
+.stageMobile {
+  margin: 0 -20px;
+  border-width: 1px 0;
+  border-radius: 0;
+}
+.rollArea {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 36px 0 40px;
+  animation: mint-fade var(--dur-slow) var(--ease-out) both;
+}
+.stageMobile .rollArea {
+  gap: 20px;
+  padding: 24px 0;
+}
+.window {
+  position: relative;
+  width: 100%;
+  height: 232px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), #000 14%, #000 86%, rgba(0, 0, 0, 0));
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), #000 14%, #000 86%, rgba(0, 0, 0, 0));
+}
+.stageMobile .window {
+  height: 176px;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), #000 12%, #000 88%, rgba(0, 0, 0, 0));
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), #000 12%, #000 88%, rgba(0, 0, 0, 0));
+}
+.strip {
+  position: absolute;
+  left: 50%;
+  top: 24px;
+  display: flex;
+  gap: 8px;
+  will-change: transform;
+}
+.stageMobile .strip {
+  top: 16px;
+}
+.marker {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--text);
+}
+.triangleTop,
+.triangleBottom {
+  position: absolute;
+  left: 50%;
+  margin-left: -7px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+}
+.triangleTop {
+  top: 4px;
+  border-top: 9px solid var(--text);
+}
+.triangleBottom {
+  bottom: 4px;
+  border-bottom: 9px solid var(--text);
+}
+.stageMobile .marker {
+  top: 6px;
+  bottom: 6px;
+}
+.stageMobile .triangleTop,
+.stageMobile .triangleBottom {
+  margin-left: -6px;
+  border-left-width: 6px;
+  border-right-width: 6px;
+}
+.stageMobile .triangleTop {
+  top: 0;
+  border-top-width: 8px;
+}
+.stageMobile .triangleBottom {
+  bottom: 0;
+  border-bottom-width: 8px;
+}
+/* Result card when the strip stops: a short scale and a glow in its rarity colour (--lock). */
+.lockIn {
+  position: relative;
+  z-index: 1;
+  animation: lock 450ms var(--ease-out) both;
+}
+@keyframes lock {
+  0% {
+    transform: scale(1);
+    box-shadow: inset 0 0 0 1px var(--lock), 0 0 0 0 transparent;
+  }
+  45% {
+    transform: scale(1.07);
+    box-shadow: inset 0 0 0 1px var(--lock), 0 0 32px 2px color-mix(in srgb, var(--lock) 55%, transparent);
+  }
+  100% {
+    transform: scale(1.04);
+    box-shadow: inset 0 0 0 1px var(--lock), 0 0 22px 0 color-mix(in srgb, var(--lock) 40%, transparent);
+  }
+}
+/* The roll area fades out at the end of the lock-in, just before the reveal. */
+.rollArea.rollLeaving {
+  animation: mint-fade-out 160ms 290ms var(--ease-in-out) both;
+}
+/* Grade colour of the reveal, faded in over the stage (gradients cannot transition). */
+.stageGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 600ms var(--ease-out);
+}
+.reveal[data-closing],
+.gold[data-closing] {
+  animation: mint-fade-out 160ms var(--ease-in-out) both;
+  pointer-events: none;
+}
+/* Mute button, top right of the stage. */
+.soundToggle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease;
+}
+.soundToggle:hover {
+  color: var(--text);
+  background: var(--nav-hover);
+}
+.soundToggle svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Always there (one line high), so the message never pushes the page down when it shows. */
+.rollStatus {
+  min-height: 18px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--error);
+  text-align: center;
+  transition: opacity 300ms ease;
+}
+
+/* ── Reveal ── */
+.reveal {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+.revealArt {
+  flex: 1 1 440px;
+  position: relative;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+}
+.revealArt .revealImg {
+  position: relative;
+  width: 78%;
+  max-width: 460px;
+  animation: mint-pop 480ms var(--pop-ease) both;
+}
+.revealInfo {
+  flex: 1 1 380px;
+  padding: 44px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  animation: mint-rise 500ms 150ms ease-out both;
+}
+.revealRarity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.revealSquare {
+  width: 10px;
+  height: 10px;
+}
+.revealTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.revealWeapon {
+  font-size: 15px;
+  color: var(--text-2);
+}
+.revealSkin {
+  font-size: 44px;
+  line-height: 1.02;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.floatBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.floatHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.floatValue {
+  font-size: 18px;
+  font-weight: 500;
+}
+.recycleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 14px;
+  border-top: 1px solid var(--separator);
+}
+.recycleLabel {
+  font-size: 14px;
+  color: var(--text-2);
+}
+.recycleValue {
+  font-size: 16px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mobile.reveal {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+.mobile .revealArt {
+  flex: none;
+  min-height: 0;
+  height: 230px;
+}
+.mobile .revealArt .revealImg {
+  width: 84%;
+}
+.mobile .revealInfo {
+  flex: none;
+  padding: 4px 20px 24px;
+  gap: 16px;
+}
+.mobile .revealRarity {
+  gap: 8px;
+}
+.mobile .revealSquare {
+  width: 8px;
+  height: 8px;
+}
+.mobile .revealTitle {
+  gap: 4px;
+}
+.mobile .revealWeapon {
+  font-size: 14px;
+}
+.mobile .revealSkin {
+  font-size: 32px;
+  line-height: 1.05;
+}
+.mobile .pills {
+  gap: 6px;
+}
+.mobile .floatBlock {
+  gap: 8px;
+}
+.mobile .floatValue {
+  font-size: 16px;
+  font-weight: 400;
+}
+.mobile .recycleRow {
+  padding-top: 12px;
+}
+.mobile .recycleValue {
+  font-size: 15px;
+}
+.mobile .actions {
+  flex-direction: column;
+}
+
+/* ── Gold, full screen ── */
+.gold {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  padding: 88px 32px;
+  background: radial-gradient(circle at 50% 26%, rgba(228, 174, 57, 0.3), rgba(10, 11, 13, 0.97) 52%);
+  animation: mint-fade 500ms ease-out both;
+}
+.goldArt {
+  position: relative;
+  flex: none;
+  width: min(640px, 100%);
+  aspect-ratio: 2 / 1;
+  display: grid;
+  place-items: center;
+}
+.rays {
+  position: absolute;
+  inset: -30% 0;
+  background: repeating-conic-gradient(rgba(228, 174, 57, 0.12) 0deg 4deg, rgba(228, 174, 57, 0) 4deg 15deg);
+  -webkit-mask-image: radial-gradient(closest-side, #000 15%, rgba(0, 0, 0, 0));
+  mask-image: radial-gradient(closest-side, #000 15%, rgba(0, 0, 0, 0));
+  animation: mint-spin 80s linear infinite;
+}
+.goldArt .goldImg {
+  position: relative;
+  width: 84%;
+  animation: mint-flare 900ms cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+}
+.goldText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.goldWeapon {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--gold-text);
+}
+.goldSkin {
+  font-size: 60px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.goldMeta {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.goldActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.mobile.gold {
+  gap: 22px;
+  padding: 96px 20px 40px;
+  background: radial-gradient(circle at 50% 30%, rgba(228, 174, 57, 0.32), rgba(10, 11, 13, 0.98) 58%);
+}
+.mobile .goldArt {
+  width: 100%;
+  aspect-ratio: auto;
+  height: 190px;
+}
+.mobile .rays {
+  inset: -40% -10%;
+}
+.mobile .goldArt .goldImg {
+  width: 92%;
+}
+.mobile .goldText {
+  gap: 6px;
+}
+.mobile .goldWeapon {
+  font-size: 15px;
+  font-weight: 400;
+}
+.mobile .goldSkin {
+  font-size: 44px;
+  letter-spacing: -0.02em;
+}
+.mobile .goldMeta {
+  margin-top: 4px;
+  font-size: 12px;
+}
+.mobile .goldActions {
+  width: 100%;
+  flex-direction: column;
+  margin-top: auto;
+}

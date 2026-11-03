@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Auction (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.btn-p:disabled{background:#3A3F46;color:#A1A7AF}
+@keyframes mint-blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes mint-rise{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<div style="position: absolute; left: 0; right: 0; top: 0; bottom: 176px; overflow-y: auto; box-sizing: border-box; padding-top: 50px">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 8px">
+<a href="Mobile-Market.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Market</a>
+<span class="mono" style="margin-right: 12px; font-size: 12px; color: #A1A7AF">Held {{held}} CR</span>
+</header>
+
+<div style="position: relative; height: 210px; display: grid; place-items: center; border-top: 1px solid #1C1F24; border-bottom: 1px solid #1C1F24; background: radial-gradient(ellipse at 50% 50%, rgba(235,75,75,0.12), rgba(14,16,19,0) 70%), #0E1013">
+<span aria-hidden="true" style="position: absolute; inset: 6% 4%; background: radial-gradient(closest-side, rgba(235,75,75,0.30), rgba(235,75,75,0))"></span>
+<span aria-hidden="true" style="position: absolute; left: 16px; top: 16px; width: 16px; height: 16px; border-left: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 16px; bottom: 16px; width: 16px; height: 16px; border-right: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span class="lbl" style="position: absolute; left: 28px; top: 26px; font-size: 10px; color: #F27D7D">Covert</span>
+<span class="lbl" style="position: absolute; right: 28px; top: 26px; font-size: 10px">MW · 0.0871</span>
+<svg role="img" aria-label="M4A4 | Temukau (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 88%; fill: #DADDE2"><path d="{{art}}"></path></svg>
+</div>
+
+<div role="timer" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; {{timerBox}}">
+<span class="lbl" style="display: flex; align-items: center; gap: 8px; color: inherit"><sc-if value="{{urgent}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" class="anim" style="width: 7px; height: 7px; border-radius: 50%; background: #C8382F; animation: mint-blink 1s ease-in-out infinite"></span></sc-if>{{timerLabel}}</span>
+<span class="mono" style="font-size: 26px; font-weight: 600">{{timer}}</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 18px; padding: 18px 20px 24px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; color: #A1A7AF">M4A4</span><h1 style="margin: 0; font-size: 30px; line-height: 1; font-weight: 600; letter-spacing: -0.02em">Temukau</h1></div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span class="lbl" style="font-size: 10px">Current bid</span><span class="mono" style="font-size: 22px; font-weight: 500">{{current}}</span></div>
+</div>
+<span style="font-size: 13px; color: #A1A7AF">{{leaderLine}} · sold by lou · buy now 4,800 CR</span>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}"><div role="status" class="anim" style="padding: 12px 14px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 13px; line-height: 1.45; animation: mint-rise 300ms ease-out both">{{toast}}</div></sc-if>
+
+<sc-if value="{{ended}}" hint-placeholder-val="{{ false }}"><div role="status" style="padding: 16px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316; font-size: 15px; font-weight: 600">{{endTitle}}</div></sc-if>
+
+<section aria-labelledby="mh" style="display: flex; flex-direction: column">
+<h2 id="mh" class="lbl" style="margin: 0 0 6px">// Bids · {{bidCount}}</h2>
+<sc-for list="{{history}}" as="h" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #1A1D22; {{h.rowStyle}}">
+<span aria-hidden="true" style="flex: none; width: 26px; height: 26px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 11px; font-weight: 600; color: #A1A7AF">{{h.initial}}</span>
+<span style="flex: 1; font-size: 14px; font-weight: {{h.weight}}">{{h.user}}</span>
+<span class="mono" style="font-size: 11px; color: #858B94">{{h.time}}</span>
+<span class="mono" style="min-width: 72px; text-align: right; font-size: 13px">{{h.amount}}</span>
+</div>
+</sc-for>
+</section>
+</div>
+</div>
+
+<section aria-label="Place a bid" style="position: absolute; left: 0; right: 0; bottom: 84px; z-index: 5; box-sizing: border-box; height: 92px; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 10px 16px; background: #111316; border-top: 1px solid #2C3138">
+<div style="display: flex; gap: 8px">
+<label style="position: relative; flex: 1; display: block">
+<span class="lbl" style="position: absolute; left: 12px; top: 6px; font-size: 9px">Your bid · min {{minNext}}</span>
+<input type="number" class="mono" min="{{minNextRaw}}" step="10" value="{{amount}}" onChange="{{onAmount}}" disabled="{{ended}}" style="box-sizing: border-box; width: 100%; height: 52px; padding: 18px 44px 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 17px">
+<span class="mono" style="position: absolute; right: 12px; top: 20px; font-size: 12px; color: #A1A7AF">CR</span>
+</label>
+<button type="button" class="btn-p" onClick="{{place}}" disabled="{{ended}}" style="height: 52px; padding: 0 20px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 15px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)">Place bid</button>
+</div>
+<sc-if value="{{hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: #F27D7D">{{error}}</span></sc-if>
+</section>
+
+<nav aria-label="Main" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 6px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #0D0E11; border-top: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<a href="{{t.href}}" aria-current="{{t.current}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; text-decoration: none; font-size: 11px; font-weight: 500; color: {{t.color}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg>
+<span>{{t.label}}</span>
+</a>
+</sc-for>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+const TABS = [
+  ['home', 'Home', 'Mobile-Home.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Mobile-Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Mobile-Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Mobile-Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['more', 'More', 'Mobile-More.dc.html', 'M4 6h16M4 12h16M4 18h16']
+];
+const RIFLE = 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z';
+const BALANCE = 4870;
+const START = [['kenji', 3150, '1 min'], ['ash', 3000, '4 min'], ['nyx', 2850, '9 min'], ['kenji', 2710, '22 min'], ['ash', 2580, '41 min'], ['rhea', 2450, '1 h'], ['kenji', 2330, '2 h'], ['ash', 2210, '3 h'], ['nyx', 2100, '5 h']];
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+function pad(n) { return n < 10 ? '0' + n : String(n); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { left: 102, bids: START.map((b) => ({ user: b[0], amount: b[1], time: b[2] })), amount: '', held: 0, toast: '', error: '', outbidDone: false };
+    this.iv = null; this.to = null;
+  }
+  componentDidMount() { this.iv = setInterval(() => { if (this.state.left > 0) this.setState({ left: this.state.left - 1 }); }, 1000); }
+  componentWillUnmount() { clearInterval(this.iv); clearTimeout(this.to); }
+  place() {
+    const st = this.state;
+    const min = Math.ceil(st.bids[0].amount * 1.05);
+    const amt = parseInt(st.amount || String(min), 10);
+    if (!amt || amt < min) { this.setState({ error: 'At least ' + fmt(min) + ' CR (+5%).' }); return; }
+    if (amt > BALANCE) { this.setState({ error: 'You only have ' + fmt(BALANCE) + ' CR.' }); return; }
+    const extend = st.left <= 120;
+    this.setState({
+      bids: [{ user: 'vex (you)', amount: amt, time: 'now', you: true }].concat(st.bids), held: amt, amount: '', error: '',
+      left: extend ? st.left + 120 : st.left,
+      toast: extend ? 'You lead. Last-2-minutes bid: +2:00 on the clock.' : 'You lead with ' + fmt(amt) + ' CR.'
+    });
+    if (!st.outbidDone) {
+      clearTimeout(this.to);
+      this.to = setTimeout(() => {
+        const s = this.state;
+        if (s.left === 0) return;
+        const counter = Math.ceil(s.bids[0].amount * 1.05 / 10) * 10;
+        this.setState({ bids: [{ user: 'kenji', amount: counter, time: 'now' }].concat(s.bids), held: 0, outbidDone: true, left: s.left <= 120 ? s.left + 120 : s.left, toast: 'kenji outbid you. Your ' + fmt(s.held) + ' CR are back.' });
+      }, 6000);
+    }
+  }
+  renderVals() {
+    const st = this.state;
+    const top = st.bids[0];
+    const min = Math.ceil(top.amount * 1.05);
+    const urgent = st.left > 0 && st.left <= 120;
+    const ended = st.left === 0;
+    return {
+      tabs: TABS.map((t) => ({ label: t[1], href: t[2], icon: t[3], current: t[0] === 'more' ? 'page' : undefined, color: t[0] === 'more' ? '#ECEDEF' : '#858B94' })),
+      art: RIFLE, held: fmt(st.held),
+      timer: pad(Math.floor(st.left / 60)) + ':' + pad(st.left % 60), urgent, ended,
+      timerLabel: ended ? 'Ended' : urgent ? 'Ending · a bid adds 2 min' : 'Ends in',
+      timerBox: urgent ? 'background: #ECEDEF; color: #0A0B0D' : 'background: #0E1013; color: #ECEDEF; border-bottom: 1px solid #1C1F24',
+      current: fmt(top.amount) + ' CR',
+      leaderLine: (top.you ? 'You' : top.user) + ' leading',
+      minNext: fmt(min), minNextRaw: min, amount: st.amount || String(min),
+      onAmount: (e) => this.setState({ amount: e.target.value, error: '' }),
+      place: () => this.place(),
+      hasError: !!st.error, error: st.error,
+      hasToast: !!st.toast && !ended, toast: st.toast,
+      endTitle: top.you ? 'You won it for ' + fmt(top.amount) + ' CR' : 'Sold to ' + top.user + ' for ' + fmt(top.amount) + ' CR',
+      bidCount: String(st.bids.length),
+      history: st.bids.slice(0, 6).map((b, i) => ({ user: b.user, initial: b.user[0].toUpperCase(), time: b.time, amount: fmt(b.amount), weight: i === 0 ? '600' : '400', rowStyle: b.you ? 'background: #15171B' : '' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

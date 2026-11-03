@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Trade-up contract</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.side-inner{min-height:860px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover{background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46;color:#A1A7AF;cursor:default}
+.btn-s:hover{border-color:#4A5059;background:#121417}
+.slot:hover{border-color:#4A5059}
+.pick:hover:not(:disabled){border-color:#4A5059}
+.chip:hover:not(:disabled){border-color:#4A5059}
+@keyframes mint-pop{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Main" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: #0F1114">
+<span class="lbl">Balance</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span class="mono" style="font-size: 24px; font-weight: 600">4,870</span><span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Free case</span><span class="mono" style="color: #ECEDEF">Ready</span></div>
+</div>
+<a href="Profile.dc.html" style="display: flex; gap: 10px; align-items: center; padding: 8px 4px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">V</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">vex</span><span style="font-size: 12px; color: #A1A7AF">View profile</span></span>
+</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div role="status" style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; min-height: 40px; padding: 8px 32px; box-sizing: border-box; border-bottom: 1px solid #1C1F24; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px"><span style="font-weight: 600">nyx</span><span style="color: #A1A7AF">unboxed</span><span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span><span class="mono" style="font-size: 12px; color: #A1A7AF">FN · 0.0081</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+
+<div style="width: 100%; max-width: 1240px; box-sizing: border-box; margin: 0 auto; padding: 40px 48px 72px; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span class="lbl">// Trade-up contract</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Trade-up</h1>
+<p style="margin: 0; max-width: 620px; font-size: 14px; line-height: 1.55; color: #A1A7AF">Ten skins of the same rarity become one skin of the next rarity, drawn from their collections in proportion. All StatTrak™ or none. Its float is the average of the ten, brought into the new skin's range.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<div role="radiogroup" aria-label="Rarity to trade up" style="display: flex; gap: 6px">
+<sc-for list="{{rarTabs}}" as="r" hint-placeholder-count="4">
+<button type="button" role="radio" class="chip" aria-checked="{{r.on}}" disabled="{{r.off}}" onClick="{{r.pick}}" title="{{r.title}}" style="display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 2px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; {{r.style}}"><span aria-hidden="true" style="width: 8px; height: 8px; background: {{r.color}}"></span>{{r.label}}</button>
+</sc-for>
+</div>
+<button type="button" class="chip" aria-pressed="{{st}}" onClick="{{toggleSt}}" style="height: 40px; padding: 0 12px; border-radius: 2px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; {{stStyle}}">StatTrak™</button>
+</div>
+</header>
+
+<sc-if value="{{hasResult}}" hint-placeholder-val="{{ false }}">
+<section role="status" class="anim" style="position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px; padding: 28px 36px; border: 1px solid {{result.text}}; border-radius: 6px; overflow: hidden; background: radial-gradient(ellipse at 20% 50%, {{result.soft}}, rgba(14,16,19,0) 60%), #0E1013; animation: mint-pop 500ms cubic-bezier(.2,.9,.3,1.2) both">
+<div style="position: relative; flex: 0 1 320px; height: 150px; display: grid; place-items: center">
+<span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(closest-side, {{result.glow}}, rgba(0,0,0,0))"></span>
+<svg role="img" aria-label="{{result.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 100%; fill: #DADDE2"><path d="{{result.art}}"></path></svg>
+</div>
+<div style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 8px">
+<span class="lbl" style="color: {{result.text}}">Contract signed · {{result.rarName}}</span>
+<span style="font-size: 14px; color: #A1A7AF">{{result.weapon}}</span>
+<span style="font-size: 36px; font-weight: 600; letter-spacing: -0.02em">{{result.skin}}</span>
+<span class="mono" style="font-size: 13px; color: #A1A7AF">{{result.meta}}</span>
+<sc-if value="{{result.album}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #ECEDEF">New in your album.</span></sc-if>
+</div>
+<div style="display: flex; gap: 10px">
+<a href="Inventory.dc.html" class="btn-s" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 14px">Inventory</a>
+<button type="button" class="btn-p" onClick="{{again}}" style="height: 44px; padding: 0 18px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">New contract</button>
+</div>
+</section>
+</sc-if>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+<section aria-label="Contract slots" style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="lbl">Contract</span><span class="mono" style="font-size: 13px; color: #A1A7AF">{{count}} / 10 {{rarName}}</span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{slots}}" as="s" hint-placeholder-count="10">
+<sc-if value="{{s.filled}}" hint-placeholder-val="{{ true }}">
+<button type="button" class="slot" aria-label="Remove {{s.full}} from the contract" onClick="{{s.remove}}" style="position: relative; display: flex; flex-direction: column; padding: 0; border: 1px solid #2C3138; border-radius: 4px; overflow: hidden; background: #121417; color: #ECEDEF; font: inherit; text-align: left; cursor: pointer">
+<span style="position: relative; height: 74px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 8% 8%; background: radial-gradient(closest-side, {{s.glow}}, rgba(0,0,0,0))"></span><svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 84%; fill: #D3D6DB"><path d="{{s.art}}"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 1px; padding: 0 10px 10px"><span style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{s.skin}}</span><span class="mono" style="font-size: 10px; color: #A1A7AF">{{s.float}}</span></span>
+<span class="lbl" style="position: absolute; left: 8px; top: 6px; font-size: 9px">{{s.index}}</span>
+<span aria-hidden="true" style="height: 2px; background: {{s.color}}"></span>
+</button>
+</sc-if>
+<sc-if value="{{s.empty}}" hint-placeholder-val="{{ false }}">
+<div style="min-height: 122px; display: grid; place-items: center; border: 1px dashed #2C3138; border-radius: 4px"><span class="lbl" style="font-size: 10px">{{s.index}}</span></div>
+</sc-if>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; padding-top: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="lbl">Your {{rarName}} items{{stSuffix}}</span><span style="font-size: 12px; color: #858B94">Tap to add or remove</span></div>
+<sc-if value="{{noPool}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 24px; border: 1px dashed #2C3138; border-radius: 4px; font-size: 14px; color: #A1A7AF; text-align: center">Not enough of these to fill a contract yet. Open cases or trade for more.</p></sc-if>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(132px, 100%), 1fr)); gap: 8px">
+<sc-for list="{{pool}}" as="p" hint-placeholder-count="10">
+<button type="button" class="pick" aria-pressed="{{p.on}}" disabled="{{p.disabled}}" onClick="{{p.toggle}}" style="position: relative; display: flex; flex-direction: column; padding: 0; border-radius: 4px; overflow: hidden; background: #0E1013; color: #ECEDEF; font: inherit; text-align: left; cursor: pointer; {{p.frame}}">
+<span style="position: relative; height: 58px; display: grid; place-items: center; opacity: {{p.op}}"><span aria-hidden="true" style="position: absolute; inset: 8% 10%; background: radial-gradient(closest-side, {{p.glow}}, rgba(0,0,0,0))"></span><svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 80%; fill: #D3D6DB"><path d="{{p.art}}"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 1px; padding: 0 8px 8px"><span style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.skin}}</span><span class="mono" style="font-size: 10px; color: #A1A7AF">{{p.tag}}</span></span>
+<sc-if value="{{p.on}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="position: absolute; right: 6px; top: 6px; font-size: 8px; color: #ECEDEF">In contract</span></sc-if>
+<span aria-hidden="true" style="height: 2px; background: {{p.color}}"></span>
+</button>
+</sc-for>
+</div>
+</div>
+</section>
+
+<aside aria-label="Contract result preview" style="flex: 1 1 340px; display: flex; flex-direction: column; gap: 18px; padding: 22px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="lbl">You receive</span>
+<span style="display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600"><span aria-hidden="true" style="width: 10px; height: 10px; background: {{nextColor}}"></span>1 {{nextName}} skin{{stOut}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="lbl">Average float</span><span class="mono" style="font-size: 22px; font-weight: 500">{{avgFloat}}</span></div>
+<div style="position: relative; padding-top: 8px">
+<div aria-hidden="true" style="display: flex; gap: 2px; height: 6px"><span style="flex: 7 1 0; background: #3FB950"></span><span style="flex: 8 1 0; background: #9BC53D"></span><span style="flex: 23 1 0; background: #E3B341"></span><span style="flex: 7 1 0; background: #F0883E"></span><span style="flex: 55 1 0; background: #F05D52"></span></div>
+<sc-if value="{{hasAvg}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="position: absolute; top: 0; left: {{avgPct}}%; width: 2px; height: 22px; margin-left: -1px; background: #ECEDEF"></span></sc-if>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 6px"><span class="lbl">Possible results</span><span class="mono" style="font-size: 11px; color: #858B94">{{outcomeCount}}</span></div>
+<sc-if value="{{noOutcomes}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 13px; color: #A1A7AF">Add skins to see what can come out.</p></sc-if>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{outcomes}}" as="o" hint-placeholder-count="6">
+<li style="display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-top: 1px solid #1A1D22">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="position: relative; flex: none; width: 48px; height: 26px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(closest-side, {{o.glow}}, rgba(0,0,0,0))"></span><svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 100%; fill: #D3D6DB"><path d="{{o.art}}"></path></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.full}}</span><span class="mono" style="font-size: 10px; color: #A1A7AF">{{o.meta}}</span></span>
+<sc-if value="{{o.album}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="font-size: 8px; color: #ECEDEF">Album +1</span></sc-if>
+<span class="mono" style="font-size: 13px; min-width: 52px; text-align: right">{{o.pct}}</span>
+</div>
+<span aria-hidden="true" style="position: relative; height: 2px; background: #1E2227"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{o.bar}}%; background: {{o.color}}"></span></span>
+</li>
+</sc-for>
+</ul>
+</div>
+<button type="button" class="btn-p" onClick="{{sign}}" disabled="{{cantSign}}" style="height: 52px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">{{signLabel}}</button>
+<p style="margin: 0; font-size: 12px; line-height: 1.5; color: #858B94">The ten skins are destroyed when you sign. Covert, knives and gloves can't go in a contract for now.</p>
+</aside>
+</div>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1560}}'>
+const NAVDEF = [
+  ['home', 'Home', 'Main.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['market', 'Market', 'Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+  ['trades', 'Trades', 'Trades.dc.html', 'M4 8h15l-4-4M20 16H5l4 4'],
+  ['tradeup', 'Trade-up', 'TradeUp.dc.html', 'M12 20V5M6 11l6-6 6 6M5 20h14'],
+  ['friends', 'Friends', 'Friends.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'],
+  ['leaderboard', 'Leaderboard', 'Leaderboard.dc.html', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+];
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z'
+};
+const RAR = {
+  milspec: { name: 'Mil-Spec', color: '#4B69FF', text: '#8197FF', glow: 'rgba(75,105,255,0.30)', soft: 'rgba(75,105,255,0.12)', next: 'restricted' },
+  restricted: { name: 'Restricted', color: '#8847FF', text: '#A983FF', glow: 'rgba(136,71,255,0.32)', soft: 'rgba(136,71,255,0.12)', next: 'classified' },
+  classified: { name: 'Classified', color: '#D32CE6', text: '#E57AF0', glow: 'rgba(211,44,230,0.30)', soft: 'rgba(211,44,230,0.12)', next: 'covert' },
+  covert: { name: 'Covert', color: '#EB4B4B', text: '#F27D7D', glow: 'rgba(235,75,75,0.32)', soft: 'rgba(235,75,75,0.14)', next: null }
+};
+const WEAR = [['FN', 0.07], ['MW', 0.15], ['FT', 0.38], ['WW', 0.45], ['BS', 1.01]];
+// collection -> rarity -> [weapon, skin, art, minFloat, maxFloat, missing from your album]
+const COLL = {
+  K: {
+    restricted: [['Glock-18', 'Block-18', 'pistol', 0, 1, false], ['M4A4', 'Etch Lord', 'rifle', 0, 0.8, false], ['Five-SeveN', 'Hybrid', 'pistol', 0, 0.75, true], ['MP7', 'Just Smile', 'smg', 0, 0.65, true], ['Sawed-Off', 'Analog Input', 'rifle', 0, 0.9, true]],
+    classified: [['M4A1-S', 'Black Lotus', 'rifle', 0, 0.7, false], ['Zeus x27', 'Olympus', 'pistol', 0, 0.8, true], ['USP-S', 'Jawbreaker', 'pistol', 0, 0.75, false]],
+    covert: [['AK-47', 'Inheritance', 'rifle', 0, 0.8, false], ['AWP', 'Chrome Cannon', 'sniper', 0, 0.7, false]]
+  },
+  R: {
+    restricted: [['M4A1-S', 'Emphorosaur-S', 'rifle', 0, 0.8, false], ['Glock-18', 'Umbral Rabbit', 'pistol', 0, 1, false], ['MAC-10', 'Sakkaku', 'smg', 0, 0.7, false], ['P90', 'Neoqueen', 'smg', 0, 0.7, true], ['R8 Revolver', 'Banana Cannon', 'pistol', 0, 1, true]],
+    classified: [['AWP', 'Duality', 'sniper', 0, 0.6, false], ['UMP-45', 'Wild Child', 'smg', 0, 0.8, true], ['P2000', 'Wicked Sick', 'pistol', 0, 0.8, true]],
+    covert: [['AK-47', 'Head Shot', 'rifle', 0, 0.75, false], ['M4A4', 'Temukau', 'rifle', 0, 0.8, true]]
+  }
+};
+// id, weapon, skin, rarity, collection, art, float, stattrak, locked
+const INV = [
+  ['a1', 'Nova', 'Dark Sigil', 'milspec', 'K', 'rifle', 0.0812, false, false],
+  ['a2', 'MAC-10', 'Light Box', 'milspec', 'K', 'smg', 0.3121, false, false],
+  ['a3', 'XM1014', 'Irezumi', 'milspec', 'K', 'rifle', 0.2004, false, false],
+  ['a4', 'Tec-9', 'Slag', 'milspec', 'K', 'pistol', 0.6188, false, false],
+  ['a5', 'P250', 'Re.built', 'milspec', 'R', 'pistol', 0.0877, false, false],
+  ['a6', 'MAG-7', 'Insomnia', 'milspec', 'R', 'rifle', 0.2455, false, false],
+  ['a7', 'SG 553', 'Cyberforce', 'milspec', 'R', 'rifle', 0.3302, false, false],
+  ['a8', 'MP5-SD', 'Liquidation', 'milspec', 'R', 'smg', 0.4103, false, false],
+  ['a9', 'SCAR-20', 'Fragments', 'milspec', 'R', 'sniper', 0.1990, false, false],
+  ['a10', 'Tec-9', 'Rebel', 'milspec', 'R', 'pistol', 0.1204, false, false],
+  ['a11', 'MAC-10', 'Light Box', 'milspec', 'K', 'smg', 0.2710, false, false],
+  ['a12', 'Nova', 'Dark Sigil', 'milspec', 'K', 'rifle', 0.1655, false, false],
+  ['a13', 'XM1014', 'Irezumi', 'milspec', 'K', 'rifle', 0.3902, false, false],
+  ['a14', 'SSG 08', 'Dezastre', 'milspec', 'K', 'sniper', 0.0402, true, false],
+  ['a15', 'MP9', 'Featherweight', 'milspec', 'R', 'smg', 0.2290, true, false],
+  ['b1', 'M4A4', 'Etch Lord', 'restricted', 'K', 'rifle', 0.1287, false, false],
+  ['b2', 'Glock-18', 'Umbral Rabbit', 'restricted', 'R', 'pistol', 0.0390, false, false],
+  ['b3', 'MAC-10', 'Sakkaku', 'restricted', 'R', 'smg', 0.2551, false, false],
+  ['b4', 'Glock-18', 'Block-18', 'restricted', 'K', 'pistol', 0.1876, true, false],
+  ['c1', 'M4A1-S', 'Black Lotus', 'classified', 'K', 'rifle', 0.0512, false, false],
+  ['c2', 'USP-S', 'Jawbreaker', 'classified', 'K', 'pistol', 0.4012, false, false],
+  ['c3', 'AWP', 'Duality', 'classified', 'R', 'sniper', 0.1130, false, true]
+];
+function wearOf(f) { for (let i = 0; i < WEAR.length; i++) { if (f < WEAR[i][1]) return WEAR[i][0]; } return 'BS'; }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { rar: 'milspec', st: false, slots: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7'], used: [], result: null };
+  }
+  outcomes(items) {
+    const n = items.length;
+    if (!n) return [];
+    const next = RAR[this.state.rar].next;
+    const avg = items.reduce((a, b) => a + b[6], 0) / n;
+    const counts = {};
+    items.forEach((i) => { counts[i[4]] = (counts[i[4]] || 0) + 1; });
+    const out = [];
+    Object.keys(counts).forEach((c) => {
+      const pool = COLL[c][next];
+      pool.forEach((s) => {
+        const f = s[3] + avg * (s[4] - s[3]);
+        out.push({ s, p: (counts[c] / n) / pool.length, f });
+      });
+    });
+    return out.sort((a, b) => b.p - a.p);
+  }
+  sign(items) {
+    const outs = this.outcomes(items);
+    let r = Math.random(), pick = outs[outs.length - 1];
+    for (let i = 0; i < outs.length; i++) { r -= outs[i].p; if (r <= 0) { pick = outs[i]; break; } }
+    this.setState({ result: { pick, rar: RAR[this.state.rar].next, st: this.state.st }, used: this.state.used.concat(this.state.slots), slots: [] });
+  }
+  renderVals() {
+    const st = this.state;
+    const R = RAR[st.rar];
+    const next = RAR[R.next];
+    const nav = NAVDEF.map((n) => ({
+      label: n[1], href: n[2], icon: n[3],
+      current: n[0] === 'tradeup' ? 'page' : undefined,
+      style: n[0] === 'tradeup' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF'
+    }));
+    const byId = {};
+    INV.forEach((i) => { byId[i[0]] = i; });
+    const items = st.slots.map((id) => byId[id]);
+    const n = items.length;
+    const avg = n ? items.reduce((a, b) => a + b[6], 0) / n : 0;
+    const slots = [];
+    for (let i = 0; i < 10; i++) {
+      const it = items[i];
+      slots.push(it ? {
+        filled: true, empty: false, index: (i < 9 ? '0' : '') + (i + 1), skin: it[2], full: it[1] + ' | ' + it[2], art: ART[it[5]],
+        float: it[6].toFixed(4), color: R.color, glow: R.glow,
+        remove: () => this.setState({ slots: this.state.slots.filter((x) => x !== it[0]) })
+      } : { filled: false, empty: true, index: (i < 9 ? '0' : '') + (i + 1) });
+    }
+    const pool = INV.filter((i) => i[3] === st.rar && i[7] === st.st && st.used.indexOf(i[0]) < 0).map((i) => {
+      const on = st.slots.indexOf(i[0]) >= 0;
+      const disabled = i[8] || (!on && n >= 10);
+      return {
+        skin: i[2], art: ART[i[5]], color: R.color, glow: R.glow, on, disabled,
+        tag: i[8] ? 'In a trade' : (st.st ? 'ST ' : '') + wearOf(i[6]) + ' ' + i[6].toFixed(4),
+        op: i[8] ? '0.35' : '1',
+        frame: on ? 'border: 1px solid #ECEDEF' : 'border: 1px solid #1C1F24',
+        toggle: () => this.setState({ slots: on ? this.state.slots.filter((x) => x !== i[0]) : this.state.slots.concat([i[0]]) })
+      };
+    });
+    const outs = this.outcomes(items).map((o) => ({
+      full: o.s[0] + ' | ' + o.s[1], art: ART[o.s[2]], glow: next.glow, color: next.color,
+      meta: 'would land ' + wearOf(o.f) + ' ' + o.f.toFixed(4), album: o.s[5],
+      pct: (o.p * 100).toFixed(1) + '%', bar: (o.p * 100).toFixed(1)
+    }));
+    const rarTabs = ['milspec', 'restricted', 'classified', 'covert'].map((k) => ({
+      label: RAR[k].name, color: RAR[k].color, on: st.rar === k, off: k === 'covert',
+      title: k === 'covert' ? 'Not allowed yet' : 'Trade up ' + RAR[k].name,
+      style: k === 'covert' ? 'background: transparent; color: #5A616B; border: 1px dashed #2C3138; cursor: not-allowed' : st.rar === k ? 'background: #1E2227; color: #ECEDEF; border: 1px solid #ECEDEF' : 'background: transparent; color: #A1A7AF; border: 1px solid #2C3138',
+      pick: () => this.setState({ rar: k, slots: [], result: null })
+    }));
+    let result = null;
+    if (st.result) {
+      const p = st.result.pick, rr = RAR[st.result.rar];
+      result = {
+        weapon: p.s[0], skin: p.s[1], full: p.s[0] + ' | ' + p.s[1], art: ART[p.s[2]], rarName: rr.name,
+        text: rr.text, glow: rr.glow, soft: rr.soft, album: p.s[5],
+        meta: (st.result.st ? 'StatTrak™ · ' : '') + wearOf(p.f) + ' · ' + p.f.toFixed(9)
+      };
+    }
+    return {
+      nav, slots, pool, rarTabs,
+      outcomes: outs, noOutcomes: outs.length === 0, outcomeCount: outs.length ? outs.length + ' skins' : '',
+      count: n, rarName: R.name, nextName: next.name, nextColor: next.color,
+      st: st.st, stSuffix: st.st ? ' · StatTrak™' : '', stOut: st.st ? ', StatTrak™' : '',
+      stStyle: st.st ? 'background: #ECEDEF; color: #0A0B0D; border: 1px solid #ECEDEF' : 'background: transparent; color: #A1A7AF; border: 1px solid #2C3138',
+      toggleSt: () => this.setState({ st: !st.st, slots: [], result: null }),
+      noPool: pool.length < 10,
+      avgFloat: n ? avg.toFixed(4) : '—', hasAvg: n > 0, avgPct: (avg * 100).toFixed(2),
+      cantSign: n !== 10,
+      signLabel: n === 10 ? 'Sign contract' : 'Add ' + (10 - n) + ' more',
+      sign: () => this.sign(items),
+      hasResult: !!result, result: result || {},
+      again: () => this.setState({ result: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

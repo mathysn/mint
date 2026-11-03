@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Ban</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<a href="Admin-Players.dc.html" class="mono" style="align-self: flex-start; font-size: 12px; color: #A1A7AF; text-decoration: none">← Players</a>
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 20px">
+<div style="display: flex; align-items: center; gap: 20px">
+<span aria-hidden="true" style="flex: none; width: 80px; height: 80px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 30px; font-weight: 600">V</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<h1 style="margin: 0; font-size: 40px; line-height: 1; font-weight: 600; letter-spacing: -0.02em">{{bg.name}}</h1>
+<span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px">Account</span>
+<sc-if value="{{bg.online}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #ECEDEF"></span>Online</span></sc-if>
+<sc-if value="{{bg.banned}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border: 1px solid #F27D7D; border-radius: 2px; font-size: 11px; color: #F27D7D">{{bg.bannedChip}}</span></sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: #A1A7AF"><span class="mono" style="color: #ECEDEF">284716593820471296</span><span>Joined Oct 3, 18:20</span><span>Last seen {{bg.seen}}</span></div>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px">
+<sc-for list="{{bg.actions}}" as="a" hint-placeholder-count="5">
+<sc-if value="{{a.isLink}}" hint-placeholder-val="{{ true }}"><a href="{{a.href}}" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 2px; text-decoration: none; font-size: 13px; font-weight: 500; {{a.style}}">{{a.label}}</a></sc-if>
+<sc-if value="{{a.isButton}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{a.go}}" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 2px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; {{a.style}}">{{a.label}}</button></sc-if>
+</sc-for>
+</div>
+</header>
+<sc-if value="{{bg.banned}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 14px 18px; border: 1px solid #F27D7D; border-radius: 4px; background: rgba(242,125,125,0.06)"><span style="flex: 1 1 400px; font-size: 14px"><strong style="color: #F27D7D">{{bg.bannedBand}}</strong> <span style="color: #A1A7AF">· by {{staffName}} · Reason: {{bg.banReason}}</span></span><button type="button" class="btn-s" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Unban</button></div>
+</sc-if>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden">
+<sc-for list="{{bg.stats}}" as="s" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column-reverse; gap: 6px; padding: 16px 18px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">{{s.k}}</dt><dd class="mono" style="margin: 0; font-size: 20px; font-weight: 500">{{s.v}}</dd></div>
+</sc-for>
+</dl>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 24px; border-bottom: 1px solid #1C1F24"><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Inventory</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Openings</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Trades</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Market</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Friends</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #ECEDEF; border-bottom: 2px solid #ECEDEF; margin-bottom: -1px">Ledger</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Sessions</span><span style="height: 44px; display: inline-flex; align-items: center; font-size: 14px; color: #A1A7AF">Notes</span></div>
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<sc-for list="{{bg.ledger}}" as="l" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: 130px 140px 120px 120px minmax(0, 1fr); align-items: center; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #1A1D22; font-size: 13px"><span class="mono" style="color: #A1A7AF; font-size: 12px">{{l.a}}</span><span class="mono" style="font-size: 12px">{{l.b}}</span><span class="mono" style="text-align: right">{{l.c}}</span><span class="mono" style="text-align: right; color: #A1A7AF">{{l.d}}</span><span style="padding-left: 20px; color: #A1A7AF">{{l.e}}</span></div>
+</sc-for>
+</div>
+</div>
+</main>
+<sc-if value="{{dlgOpen}}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" onClick="{{closeDlg}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(5,6,8,0.72)"></div>
+<div role="dialog" aria-modal="true" aria-labelledby="dlg-t" style="position: absolute; left: 50%; top: 56px; z-index: 31; transform: translateX(-50%); width: min(560px, calc(100% - 32px)); max-height: calc(100% - 96px); box-sizing: border-box; display: flex; flex-direction: column; background: #0E1013; border: 1px solid #2C3138; border-radius: 6px; box-shadow: 0 32px 80px rgba(0,0,0,0.6)">
+<div class="dscroll" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding: 18px 28px 24px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="lbl">{{dlgLabel}}</span><button type="button" aria-label="Close" onClick="{{closeDlg}}" style="width: 44px; height: 44px; margin-right: -12px; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<h2 id="dlg-t" style="margin: -6px 0 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em">{{dlgTitle}}</h2>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span id="dur-l" style="font-size: 13px; color: #A1A7AF">Duration</span>
+<div role="radiogroup" aria-labelledby="dur-l" style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{durs}}" as="d" hint-placeholder-count="4">
+<button type="button" role="radio" aria-checked="{{d.on}}" onClick="{{d.pick}}" style="height: 40px; padding: 0 16px; border-radius: 2px; font: inherit; font-size: 14px; cursor: pointer; {{d.style}}">{{d.label}}</button>
+</sc-for>
+</div>
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{until}}</span>
+</div>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Reason <span style="color: #858B94">· required, shown to vex and in the admin log</span></span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="e.g. scam attempt in trades" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+<section aria-labelledby="fx-t" style="display: flex; flex-direction: column; gap: 0; border: 1px solid #1C1F24; border-radius: 4px">
+<h3 id="fx-t" class="lbl" style="margin: 0; padding: 12px 14px 8px; font-size: 10px">Happens right away</h3>
+<sc-for list="{{effects}}" as="e" hint-placeholder-count="4">
+<div style="display: flex; gap: 12px; padding: 10px 14px; border-top: 1px solid #1A1D22; font-size: 13px; line-height: 1.5"><span class="mono" style="flex: none; width: 22px; color: #ECEDEF">{{e.n}}</span><span style="color: #A1A7AF"><span style="color: #ECEDEF">{{e.head}}</span> {{e.text}}</span></div>
+</sc-for>
+</section>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #A1A7AF">What vex sees</span>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #0D0E11">
+<span class="lbl" style="font-size: 10px">// Account</span>
+<span style="font-size: 16px; font-weight: 600">{{seesTitle}}</span>
+<span style="font-size: 14px; color: #A1A7AF">Reason: <span style="color: #ECEDEF">{{seesReason}}</span></span>
+<span style="font-size: 12px; color: #858B94">Your items and credits are safe. You can still look at your inventory.</span>
+</div>
+</div>
+<sc-if value="{{perm}}" hint-placeholder-val="{{ false }}">
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Type <span class="mono" style="color: #ECEDEF">vex</span> to confirm a permanent ban</span><input type="text" class="field mono" value="{{typed}}" onChange="{{onTyped}}" autocomplete="off" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 14px"></label>
+</sc-if>
+</div>
+<div style="flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 28px; border-top: 1px solid #1C1F24">
+<span class="mono" style="margin-right: auto; font-size: 11px; color: #858B94">Logged as {{staffName}}</span>
+<button type="button" class="btn-s" onClick="{{closeDlg}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="{{goClass}}" onClick="{{go}}" disabled="{{cantGo}}" style="height: 44px; padding: 0 20px; border-radius: 2px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; {{goStyle}}">{{goLabel}}</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"duration":{"editor":"enum","options":["7d","permanent"],"default":"7d","section":"State"},"$preview":{"width":1440,"height":900}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+const VEX_LEDGER = [['Oct 23 14:10', 'admin_remove', '−5,000 CR', '4,870 CR', 'by mathys · duplicate refund'], ['Oct 23 14:05', 'bid_refund', '+5,000 CR', '9,870 CR', 'auction #8812, refunded twice'], ['Oct 23 14:02', 'case_open', '−250 CR', '4,870 CR', 'Revolution Case'], ['Oct 23 13:40', 'recycle', '+500 CR', '5,120 CR', 'AWP | Redline (FT)']];
+function VEXBG(current, reopen, over) {
+  const o = over || {};
+  const defs = [['credits', 'Adjust credits', 'Admin-Dlg-Credits.dc.html', 's'], ['grant', 'Grant item', 'Admin-Dlg-Grant.dc.html', 's'], ['reset', 'Reset free case', 'Admin-Player.dc.html', 's'], ['signout', 'Sign out everywhere', 'Admin-Player.dc.html', 's'], ['ban', 'Ban', 'Admin-Dlg-Ban.dc.html', 'd'], ['delete', '⋯', 'Admin-Dlg-Delete.dc.html', 's']];
+  const ledger = (o.ledgerTop ? [o.ledgerTop] : []).concat(VEX_LEDGER).slice(0, 4);
+  return {
+    name: o.name || 'vex', online: !o.banned && !o.deleted, banned: !!o.banned, bannedChip: o.bannedChip || '', bannedBand: o.bannedBand || '', banReason: o.banReason || '', seen: o.banned ? 'just now · signed out' : '2 min ago',
+    actions: defs.map((d) => ({ label: d[0] === 'ban' && o.banned ? 'Unban' : d[1], href: d[2], isLink: d[0] !== current, isButton: d[0] === current, go: reopen, style: d[3] === 'd' && !o.banned ? 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D' : 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF' })),
+    stats: [['Balance', o.balance || '4,870 CR'], ['Held in bids', o.held || '1,200 CR'], ['Inventory value', o.inv || '34,269 CR'], ['Cases opened', '312'], ['Trades completed', '14'], ['Albums', '23%']].map((s) => ({ k: s[0], v: s[1] })),
+    ledger: ledger.map((l) => ({ a: l[0], b: l[1], c: l[2], d: l[3], e: l[4] }))
+  };
+}
+
+const DURS = [['24h', '24 hours', 'Until Oct 24, 14:12 UTC', 'Oct 24, 14:12', '24 h', 'for 24 hours'], ['7d', '7 days', 'Until Oct 30, 14:12 UTC', 'Oct 30, 14:12', '7 d', 'for 7 days'], ['30d', '30 days', 'Until Nov 22, 14:12 UTC', 'Nov 22, 14:12', '30 d', 'for 30 days'], ['perm', 'Permanent', 'No end date. Only an unban lifts it.', '', 'Permanent', 'permanently']];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { dur: props.duration === 'permanent' ? 3 : 1, reason: '', typed: '', open: true, done: null, toast: '' };
+  }
+  componentDidUpdate(prev) {
+    if (prev.duration !== this.props.duration) this.setState({ dur: this.props.duration === 'permanent' ? 3 : 1, reason: '', typed: '', open: true, done: null, toast: '' });
+  }
+  renderVals() {
+    const st = this.state;
+    const sh = SHELL('admin', 'players');
+    const d = DURS[st.dur];
+    const perm = d[0] === 'perm';
+    const reason = st.reason.trim();
+    const done = st.done;
+    const bg = VEXBG('ban', () => this.setState({ open: true, reason: '', typed: '' }), done ? { banned: true, bannedChip: 'Banned · ' + done.d[4], bannedBand: done.d[0] === 'perm' ? 'Banned permanently' : 'Banned until ' + done.d[3], banReason: done.reason, balance: '6,070 CR', held: '0 CR', ledgerTop: ['Oct 23 14:12', 'bid_refund', '+1,200 CR', '6,070 CR', 'bid cancelled by ban'] } : {});
+    return Object.assign(sh, {
+      bg, dlgOpen: st.open, closeDlg: () => this.setState({ open: false }),
+      dlgLabel: '// Ban', dlgTitle: 'Ban vex ' + d[5],
+      durs: DURS.map((x, i) => ({ label: x[1], on: st.dur === i, pick: () => this.setState({ dur: i, typed: '' }), style: st.dur === i ? 'border: 1px solid #ECEDEF; background: #ECEDEF; color: #0A0B0D' : 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF' })),
+      until: d[2],
+      reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }),
+      effects: [
+        ['3', 'sessions signed out,', 'including the Discord activity.'],
+        ['1', 'listing cancelled:', 'AK-47 | Redline goes back to vex’s inventory. 4 bids refunded, the leading 1,380 CR to kenji.'],
+        ['1', 'bid cancelled:', 'M4A4 | Temukau. 1,200 CR goes back to vex’s balance.'],
+        ['0', 'open offers', 'to cancel.']
+      ].map((e) => ({ n: e[0], head: e[1], text: e[2] })),
+      seesTitle: perm ? 'You’re banned from Mint.' : 'You’re banned until ' + d[3] + '.',
+      seesReason: reason || '…',
+      perm, typed: st.typed, onTyped: (e) => this.setState({ typed: e.target.value }),
+      goLabel: 'Ban vex ' + d[5], goClass: 'btn-d', goStyle: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D',
+      cantGo: !reason || (perm && st.typed.trim() !== 'vex'),
+      go: () => {
+        if (!reason || (perm && st.typed.trim() !== 'vex')) return;
+        this.setState({ open: false, done: { d, reason }, toast: 'Banned vex ' + d[5] + ' · logged' });
+      },
+      hasToast: !!st.toast, toast: st.toast
+    });
+  }
+}
+</script>
+</body>
+</html>

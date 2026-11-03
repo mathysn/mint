@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Auction: M4A4 | Temukau</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.side-inner{min-height:860px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover{background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46;color:#A1A7AF;cursor:default}
+.btn-s:hover{border-color:#4A5059;background:#121417}
+.chip:hover{border-color:#4A5059}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+@keyframes mint-blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes mint-rise{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Main" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: #0F1114">
+<span class="lbl">Balance</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span class="mono" style="font-size: 24px; font-weight: 600">{{available}}</span><span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Held in bids</span><span class="mono" style="color: #ECEDEF">{{held}}</span></div>
+</div>
+<a href="Profile.dc.html" style="display: flex; gap: 10px; align-items: center; padding: 8px 4px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">V</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">vex</span><span style="font-size: 12px; color: #A1A7AF">View profile</span></span>
+</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div role="status" style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; min-height: 40px; padding: 8px 32px; box-sizing: border-box; border-bottom: 1px solid #1C1F24; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px"><span style="font-weight: 600">nyx</span><span style="color: #A1A7AF">unboxed</span><span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span><span class="mono" style="font-size: 12px; color: #A1A7AF">FN · 0.0081</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+
+<div style="width: 100%; max-width: 1240px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 28px">
+<a href="Market.dc.html" class="mono" style="align-self: flex-start; font-size: 12px; color: #A1A7AF; text-decoration: none">← Market</a>
+
+<div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+<div style="flex: 1 1 500px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div style="position: relative; min-height: 440px; display: grid; place-items: center; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden; background: radial-gradient(ellipse at 50% 50%, rgba(235,75,75,0.10), rgba(14,16,19,0) 70%), #0E1013">
+<span aria-hidden="true" style="position: absolute; inset: 8% 6%; background: radial-gradient(closest-side, rgba(235,75,75,0.30), rgba(235,75,75,0))"></span>
+<span aria-hidden="true" style="position: absolute; left: 24px; top: 24px; width: 22px; height: 22px; border-left: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 24px; top: 24px; width: 22px; height: 22px; border-right: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; left: 24px; bottom: 24px; width: 22px; height: 22px; border-left: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 24px; bottom: 24px; width: 22px; height: 22px; border-right: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span class="lbl" style="position: absolute; left: 40px; top: 38px; color: #F27D7D">Covert</span>
+<span class="lbl" style="position: absolute; right: 40px; top: 38px">Pattern #301</span>
+<svg role="img" aria-label="M4A4 | Temukau (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 84%; fill: #DADDE2"><path d="{{art}}"></path></svg>
+<span class="lbl" style="position: absolute; left: 40px; bottom: 38px">Revolution Case</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="lbl">Float</span><span class="mono" style="font-size: 18px">0.087104331</span></div>
+<div style="position: relative; padding-top: 8px">
+<div aria-hidden="true" style="display: flex; gap: 2px; height: 6px"><span style="flex: 7 1 0; background: #3FB950"></span><span style="flex: 8 1 0; background: #9BC53D"></span><span style="flex: 23 1 0; background: #E3B341"></span><span style="flex: 7 1 0; background: #F0883E"></span><span style="flex: 55 1 0; background: #F05D52"></span></div>
+<span aria-hidden="true" style="position: absolute; top: 0; left: 8.71%; width: 2px; height: 22px; margin-left: -1px; background: #ECEDEF"></span>
+<div class="mono" aria-hidden="true" style="display: flex; gap: 2px; margin-top: 10px; font-size: 10px; color: #858B94"><span style="flex: 7 1 0">FN</span><span style="flex: 8 1 0">MW</span><span style="flex: 23 1 0">FT</span><span style="flex: 7 1 0">WW</span><span style="flex: 55 1 0">BS</span></div>
+</div>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: #0E1013"><dt class="lbl">Seller</dt><dd style="margin: 0; font-size: 14px">lou</dd></div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: #0E1013"><dt class="lbl">Starting price</dt><dd class="mono" style="margin: 0; font-size: 14px">2,000 CR</dd></div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: #0E1013"><dt class="lbl">Listed</dt><dd style="margin: 0; font-size: 14px">Oct 19 · 48 h</dd></div>
+</dl>
+</div>
+
+<div style="flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 16px; color: #A1A7AF">M4A4</span>
+<h1 style="margin: 0; font-size: 48px; line-height: 1; font-weight: 600; letter-spacing: -0.025em">Temukau</h1>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px">
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; font-size: 13px"><span aria-hidden="true" style="width: 8px; height: 8px; background: #EB4B4B"></span>Covert</span>
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; font-size: 13px"><span aria-hidden="true" style="width: 8px; height: 8px; background: #9BC53D"></span>Minimal Wear</span>
+</div>
+</div>
+
+<div role="timer" aria-live="off" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; border-radius: 6px; {{timerBox}}">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span class="lbl" style="display: flex; align-items: center; gap: 8px; color: inherit"><sc-if value="{{urgent}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" class="anim" style="width: 8px; height: 8px; border-radius: 50%; background: #C8382F; animation: mint-blink 1s ease-in-out infinite"></span></sc-if>{{timerLabel}}</span>
+<span style="font-size: 13px; opacity: 0.8">{{timerHint}}</span>
+</div>
+<span class="mono" style="font-size: 40px; font-weight: 600; letter-spacing: -0.02em">{{timer}}</span>
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="padding: 12px 16px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; line-height: 1.45; animation: mint-rise 300ms ease-out both">{{toast}}</div>
+</sc-if>
+
+<sc-if value="{{live}}" hint-placeholder-val="{{ true }}">
+<section aria-labelledby="bid-title" style="display: flex; flex-direction: column; gap: 16px; padding: 22px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 id="bid-title" class="lbl" style="margin: 0">Current bid</h2><span class="mono" style="font-size: 30px; font-weight: 500">{{current}} CR</span></div>
+<span style="font-size: 13px; color: #A1A7AF; text-align: right">{{leaderLine}}</span>
+</div>
+<label style="display: flex; flex-direction: column; gap: 8px">
+<span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #A1A7AF">Your bid</span><span class="mono" style="color: #A1A7AF">min. {{minNext}} CR (+5%)</span></span>
+<span style="position: relative; display: block">
+<input type="number" class="field mono" min="{{minNextRaw}}" step="10" value="{{amount}}" onChange="{{onAmount}}" style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 56px 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 20px">
+<span class="mono" style="position: absolute; right: 16px; top: 16px; font-size: 14px; color: #A1A7AF">CR</span>
+</span>
+</label>
+<div role="group" aria-label="Quick bids" style="display: flex; gap: 8px">
+<sc-for list="{{quick}}" as="q" hint-placeholder-count="3">
+<button type="button" class="chip mono" onClick="{{q.pick}}" style="flex: 1; height: 40px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font-size: 13px; cursor: pointer">{{q.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{hasError}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13px; color: #F27D7D">{{error}}</p></sc-if>
+<button type="button" class="btn-p" onClick="{{place}}" style="height: 52px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Place bid</button>
+<p style="margin: 0; font-size: 12px; line-height: 1.5; color: #858B94">Your bid is held from your balance and comes back the moment someone outbids you. A bid in the last 2 minutes adds 2 minutes.</p>
+<sc-if value="{{showBuy}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 16px; border-top: 1px solid #1A1D22">
+<span style="font-size: 14px; color: #A1A7AF">Or end it now</span>
+<sc-if value="{{noConfirmBuy}}" hint-placeholder-val="{{ true }}"><button type="button" class="btn-s" onClick="{{askBuy}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer">Buy now · <span class="mono">4,800 CR</span></button></sc-if>
+<sc-if value="{{confirmBuy}}" hint-placeholder-val="{{ false }}"><span style="display: flex; gap: 8px"><button type="button" onClick="{{cancelBuy}}" style="height: 44px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button><button type="button" class="btn-p" onClick="{{buy}}" style="height: 44px; padding: 0 16px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Confirm · 4,800 CR</button></span></sc-if>
+</div>
+</sc-if>
+</section>
+</sc-if>
+
+<sc-if value="{{ended}}" hint-placeholder-val="{{ false }}">
+<section role="status" style="display: flex; flex-direction: column; gap: 12px; padding: 22px; border: 1px solid #ECEDEF; border-radius: 6px; background: #111316">
+<span class="lbl" style="color: #ECEDEF">Auction ended</span>
+<span style="font-size: 20px; font-weight: 600">{{endTitle}}</span>
+<span style="font-size: 14px; color: #A1A7AF">{{endText}}</span>
+<a href="Market.dc.html" class="btn-s" style="align-self: flex-start; display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 14px">Back to the market</a>
+</section>
+</sc-if>
+</div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+<section aria-labelledby="hist-title" style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="hist-title" class="lbl" style="margin: 0">// Bid history</h2><span class="mono" style="font-size: 12px; color: #858B94">{{bidCount}}</span></div>
+<ol style="list-style: none; margin: 0; padding: 0; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<sc-for list="{{history}}" as="h" hint-placeholder-count="6">
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-bottom: 1px solid #1A1D22; {{h.rowStyle}}">
+<span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 12px; font-weight: 600; color: #A1A7AF">{{h.initial}}</span>
+<span style="flex: 1; font-size: 14px; font-weight: {{h.weight}}">{{h.user}}</span>
+<span class="mono" style="font-size: 12px; color: #858B94">{{h.time}}</span>
+<span class="mono" style="min-width: 90px; text-align: right; font-size: 14px">{{h.amount}} CR</span>
+</li>
+</sc-for>
+</ol>
+</section>
+<section aria-labelledby="sales-title" style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="sales-title" class="lbl" style="margin: 0">// Recent sales · Temukau MW</h2><span class="mono" style="font-size: 12px; color: #858B94">avg {{avg}} CR</span></div>
+<figure style="margin: 0; padding: 18px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; display: flex; flex-direction: column; gap: 8px">
+<svg role="img" aria-label="Last 10 sales of this skin and wear, between 2,990 and 3,500 CR" viewBox="0 0 400 120" preserveAspectRatio="none" style="width: 100%; height: 140px">
+<line x1="0" y1="{{avgY}}" x2="400" y2="{{avgY}}" style="stroke: #5A616B; stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke"></line>
+<polyline points="{{points}}" style="fill: none; stroke: #ECEDEF; stroke-width: 1.5; vector-effect: non-scaling-stroke"></polyline>
+</svg>
+<figcaption class="mono" style="display: flex; justify-content: space-between; font-size: 11px; color: #858B94"><span>10 sales ago</span><span>dashed line · average</span><span>latest</span></figcaption>
+</figure>
+</section>
+</div>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+const NAVDEF = [
+  ['home', 'Home', 'Main.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['market', 'Market', 'Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+  ['trades', 'Trades', 'Trades.dc.html', 'M4 8h15l-4-4M20 16H5l4 4'],
+  ['tradeup', 'Trade-up', 'TradeUp.dc.html', 'M12 20V5M6 11l6-6 6 6M5 20h14'],
+  ['friends', 'Friends', 'Friends.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'],
+  ['leaderboard', 'Leaderboard', 'Leaderboard.dc.html', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+];
+const RIFLE = 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z';
+const BALANCE = 4870;
+const BUY_NOW = 4800;
+const START_BIDS = [
+  ['kenji', 3150, '1 min ago'], ['ash', 3000, '4 min ago'], ['nyx', 2850, '9 min ago'], ['kenji', 2710, '22 min ago'], ['ash', 2580, '41 min ago'],
+  ['rhea', 2450, '1 h ago'], ['kenji', 2330, '2 h ago'], ['ash', 2210, '3 h ago'], ['nyx', 2100, '5 h ago']
+];
+const SALES = [3300, 3050, 3420, 3180, 2990, 3260, 3500, 3120, 3340, 3210];
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+function pad(n) { return n < 10 ? '0' + n : String(n); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { left: 102, bids: START_BIDS.map((b) => ({ user: b[0], amount: b[1], time: b[2] })), amount: '', held: 0, toast: '', error: '', outbidDone: false, bought: false, confirmBuy: false };
+    this.iv = null; this.to = null;
+  }
+  componentDidMount() {
+    this.iv = setInterval(() => { if (this.state.left > 0 && !this.state.bought) this.setState({ left: this.state.left - 1 }); }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.iv); clearTimeout(this.to); }
+  minNext() { return Math.ceil(this.state.bids[0].amount * 1.05); }
+  place() {
+    const st = this.state;
+    const min = this.minNext();
+    const amt = parseInt(st.amount || String(min), 10);
+    if (!amt || amt < min) { this.setState({ error: 'Your bid has to be at least ' + fmt(min) + ' CR, 5% above the current one.' }); return; }
+    if (amt > BALANCE) { this.setState({ error: 'You only have ' + fmt(BALANCE) + ' CR available.' }); return; }
+    const extend = st.left <= 120;
+    this.setState({
+      bids: [{ user: 'vex (you)', amount: amt, time: 'just now', you: true }].concat(st.bids),
+      held: amt, amount: '', error: '',
+      left: extend ? st.left + 120 : st.left,
+      toast: extend ? 'You lead with ' + fmt(amt) + ' CR. Your bid landed in the last 2 minutes, so the auction got 2 more minutes.' : 'You lead with ' + fmt(amt) + ' CR, held from your balance.'
+    });
+    if (!st.outbidDone) {
+      clearTimeout(this.to);
+      this.to = setTimeout(() => {
+        const s = this.state;
+        if (s.bought || s.left === 0) return;
+        const counter = Math.ceil(s.bids[0].amount * 1.05 / 10) * 10;
+        this.setState({
+          bids: [{ user: 'kenji', amount: counter, time: 'just now' }].concat(s.bids),
+          held: 0, outbidDone: true,
+          left: s.left <= 120 ? s.left + 120 : s.left,
+          toast: 'kenji outbid you with ' + fmt(counter) + ' CR. Your ' + fmt(s.held) + ' CR are back in your balance.'
+        });
+      }, 6000);
+    }
+  }
+  renderVals() {
+    const st = this.state;
+    const nav = NAVDEF.map((n) => ({
+      label: n[1], href: n[2], icon: n[3],
+      current: n[0] === 'market' ? 'page' : undefined,
+      style: n[0] === 'market' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF'
+    }));
+    const top = st.bids[0];
+    const min = this.minNext();
+    const urgent = st.left > 0 && st.left <= 120 && !st.bought;
+    const ended = st.left === 0 || st.bought;
+    const youLead = !!top.you;
+    const lo = 2900, hi = 3600;
+    const y = (p) => (110 - ((p - lo) / (hi - lo)) * 100).toFixed(1);
+    const avg = SALES.reduce((a, b) => a + b, 0) / SALES.length;
+    const timer = st.left >= 3600 ? Math.floor(st.left / 3600) + ':' + pad(Math.floor((st.left % 3600) / 60)) + ':' + pad(st.left % 60) : pad(Math.floor(st.left / 60)) + ':' + pad(st.left % 60);
+    return {
+      nav, art: RIFLE,
+      available: fmt(BALANCE - st.held), held: fmt(st.held),
+      timer: ended ? '00:00' : timer, urgent,
+      timerLabel: ended ? 'Ended' : urgent ? 'Ending' : 'Ends in',
+      timerHint: ended ? 'No more bids' : urgent ? 'A bid now adds 2 minutes' : 'Highlighted in the last 2 minutes',
+      timerBox: urgent ? 'background: #ECEDEF; color: #0A0B0D' : 'background: #0E1013; color: #ECEDEF; border: 1px solid #1C1F24',
+      live: !ended,
+      current: fmt(top.amount),
+      leaderLine: (youLead ? 'You' : top.user) + ' leading · ' + st.bids.length + ' bids',
+      minNext: fmt(min), minNextRaw: min,
+      amount: st.amount || String(min),
+      onAmount: (e) => this.setState({ amount: e.target.value, error: '' }),
+      quick: [['+5%', 1.05], ['+10%', 1.10], ['+25%', 1.25]].map((q) => ({ label: q[0] + ' · ' + fmt(Math.ceil(top.amount * q[1])), pick: () => this.setState({ amount: String(Math.ceil(top.amount * q[1])), error: '' }) })),
+      hasError: !!st.error, error: st.error,
+      place: () => this.place(),
+      showBuy: top.amount < BUY_NOW,
+      confirmBuy: st.confirmBuy, noConfirmBuy: !st.confirmBuy,
+      askBuy: () => this.setState({ confirmBuy: true }),
+      cancelBuy: () => this.setState({ confirmBuy: false }),
+      buy: () => { clearTimeout(this.to); this.setState({ bought: true, confirmBuy: false, held: 0, toast: '' }); },
+      hasToast: !!st.toast && !ended, toast: st.toast,
+      ended,
+      endTitle: st.bought ? 'You bought it for 4,800 CR' : youLead ? 'You won it for ' + fmt(top.amount) + ' CR' : 'Sold to ' + top.user + ' for ' + fmt(top.amount) + ' CR',
+      endText: st.bought || youLead ? 'M4A4 | Temukau is in your inventory.' : 'Better luck next time. Nothing was taken from your balance.',
+      bidCount: st.bids.length + ' bids',
+      history: st.bids.map((b, i) => ({
+        user: b.user, initial: b.user[0].toUpperCase(), time: b.time, amount: fmt(b.amount),
+        weight: i === 0 ? '600' : '400',
+        rowStyle: b.you ? 'background: #15171B' : ''
+      })),
+      points: SALES.map((p, i) => (i * (400 / (SALES.length - 1))).toFixed(1) + ',' + y(p)).join(' '),
+      avg: fmt(avg), avgY: y(avg)
+    };
+  }
+}
+</script>
+</body>
+</html>

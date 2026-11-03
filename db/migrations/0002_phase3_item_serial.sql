@@ -1,0 +1,2 @@
+ALTER TABLE "items" ADD COLUMN "serial" bigint NOT NULL GENERATED ALWAYS AS IDENTITY (sequence name "items_serial_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1);--> statement-breakpoint
+ALTER TABLE "items" ADD CONSTRAINT "items_serial_unique" UNIQUE("serial");

@@ -1,0 +1,345 @@
+/* ── Buttons (DESIGN.md §3): primary white bevelled · secondary outline · tertiary underlined ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-out);
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.primary {
+  background: var(--primary-bg);
+  color: var(--primary-text);
+  font-weight: 600;
+  border-radius: 0;
+  clip-path: var(--bevel);
+}
+.primary:hover {
+  background: var(--primary-hover);
+  color: var(--primary-text);
+}
+.primary.flat {
+  clip-path: none;
+  border-radius: var(--radius-control);
+}
+.primary.bevel10 {
+  clip-path: var(--bevel-10);
+}
+.primary.bevel14 {
+  clip-path: var(--bevel-14);
+}
+.primary:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: default;
+}
+.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+.secondary:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-raised);
+  color: var(--text);
+}
+.secondary:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+.tertiary {
+  padding: 0;
+  background: none;
+  color: var(--text-2);
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.tertiary:hover {
+  color: var(--text);
+}
+.ghost {
+  padding: 0;
+  background: none;
+  color: var(--text-2);
+  font-weight: 400;
+}
+.ghost:hover {
+  color: var(--text);
+}
+.s44 {
+  height: 44px;
+  font-size: 14px;
+  padding-inline: 18px;
+}
+.s48 {
+  height: 48px;
+  font-size: 15px;
+}
+.s52 {
+  height: 52px;
+  font-size: 16px;
+  padding-inline: 36px;
+}
+.s56 {
+  height: 56px;
+  font-size: 17px;
+}
+.tertiary.s44,
+.ghost.s44 {
+  padding-inline: 0;
+}
+.block {
+  display: flex;
+  width: 100%;
+}
+.btnNote {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* ── Chips (filters) ── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-out);
+}
+.chip:hover {
+  border-color: var(--border-hover);
+}
+.chip:active {
+  transform: scale(0.97);
+}
+.chip[aria-pressed='true'] {
+  background: var(--primary-bg);
+  color: var(--primary-text);
+  border-color: var(--primary-bg);
+}
+/* Rarity chip: 8 px square + label; active = #1E2227 with white outline. */
+.rarityChip {
+  padding: 0 12px;
+  color: var(--text-2);
+}
+.rarityChip[aria-pressed='true'] {
+  background: var(--track);
+  color: var(--text);
+  border-color: var(--text);
+}
+.square {
+  width: 8px;
+  height: 8px;
+  flex: none;
+}
+
+/* Fields (search, select) have their own modules: search.module.css, select.module.css. */
+
+/* ── HUD corners: 4 brackets, 1 px ── */
+.corners {
+  position: absolute;
+  pointer-events: none;
+}
+.corner {
+  position: absolute;
+  border-color: currentColor;
+  border-style: solid;
+  border-width: 0;
+}
+.tl {
+  left: 0;
+  top: 0;
+  border-left-width: 1px;
+  border-top-width: 1px;
+}
+.tr {
+  right: 0;
+  top: 0;
+  border-right-width: 1px;
+  border-top-width: 1px;
+}
+.bl {
+  left: 0;
+  bottom: 0;
+  border-left-width: 1px;
+  border-bottom-width: 1px;
+}
+.br {
+  right: 0;
+  bottom: 0;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+/* ── Badges ── */
+.stBadge {
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  background: var(--primary-bg);
+  color: var(--primary-text);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.tag {
+  padding: 3px 6px;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+}
+.tagSolid {
+  padding: 4px 7px;
+  background: var(--primary-bg);
+  color: var(--primary-text);
+}
+
+/* ── Progress (2 px album bar) ── */
+.progress {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: var(--track);
+}
+.progressFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--text);
+  transform-origin: left;
+  /* Fills from the left when it first shows, then follows its value. */
+  animation: mint-grow-x 700ms var(--ease-out) both;
+  transition: width 400ms var(--ease-out);
+}
+
+/* ── Spinner ── */
+.spinner {
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--text);
+  animation: mint-spin 900ms linear infinite;
+}
+
+/* ── Avatar ── */
+.avatar {
+  flex: none;
+  border-radius: 50%;
+  background: var(--avatar);
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.avatarGuest {
+  font-weight: 400;
+  color: var(--text-2);
+}
+
+/* ── Empty state ── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 24px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-panel);
+  text-align: center;
+  animation: mint-fade var(--dur-slow) var(--ease-out) both;
+}
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ── Toast ── */
+.toasts {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 50;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(440px, calc(100% - 24px));
+}
+.toast {
+  padding: 14px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  background: var(--surface-bar);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  line-height: 1.45;
+  animation: mint-rise 300ms var(--ease-out) both;
+}
+.toast[data-closing] {
+  animation: mint-sink var(--dur-base) var(--ease-in-out) both;
+}
+.toastError {
+  color: var(--error);
+}
+.toastCheck {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toastCheck svg {
+  flex: none;
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 860px) {
+  .toasts {
+    bottom: calc(var(--tabbar) + 12px);
+  }
+}
+
+/* ── Credits ── */
+.credits {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.creditsUnit {
+  color: var(--text-2);
+}

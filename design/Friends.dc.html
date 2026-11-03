@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Friends</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.side-inner{min-height:860px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover{background:#FFFFFF}
+.btn-s:hover{border-color:#4A5059;background:#121417}
+.row:hover{border-color:#2C3138}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Main" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: #0F1114">
+<span class="lbl">Balance</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span class="mono" style="font-size: 24px; font-weight: 600">4,870</span><span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Free case</span><span class="mono" style="color: #ECEDEF">Ready</span></div>
+</div>
+<a href="Profile.dc.html" style="display: flex; gap: 10px; align-items: center; padding: 8px 4px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">V</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">vex</span><span style="font-size: 12px; color: #A1A7AF">View profile</span></span>
+</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div role="status" style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; min-height: 40px; padding: 8px 32px; box-sizing: border-box; border-bottom: 1px solid #1C1F24; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px"><span style="font-weight: 600">nyx</span><span style="color: #A1A7AF">unboxed</span><span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span><span class="mono" style="font-size: 12px; color: #A1A7AF">FN · 0.0081</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+
+<div style="width: 100%; max-width: 1240px; box-sizing: border-box; margin: 0 auto; padding: 40px 48px 72px; display: flex; flex-direction: column; gap: 32px">
+
+<header style="display: flex; flex-direction: column; gap: 12px">
+<span class="lbl">// Friends</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Friends</h1>
+<p class="mono" style="margin: 0; font-size: 13px; color: #A1A7AF">{{countLine}}</p>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+<section aria-label="Your friends" style="flex: 999 1 520px; min-width: 0">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{friends}}" as="f" hint-placeholder-count="6">
+<li class="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; padding: 16px 18px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 15px; font-weight: 600; color: #ECEDEF">{{f.initial}}</span>
+<div style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 16px; font-weight: 600">{{f.name}}</span>
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{f.stats}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="lbl" style="font-size: 10px">Showcase</span>
+<div aria-label="{{f.showcaseLabel}}" role="img" style="display: flex; gap: 4px">
+<sc-for list="{{f.showcase}}" as="s" hint-placeholder-count="5">
+<span style="width: 30px; height: 22px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; background: #121417; border: 1px solid #1C1F24; border-radius: 2px; overflow: hidden"><span style="height: 3px; background: {{s.color}}"></span></span>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; gap: 8px">
+<a href="Profile.dc.html" class="btn-s" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 13px; font-weight: 500">Profile</a>
+<a href="TradeNew.dc.html" class="btn-s" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 13px; font-weight: 500">Trade</a>
+</div>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<aside style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-labelledby="add-title" style="display: flex; flex-direction: column; gap: 14px; padding: 22px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="add-title" style="margin: 0; font-size: 16px; font-weight: 600">Add a friend</h2>
+<label style="display: flex; flex-direction: column; gap: 6px">
+<span class="lbl">Player name</span>
+<input type="search" class="field" value="{{query}}" onChange="{{onQuery}}" placeholder="Search by name" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px">
+</label>
+<sc-if value="{{hasResults}}" hint-placeholder-val="{{ true }}">
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{results}}" as="r" hint-placeholder-count="3">
+<li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #1A1D22">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: #A1A7AF">{{r.initial}}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{r.name}}</span><span style="font-size: 12px; color: #A1A7AF">{{r.note}}</span></span>
+<sc-if value="{{r.canAdd}}" hint-placeholder-val="{{ true }}"><button type="button" class="btn-s" onClick="{{r.add}}" style="height: 36px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer">Add</button></sc-if>
+<sc-if value="{{r.canAccept}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn-p" onClick="{{r.accept}}" style="height: 36px; padding: 0 12px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">Accept</button></sc-if>
+<sc-if value="{{r.showTag}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="font-size: 10px">{{r.tag}}</span></sc-if>
+</li>
+</sc-for>
+</ul>
+</sc-if>
+<sc-if value="{{noResults}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 13px; color: #A1A7AF">No player called “{{query}}”.</p></sc-if>
+</section>
+
+<section aria-labelledby="req-title" style="display: flex; flex-direction: column; gap: 8px; padding: 22px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="req-title" style="margin: 0; font-size: 16px; font-weight: 600">Requests</h2><span class="mono" style="font-size: 12px; color: #A1A7AF">{{incomingCount}}</span></div>
+<sc-if value="{{noIncoming}}" hint-placeholder-val="{{ false }}"><p style="margin: 6px 0 0; font-size: 13px; color: #A1A7AF">No requests waiting.</p></sc-if>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{incoming}}" as="q" hint-placeholder-count="2">
+<li style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 12px 0; border-top: 1px solid #1A1D22">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: #A1A7AF">{{q.initial}}</span>
+<span style="flex: 1 1 100px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{q.name}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{q.stats}}</span></span>
+<span style="display: flex; gap: 6px">
+<button type="button" onClick="{{q.decline}}" style="height: 36px; padding: 0 10px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 13px; cursor: pointer">Decline</button>
+<button type="button" class="btn-p" onClick="{{q.accept}}" style="height: 36px; padding: 0 12px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">Accept</button>
+</span>
+</li>
+</sc-for>
+</ul>
+<sc-if value="{{hasSent}}" hint-placeholder-val="{{ true }}">
+<span class="lbl" style="margin-top: 12px">Sent</span>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{sent}}" as="s" hint-placeholder-count="1">
+<li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #1A1D22">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: #A1A7AF">{{s.initial}}</span>
+<span style="flex: 1; font-size: 14px; font-weight: 600">{{s.name}}</span>
+<span class="lbl" style="font-size: 10px">Pending</span>
+<button type="button" onClick="{{s.cancel}}" style="height: 36px; padding: 0 8px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 13px; cursor: pointer">Cancel</button>
+</li>
+</sc-for>
+</ul>
+</sc-if>
+</section>
+
+</aside>
+</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+const NAVDEF = [
+  ['home', 'Home', 'Main.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['market', 'Market', 'Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+  ['trades', 'Trades', 'Trades.dc.html', 'M4 8h15l-4-4M20 16H5l4 4'],
+  ['tradeup', 'Trade-up', 'TradeUp.dc.html', 'M12 20V5M6 11l6-6 6 6M5 20h14'],
+  ['friends', 'Friends', 'Friends.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'],
+  ['leaderboard', 'Leaderboard', 'Leaderboard.dc.html', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+];
+const RC = { milspec: '#4B69FF', restricted: '#8847FF', classified: '#D32CE6', covert: '#EB4B4B', gold: '#E4AE39' };
+const RN = { milspec: 'Mil-Spec', restricted: 'Restricted', classified: 'Classified', covert: 'Covert', gold: '★' };
+// name, value, albums %, showcase rarities
+const PLAYERS = {
+  nyx: [64800, 29, ['gold', 'gold', 'covert', 'covert', 'classified']],
+  kenji: [41200, 38, ['gold', 'covert', 'covert', 'classified', 'classified']],
+  lou: [18950, 52, ['covert', 'classified', 'classified', 'restricted', 'restricted']],
+  ash: [12600, 33, ['covert', 'classified', 'restricted', 'restricted', 'milspec']],
+  rhea: [9400, 61, ['classified', 'classified', 'restricted', 'restricted', 'milspec']],
+  tomb: [3120, 14, ['restricted', 'restricted', 'milspec', 'milspec', 'milspec']],
+  dune: [22100, 58, ['covert', 'classified', 'classified', 'restricted', 'milspec']],
+  milo: [33450, 21, ['gold', 'covert', 'classified', 'restricted', 'restricted']],
+  sable: [7800, 40, ['classified', 'restricted', 'restricted', 'milspec', 'milspec']],
+  dunk_: [1450, 6, ['restricted', 'milspec', 'milspec']],
+  dunewalker: [26300, 17, ['covert', 'covert', 'classified', 'restricted']]
+};
+const SINCE = { nyx: 'Sep 16', kenji: 'Sep 20', lou: 'Sep 22', ash: 'Oct 2', rhea: 'Oct 4', tomb: 'Oct 9' };
+function fmt(n) { return n.toLocaleString('en-US'); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { friends: ['nyx', 'kenji', 'lou', 'ash', 'rhea', 'tomb'], incoming: ['dune', 'milo'], sent: ['sable'], query: 'dun' };
+  }
+  accept(name) {
+    const st = this.state;
+    this.setState({ incoming: st.incoming.filter((x) => x !== name), friends: st.friends.concat([name]) });
+  }
+  renderVals() {
+    const st = this.state;
+    const nav = NAVDEF.map((n) => ({
+      label: n[1], href: n[2], icon: n[3],
+      current: n[0] === 'friends' ? 'page' : undefined,
+      style: n[0] === 'friends' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF'
+    }));
+    const stats = (n) => '≈ ' + fmt(PLAYERS[n][0]) + ' CR · albums ' + PLAYERS[n][1] + '%';
+    const friends = st.friends.map((n) => ({
+      name: n, initial: n[0].toUpperCase(), stats: stats(n) + (SINCE[n] ? ' · since ' + SINCE[n] : ' · new'),
+      showcase: PLAYERS[n][2].map((r) => ({ color: RC[r] })),
+      showcaseLabel: 'Showcase: ' + PLAYERS[n][2].map((r) => RN[r]).join(', ')
+    }));
+    const q = st.query.trim().toLowerCase();
+    const results = !q ? [] : Object.keys(PLAYERS).filter((n) => n.indexOf(q) >= 0).map((n) => {
+      const isFriend = st.friends.indexOf(n) >= 0;
+      const isIncoming = st.incoming.indexOf(n) >= 0;
+      const isSent = st.sent.indexOf(n) >= 0;
+      return {
+        name: n, initial: n[0].toUpperCase(),
+        note: isIncoming ? 'Wants to be your friend' : stats(n),
+        canAdd: !isFriend && !isIncoming && !isSent,
+        canAccept: isIncoming,
+        showTag: isFriend || isSent,
+        tag: isFriend ? 'Friend' : 'Requested',
+        add: () => this.setState({ sent: this.state.sent.concat([n]) }),
+        accept: () => this.accept(n)
+      };
+    });
+    return {
+      nav, friends, results,
+      query: st.query,
+      hasResults: results.length > 0,
+      noResults: !!q && results.length === 0,
+      countLine: st.friends.length + ' friends · ' + st.incoming.length + ' requests waiting',
+      incomingCount: String(st.incoming.length),
+      noIncoming: st.incoming.length === 0,
+      incoming: st.incoming.map((n) => ({
+        name: n, initial: n[0].toUpperCase(), stats: stats(n),
+        accept: () => this.accept(n),
+        decline: () => this.setState({ incoming: this.state.incoming.filter((x) => x !== n) })
+      })),
+      hasSent: st.sent.length > 0,
+      sent: st.sent.map((n) => ({ name: n, initial: n[0].toUpperCase(), cancel: () => this.setState({ sent: this.state.sent.filter((x) => x !== n) }) })),
+      onQuery: (e) => this.setState({ query: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Player</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row:hover{background:#15171B}
+.menu-i:hover:not(:disabled){background:#1A1D22}
+.menu-i:disabled{opacity:.45;cursor:not-allowed}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 28px 48px 64px; display: flex; flex-direction: column; gap: 22px">
+
+<a href="Admin-Players.dc.html" class="mono" style="align-self: flex-start; font-size: 12px; color: #A1A7AF; text-decoration: none">← Players</a>
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 20px">
+<div style="display: flex; align-items: center; gap: 20px">
+<span aria-hidden="true" style="flex: none; width: 80px; height: 80px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 30px; font-weight: 600">{{p.initial}}</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<h1 style="margin: 0; font-size: 40px; line-height: 1; font-weight: 600; letter-spacing: -0.02em">{{p.name}}</h1>
+<span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px">Account</span>
+<sc-if value="{{p.online}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #ECEDEF"></span>Online</span></sc-if>
+<sc-if value="{{p.banned}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border: 1px solid #F27D7D; border-radius: 2px; font-size: 11px; color: #F27D7D">Banned · 7 d</span></sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 13px; color: #A1A7AF">
+<span style="display: inline-flex; align-items: center; gap: 4px"><span class="mono" style="color: #ECEDEF">{{p.discord}}</span><button type="button" aria-label="Copy Discord ID" onClick="{{copy}}" style="width: 32px; height: 32px; border: 0; background: none; color: #858B94; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round"><path d="M9 9h11v11H9zM5 15H4V4h11v1"></path></svg></button><span class="mono" role="status" style="font-size: 11px">{{copied}}</span></span>
+<span>Joined {{p.joined}}</span><span>Last seen {{p.seen}}</span>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
+<div style="position: relative; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px">
+<sc-for list="{{actions}}" as="a" hint-placeholder-count="5">
+<sc-if value="{{a.isLink}}" hint-placeholder-val="{{ true }}"><a href="{{a.href}}" class="{{a.cls}}" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 2px; text-decoration: none; font-size: 13px; font-weight: 500; {{a.style}}">{{a.label}}</a></sc-if>
+<sc-if value="{{a.isButton}}" hint-placeholder-val="{{ false }}"><button type="button" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.disabled}}" title="{{a.hint}}" style="display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 2px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; {{a.style}}"><sc-if value="{{a.disabled}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg></sc-if>{{a.label}}</button></sc-if>
+</sc-for>
+<button type="button" class="btn-s" aria-label="More actions" aria-expanded="{{menuOpen}}" onClick="{{toggleMenu}}" style="width: 40px; height: 40px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: currentColor"><path d="M5 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM19 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"></path></svg></button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div role="menu" style="position: absolute; right: 0; top: 46px; z-index: 20; width: 220px; padding: 6px; border: 1px solid #2C3138; border-radius: 4px; background: #121417; box-shadow: 0 16px 40px rgba(0,0,0,0.55)">
+<button type="button" role="menuitem" class="menu-i" onClick="{{rename}}" disabled="{{cantModerate}}" style="display: flex; align-items: center; width: 100%; height: 40px; padding: 0 10px; border: 0; border-radius: 2px; background: none; color: #ECEDEF; font: inherit; font-size: 14px; text-align: left; cursor: pointer">Rename</button>
+<sc-if value="{{canDelete}}" hint-placeholder-val="{{ true }}"><a href="Admin-Dlg-Delete.dc.html" role="menuitem" class="menu-i" style="display: flex; align-items: center; height: 40px; padding: 0 10px; border-radius: 2px; color: #F27D7D; text-decoration: none; font-size: 14px">Delete account</a></sc-if>
+<sc-if value="{{cantDelete}}" hint-placeholder-val="{{ false }}"><button type="button" role="menuitem" class="menu-i" disabled="{{ true }}" style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 40px; padding: 0 10px; border: 0; background: none; color: #F27D7D; font: inherit; font-size: 14px; text-align: left">Delete account<span class="mono" style="font-size: 10px; color: #858B94">Admins only</span></button></sc-if>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{hasHint}}" hint-placeholder-val="{{ false }}"><span class="mono" style="max-width: 560px; font-size: 11px; line-height: 1.5; color: #858B94; text-align: right">{{roleHint}}</span></sc-if>
+</div>
+</header>
+
+<sc-if value="{{p.banned}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 14px 18px; border: 1px solid #F27D7D; border-radius: 4px; background: rgba(242,125,125,0.06)">
+<span style="flex: 1 1 400px; font-size: 14px"><strong style="color: #F27D7D">Banned until Oct 30, 11:02</strong> <span style="color: #A1A7AF">· by lea · Reason: scam attempt in trades</span></span>
+<button type="button" class="btn-s" onClick="{{askUnban}}" disabled="{{cantModerate}}" title="{{modHint}}" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Unban</button>
+</div>
+</sc-if>
+
+<sc-if value="{{hasConfirm}}" hint-placeholder-val="{{ false }}">
+<div role="alertdialog" aria-labelledby="ic-t" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<div style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 2px"><span id="ic-t" style="font-size: 14px; font-weight: 600">{{confirm.title}}</span><span style="font-size: 13px; color: #A1A7AF">{{confirm.text}}</span></div>
+<label style="display: flex; align-items: center; gap: 8px; flex: 1 1 260px"><span style="font-size: 13px; color: #A1A7AF">Reason</span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="Shown in the admin log" style="box-sizing: border-box; flex: 1; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+<button type="button" onClick="{{cancelConfirm}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-p" onClick="{{doConfirm}}" disabled="{{noReason}}" style="height: 40px; padding: 0 16px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{confirm.button}}</button>
+</div>
+</sc-if>
+
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden">
+<sc-for list="{{p.stats}}" as="s" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column-reverse; gap: 6px; padding: 16px 18px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">{{s.k}}</dt><dd class="mono" style="margin: 0; font-size: 20px; font-weight: 500">{{s.v}}</dd></div>
+</sc-for>
+</dl>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<section aria-label="Player records" style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div role="tablist" aria-label="Records" style="display: flex; flex-wrap: wrap; gap: 4px 24px; border-bottom: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="8">
+<button type="button" role="tab" class="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="height: 44px; padding: 0; margin-bottom: -1px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; {{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{tab.ledger}}" hint-placeholder-val="{{ true }}">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<div role="table" aria-label="Ledger" style="min-width: 760px">
+<div role="row" style="display: grid; grid-template-columns: 130px 140px 120px 120px minmax(0, 1fr); align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #1C1F24; background: #0D0E11"><span role="columnheader" class="lbl" style="font-size: 10px">Time</span><span role="columnheader" class="lbl" style="font-size: 10px">Type</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right">Amount</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right">Balance</span><span role="columnheader" class="lbl" style="font-size: 10px; padding-left: 20px">Details</span></div>
+<sc-for list="{{p.ledger}}" as="l" hint-placeholder-count="5">
+<div role="row" class="row" style="display: grid; grid-template-columns: 130px 140px 120px 120px minmax(0, 1fr); align-items: center; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #1A1D22; font-size: 13px"><span role="cell" class="mono" style="color: #A1A7AF; font-size: 12px">{{l.time}}</span><span role="cell" class="mono" style="font-size: 12px">{{l.type}}</span><span role="cell" class="mono" style="text-align: right">{{l.amount}}</span><span role="cell" class="mono" style="text-align: right; color: #A1A7AF">{{l.balance}}</span><span role="cell" style="padding-left: 20px; color: #A1A7AF">{{l.details}}</span></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{tab.inventory}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Filter by status" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{invChips}}" as="c" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="height: 36px; padding: 0 14px; border-radius: 2px; font: inherit; font-size: 13px; cursor: pointer; {{c.style}}">{{c.label}} <span class="mono" style="font-size: 11px; opacity: 0.7">{{c.n}}</span></button>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 12px">
+<sc-for list="{{p.items}}" as="it" hint-placeholder-count="6">
+<a href="Admin-Items.dc.html" style="position: relative; display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013; overflow: hidden; color: #ECEDEF; text-decoration: none">
+<span style="position: relative; height: 96px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 8% 10%; background: radial-gradient(closest-side, {{it.glow}}, rgba(0,0,0,0)); opacity: {{it.op}}"></span><svg role="img" aria-label="{{it.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 78%; fill: {{it.fill}}; opacity: {{it.op}}"><path d="{{it.art}}"></path></svg>
+<sc-if value="{{it.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="position: absolute; right: 8px; top: 8px; padding: 1px 5px; background: #ECEDEF; color: #0A0B0D; font-size: 9px; font-weight: 600">ST™</span></sc-if>
+<sc-if value="{{it.locked}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="position: absolute; left: 8px; top: 9px; display: flex; align-items: center; gap: 5px; font-size: 9px; color: #ECEDEF"><svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg>{{it.status}}</span></sc-if>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px"><span style="font-size: 11px; color: #A1A7AF">{{it.weapon}}</span><span style="font-size: 14px; font-weight: 600">{{it.skin}}</span><span style="display: flex; justify-content: space-between; margin-top: 4px"><span class="mono" style="font-size: 11px; color: #A1A7AF">{{it.wear}}</span><span class="mono" style="font-size: 11px">{{it.value}}</span></span></span>
+<span aria-hidden="true" style="height: 3px; background: {{it.color}}"></span>
+</a>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{tab.generic}}" hint-placeholder-val="{{ false }}">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<sc-for list="{{genericRows}}" as="g" hint-placeholder-count="4">
+<div class="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; min-height: 52px; padding: 8px 18px; border-bottom: 1px solid #1A1D22; font-size: 13px">
+<span class="mono" style="min-width: 110px; font-size: 12px; color: #A1A7AF">{{g.a}}</span>
+<span style="flex: 1 1 240px; display: flex; align-items: center; gap: 8px"><sc-if value="{{g.hasDot}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; background: {{g.dot}}"></span></sc-if>{{g.b}}</span>
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{g.c}}</span>
+<span class="mono" style="min-width: 120px; text-align: right; font-size: 11px; padding: 3px 7px; border-radius: 2px; {{g.chipStyle}}">{{g.d}}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{tab.notes}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{p.notes}}" as="n" hint-placeholder-count="2">
+<article style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013"><span class="mono" style="font-size: 11px; color: #858B94">{{n.meta}}</span><p style="margin: 0; font-size: 14px; line-height: 1.5">{{n.text}}</p></article>
+</sc-for>
+<label style="display: flex; flex-direction: column; gap: 6px"><span class="lbl" style="font-size: 10px">New note · staff only</span><textarea class="field" rows="3" disabled="{{cantModerate}}" placeholder="What should the next moderator know?" style="box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px; resize: vertical"></textarea></label>
+<button type="button" class="btn-s" disabled="{{cantModerate}}" title="{{modHint}}" style="align-self: flex-start; height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Add note</button>
+</div>
+</sc-if>
+</section>
+
+<aside aria-labelledby="sig-t" style="flex: 1 1 300px; display: flex; flex-direction: column; padding: 18px 20px 8px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="sig-t" class="lbl" style="margin: 0 0 10px">// Signals</h2>
+<sc-for list="{{p.signals}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 0; border-top: 1px solid #1A1D22">
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px"><span style="display: flex; align-items: center; gap: 8px; color: #A1A7AF"><sc-if value="{{s.alert}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #C8382F"></span></sc-if>{{s.k}}</span><span class="mono" style="font-size: 14px">{{s.v}}</span></span>
+<sc-if value="{{s.hasLink}}" hint-placeholder-val="{{ false }}"><a href="{{s.href}}" style="font-size: 12px; color: #A1A7AF">{{s.link}}</a></sc-if>
+</div>
+</sc-for>
+</aside>
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="align-self: center; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"player":{"editor":"enum","options":["vex","nyx"],"default":"vex","section":"State"},"role":{"editor":"enum","options":["admin","moderator","viewer"],"default":"admin","section":"State"},"$preview":{"width":1440,"height":1320}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const RAR = { milspec: ['#4B69FF', 'rgba(75,105,255,0.30)'], restricted: ['#8847FF', 'rgba(136,71,255,0.32)'], classified: ['#D32CE6', 'rgba(211,44,230,0.30)'], covert: ['#EB4B4B', 'rgba(235,75,75,0.32)'], gold: ['#E4AE39', 'rgba(228,174,57,0.36)'] };
+const CHIP = { outline: 'border: 1px solid #2C3138; color: #ECEDEF', dashed: 'border: 1px dashed #4A5059; color: #858B94', solid: 'background: #ECEDEF; color: #0A0B0D', flag: 'border: 1px solid #2C3138; color: #ECEDEF' };
+const PL = {
+  vex: {
+    name: 'vex', initial: 'V', discord: '284716593820471296', joined: 'Oct 3, 18:20', seen: '2 min ago', online: true, banned: false, balance: 4870,
+    stats: [['Balance', '4,870 CR'], ['Held in bids', '1,200 CR'], ['Inventory value', '34,269 CR'], ['Cases opened', '312'], ['Trades completed', '14'], ['Albums', '23%']],
+    ledger: [['Oct 23 14:10', 'admin_remove', '−5,000 CR', '4,870 CR', 'by mathys · duplicate refund'], ['Oct 23 14:05', 'bid_refund', '+5,000 CR', '9,870 CR', 'auction #8812, refunded twice'], ['Oct 23 14:02', 'case_open', '−250 CR', '4,870 CR', 'Revolution Case'], ['Oct 23 13:40', 'recycle', '+500 CR', '5,120 CR', 'AWP | Redline (FT)'], ['Oct 22 21:15', 'auction_sale', '+1,450 CR', '4,620 CR', 'sold to lou'], ['Oct 22 21:15', 'auction_fee', '−73 CR', '3,170 CR', '5% of 1,450 CR'], ['Oct 20 09:00', 'admin_grant', '+1,000 CR', '3,243 CR', 'by mathys · compensation, outage']],
+    items: [['AK-47', 'Redline', 'classified', 'rifle', 'FT 0.2381', '1,380 CR', true, 'Listed'], ['MP7', 'Skulls', 'milspec', 'smg', 'FN 0.0300', '45 CR', false, 'In trade'], ['★ Kukri Knife', 'Fade', 'gold', 'knife', 'FN 0.0213', '15,000 CR', false, ''], ['AWP', 'Chrome Cannon', 'covert', 'sniper', 'MW 0.0934', '6,000 CR', true, ''], ['AK-47', 'Inheritance', 'covert', 'rifle', 'FT 0.2381', '2,500 CR', false, ''], ['M4A1-S', 'Black Lotus', 'classified', 'rifle', 'FN 0.0512', '750 CR', false, '']],
+    openings: [['Oct 23 14:02', 'MAG-7 | Insomnia', 'milspec', 'Revolution Case · FT 0.2455', '36 CR'], ['Oct 23 10:00', 'Nova | Dark Sigil', 'milspec', 'Kilowatt Case, free · FT 0.2290', '30 CR'], ['Oct 22 22:41', 'AK-47 | Head Shot', 'covert', 'Revolution Case · FT 0.2710', '2,500 CR'], ['Oct 22 18:00', 'Glock-18 | Umbral Rabbit', 'restricted', 'Revolution Case, free · FN 0.0390', '180 CR']],
+    trades: [['#2231 · Oct 16', 'to kenji · MP7 | Skulls for 900 CR', '', 'Expired Oct 19 · item still locked', 'flag'], ['#2214 · Oct 14', 'to kenji · AWP | Redline for M4A1-S | Black Lotus', '', 'Accepted', 'solid'], ['#2190 · Oct 11', 'from lou · 600 CR for Tec-9 | Slag', '', 'Declined', 'dashed']],
+    market: [['Listing · ends in 5 h', 'AK-47 | Redline (ST™ FT)', 'classified', 'start 1,000 · 4 bids', '1,380 CR'], ['Bid · leading', 'M4A4 | Temukau (lou)', 'covert', 'ends in 1 h', '1,200 CR held'], ['Sold · Oct 22', 'Five-SeveN | Hybrid', 'restricted', 'to lou · fee 73 CR', '1,450 CR']],
+    friends: [['kenji', 'since Sep 20'], ['lou', 'since Sep 22'], ['rhea', 'since Oct 4'], ['dune', 'since Oct 8'], ['ash', 'since Oct 12']],
+    sessions: [['active now', 'Discord activity · desktop app', '82.64.•••.•••', 'Lyon, FR'], ['2 h ago', 'Chrome 130 · Windows', '82.64.•••.•••', 'Lyon, FR'], ['yesterday', 'Safari · iPhone', '92.184.•••.•••', 'Lyon, FR']],
+    notes: [['lea · Oct 22, 19:05', '6 trades in 2 days with kenji, all one way (41,000 CR). Asked both in DMs, waiting for an answer before touching anything.']],
+    signals: [['Account age', '20 days', false, '', ''], ['Other accounts on this IP', '3', true, 'tomb, Guest #2b7e, Guest #e310', 'Admin-Players.dc.html'], ['Flagged trades', '1', true, 'Repeated trades with kenji', 'Admin-Market.dc.html'], ['Reports against', '0', false, '', '']]
+  },
+  nyx: {
+    name: 'nyx', initial: 'N', discord: '993021547810034688', joined: 'Oct 21, 09:44', seen: '3 d ago', online: false, banned: true, balance: 0,
+    stats: [['Balance', '0 CR'], ['Held in bids', '0 CR'], ['Inventory value', '310 CR'], ['Cases opened', '18'], ['Trades completed', '2'], ['Albums', '4%']],
+    ledger: [['Oct 22 23:58', 'case_open ×17', '−4,250 CR', '0 CR', 'Revolution Case, 20:40 to 23:58'], ['Oct 22 20:31', 'trade_in', '+3,250 CR', '4,250 CR', 'offer #2240 · from 4 new accounts'], ['Oct 21 10:02', 'case_open', '0 CR', '1,000 CR', 'Revolution Case, free'], ['Oct 21 09:44', 'start_balance', '+1,000 CR', '1,000 CR', 'account created']],
+    items: [['P250', 'Re.built', 'milspec', 'rifle', 'MW 0.0877', '36 CR', false, ''], ['Tec-9', 'Slag', 'milspec', 'smg', 'BS 0.6188', '24 CR', false, '']],
+    openings: [['Oct 21 10:02', 'P250 | Re.built', 'milspec', 'Revolution Case, free · MW 0.0877', '36 CR']],
+    trades: [['#2240 · Oct 22', 'from 4 new accounts · items worth 18,500 CR + 3,250 CR', '', 'Accepted · flagged', 'flag'], ['#2244 · Oct 23', 'to kenji · AWP | Duality for 4,000 CR', '', 'Cancelled by ban', 'dashed']],
+    market: [['Listing · cancelled', 'AWP | Duality (FN)', 'classified', 'cancelled by ban, bid refunded', '—']],
+    friends: [['Guest #2b7e', 'since Oct 21']],
+    sessions: [['signed out by ban', 'Chrome 130 · Windows', '91.160.•••.•••', 'Unknown']],
+    notes: [['lea · Oct 23, 11:04', 'Took items from 4 accounts created the same day, same IP, then offered them to kenji. Banned 7 days. mathys sent the 6 items back to their owners.']],
+    signals: [['Account age', '2 days', true, '', ''], ['Other accounts on this IP', '7', true, 'Created Oct 22 from the same address', 'Admin-Market.dc.html'], ['Flagged trades', '1', true, 'Received 18,500 CR of items', 'Admin-Market.dc.html'], ['Reports against', '2', true, 'Scam attempt in trades', 'Admin-Moderation.dc.html']]
+  }
+};
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'ledger', inv: 'All', menu: false, confirm: null, reason: '', toast: '', copied: '', unbanned: false };
+  }
+  componentDidUpdate(prev) { if (prev.player !== this.props.player || prev.role !== this.props.role) this.setState({ confirm: null, toast: '', unbanned: false, menu: false }); }
+  renderVals() {
+    const st = this.state;
+    const key = this.props.player === 'nyx' ? 'nyx' : 'vex';
+    const d = PL[key];
+    const role = RANK[this.props.role] !== undefined ? this.props.role : 'admin';
+    const r = RANK[role];
+    const banned = d.banned && !st.unbanned;
+    const nav = ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === 'players' ? 'page' : undefined, style: n[0] === 'players' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' }));
+    const ask = (k) => () => this.setState({ confirm: k, reason: '', menu: false });
+    const CONF = {
+      reset: { title: 'Reset ' + d.name + '’s free case timer', text: 'The next free case becomes available right away.', button: 'Reset free case', toast: 'Reset ' + d.name + '’s free case · logged' },
+      signout: { title: 'Sign ' + d.name + ' out everywhere', text: 'Ends ' + d.sessions.length + (d.sessions.length > 1 ? ' sessions' : ' session') + ', including the Discord activity.', button: 'Sign out everywhere', toast: 'Signed ' + d.name + ' out of ' + d.sessions.length + ' sessions · logged' },
+      rename: { title: 'Rename ' + d.name, text: 'Resets the name to player_8841. They can pick a new one at next sign-in.', button: 'Rename to player_8841', toast: 'Renamed ' + d.name + ' to player_8841 · logged' },
+      unban: { title: 'Unban ' + d.name, text: 'They can sign in again right away. Cancelled listings and offers stay cancelled.', button: 'Unban ' + d.name, toast: 'Unbanned ' + d.name + ' · logged' }
+    };
+    const act = (label, need, opts) => {
+      const ok = r >= need;
+      const hint = need === 2 ? 'Admins only' : 'Moderators and admins';
+      const base = opts.danger ? 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D' : opts.primary ? 'border: 1px solid #ECEDEF; background: #ECEDEF; color: #0A0B0D' : 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF';
+      return {
+        label, hint: ok ? '' : hint, disabled: !ok,
+        isLink: ok && !!opts.href, isButton: !ok || !opts.href,
+        href: opts.href || '#', go: opts.go || (() => {}),
+        cls: opts.danger ? 'btn-d' : opts.primary ? 'btn-p' : 'btn-s', style: base
+      };
+    };
+    const actions = [
+      act('Adjust credits', 2, { href: 'Admin-Dlg-Credits.dc.html' }),
+      act('Grant item', 2, { href: 'Admin-Dlg-Grant.dc.html' }),
+      act('Reset free case', 2, { go: ask('reset') }),
+      act('Sign out everywhere', 1, { go: ask('signout') }),
+      banned ? act('Unban', 1, { go: ask('unban') }) : act('Ban', 1, { href: 'Admin-Dlg-Ban.dc.html', danger: true })
+    ];
+    const tabs = ['Inventory', 'Openings', 'Trades', 'Market', 'Friends', 'Ledger', 'Sessions', 'Notes'].map((t) => {
+      const k = t.toLowerCase();
+      return { label: t, on: st.tab === k, style: st.tab === k ? 'color: #ECEDEF; border-bottom: 2px solid #ECEDEF' : 'color: #A1A7AF; border-bottom: 2px solid transparent', pick: () => this.setState({ tab: k }) };
+    });
+    let generic = [];
+    if (st.tab === 'openings') generic = d.openings.map((o) => ({ a: o[0], b: o[1], hasDot: true, dot: RAR[o[2]][0], c: o[3], d: o[4], chipStyle: 'color: #ECEDEF' }));
+    if (st.tab === 'trades') generic = d.trades.map((o) => ({ a: o[0], b: o[1], hasDot: false, dot: '', c: o[2], d: o[3], chipStyle: CHIP[o[4]] }));
+    if (st.tab === 'market') generic = d.market.map((o) => ({ a: o[0], b: o[1], hasDot: true, dot: RAR[o[2]][0], c: o[3], d: o[4], chipStyle: 'color: #ECEDEF' }));
+    if (st.tab === 'friends') generic = d.friends.map((o) => ({ a: o[1], b: o[0], hasDot: false, dot: '', c: '', d: 'Friend', chipStyle: CHIP.outline }));
+    if (st.tab === 'sessions') generic = d.sessions.map((o) => ({ a: o[0], b: o[1], hasDot: false, dot: '', c: o[2] + ' · ' + o[3], d: o[0] === 'active now' ? 'Active' : 'Session', chipStyle: o[0] === 'active now' ? CHIP.solid : CHIP.outline }));
+    const conf = st.confirm ? CONF[st.confirm] : null;
+    const roleHint = r === 0 ? 'Read-only: you’re a Viewer. Adjust credits, Grant item and Reset free case are for admins; Ban and Sign out everywhere for moderators and admins.' : r === 1 ? 'Adjust credits, Grant item, Reset free case and Delete account: Admins only.' : '';
+    return {
+      nav, actions, tabs,
+      staffName: r === 2 ? 'mathys' : r === 1 ? 'lea' : 'sam', staffInitial: r === 2 ? 'M' : r === 1 ? 'L' : 'S',
+      roleLabel: { admin: 'Admin', moderator: 'Moderator', viewer: 'Viewer' }[role],
+      hasHint: !!roleHint, roleHint,
+      cantModerate: r < 1, modHint: r < 1 ? 'Moderators and admins' : '',
+      canDelete: r >= 2, cantDelete: r < 2,
+      menuOpen: st.menu, toggleMenu: () => this.setState({ menu: !st.menu }),
+      rename: ask('rename'), askUnban: ask('unban'),
+      hasConfirm: !!conf, confirm: conf || { title: '', text: '', button: '' },
+      reason: st.reason, noReason: !st.reason.trim(),
+      onReason: (e) => this.setState({ reason: e.target.value }),
+      cancelConfirm: () => this.setState({ confirm: null }),
+      doConfirm: () => { if (conf) this.setState({ confirm: null, toast: conf.toast, unbanned: st.unbanned || st.confirm === 'unban' }); },
+      hasToast: !!st.toast, toast: st.toast,
+      copied: st.copied, copy: () => this.setState({ copied: 'Copied' }),
+      tab: { ledger: st.tab === 'ledger', inventory: st.tab === 'inventory', notes: st.tab === 'notes', generic: ['openings', 'trades', 'market', 'friends', 'sessions'].indexOf(st.tab) >= 0 },
+      genericRows: generic,
+      invChips: ['All', 'Available', 'Listed', 'In trade'].map((c) => ({ label: c, on: st.inv === c, n: String(c === 'All' ? d.items.length : d.items.filter((i) => (i[7] || 'Available') === c).length), style: st.inv === c ? 'border: 1px solid #ECEDEF; background: #ECEDEF; color: #0A0B0D' : 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF', pick: () => this.setState({ inv: c }) })),
+      p: {
+        name: d.name, initial: d.initial, discord: d.discord, joined: d.joined, seen: d.seen, online: d.online, banned,
+        stats: d.stats.map((s) => ({ k: s[0], v: s[1] })),
+        ledger: d.ledger.map((l) => ({ time: l[0], type: l[1], amount: l[2], balance: l[3], details: l[4] })),
+        items: d.items.filter((i) => st.inv === 'All' || (i[7] || 'Available') === st.inv).map((i) => ({ weapon: i[0], skin: i[1], full: i[0] + ' | ' + i[1], color: RAR[i[2]][0], glow: RAR[i[2]][1], art: ART[i[3]], wear: i[4], value: i[5], st: i[6], status: i[7], locked: !!i[7], op: i[7] ? '0.4' : '1', fill: i[2] === 'gold' ? '#EFE6D2' : '#D3D6DB' })),
+        notes: d.notes.map((n) => ({ meta: n[0], text: n[1] })),
+        signals: d.signals.map((s) => ({ k: s[0], v: s[1], alert: s[2], link: s[3], href: s[4] || '#', hasLink: !!s[3] }))
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

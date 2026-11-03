@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Trades</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.side-inner{min-height:860px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover{background:#FFFFFF}
+.btn-s:hover{border-color:#4A5059;background:#121417}
+.tab:hover{color:#ECEDEF}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Main" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: #0F1114">
+<span class="lbl">Balance</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span class="mono" style="font-size: 24px; font-weight: 600">4,870</span><span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Free case</span><span class="mono" style="color: #ECEDEF">Ready</span></div>
+</div>
+<a href="Profile.dc.html" style="display: flex; gap: 10px; align-items: center; padding: 8px 4px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">V</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">vex</span><span style="font-size: 12px; color: #A1A7AF">View profile</span></span>
+</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div role="status" style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; min-height: 40px; padding: 8px 32px; box-sizing: border-box; border-bottom: 1px solid #1C1F24; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px"><span style="font-weight: 600">nyx</span><span style="color: #A1A7AF">unboxed</span><span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span><span class="mono" style="font-size: 12px; color: #A1A7AF">FN · 0.0081</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+
+<div style="width: 100%; max-width: 1240px; box-sizing: border-box; margin: 0 auto; padding: 40px 48px 72px; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span class="lbl">// Trades</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Trades</h1>
+<p style="margin: 0; max-width: 560px; font-size: 14px; line-height: 1.5; color: #A1A7AF">Items in an open offer are locked: they can't be sold, recycled or put in another offer until it's answered.</p>
+</div>
+<a href="TradeNew.dc.html" class="btn-p" style="display: inline-flex; align-items: center; height: 48px; padding: 0 26px; background: #ECEDEF; color: #0A0B0D; text-decoration: none; font-size: 15px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">New offer</a>
+</header>
+
+<div role="tablist" aria-label="Offers" style="display: flex; gap: 28px; border-bottom: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+<button type="button" role="tab" class="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0; margin-bottom: -1px; border: 0; background: none; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; {{t.style}}">{{t.label}}<sc-if value="{{t.hasCount}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{t.count}}</span></sc-if></button>
+</sc-for>
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316; font-size: 14px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: #ECEDEF; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+<span>{{toast}}</span>
+</div>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<sc-for list="{{offers}}" as="o" hint-placeholder-count="2">
+<article aria-label="{{o.title}}" style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; opacity: {{o.opacity}}">
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #1A1D22">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{o.initial}}</span>
+<span style="font-size: 15px"><strong>{{o.lead}}</strong> <span style="color: #A1A7AF">{{o.verb}}</span> <strong>{{o.tail}}</strong></span>
+<span style="margin-left: auto; display: flex; align-items: center; gap: 12px">
+<span class="mono" style="font-size: 12px; color: #858B94">{{o.when}}</span>
+<span class="lbl" style="padding: 4px 8px; border-radius: 2px; {{o.chipStyle}}">{{o.statusLabel}}</span>
+</span>
+</header>
+<div style="display: flex; flex-wrap: wrap; align-items: stretch">
+<sc-for list="{{o.sides}}" as="s" hint-placeholder-count="2">
+<div style="flex: 1 1 320px; box-sizing: border-box; padding: 20px; display: flex; flex-direction: column; gap: 12px; border-right: 1px solid #1A1D22">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="lbl">{{s.label}}</span><span class="mono" style="font-size: 13px; color: #A1A7AF">≈ {{s.total}} CR</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 8px">
+<sc-for list="{{s.items}}" as="it" hint-placeholder-count="2">
+<div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px 10px 8px; background: #121417; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<span style="position: relative; flex: none; width: 72px; height: 44px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(closest-side, {{it.glow}}, rgba(0,0,0,0))"></span><svg role="img" aria-label="{{it.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 100%; fill: #D3D6DB"><path d="{{it.art}}"></path></svg></span>
+<span style="min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #A1A7AF">{{it.weapon}}</span>
+<span style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.skin}}</span>
+<span class="mono" style="font-size: 11px; color: #A1A7AF">{{it.meta}}</span>
+</span>
+<sc-if value="{{it.album}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="position: absolute; right: 8px; top: 8px; font-size: 9px; color: #ECEDEF">Album +1</span></sc-if>
+<span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: {{it.color}}"></span>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{s.hasCr}}" hint-placeholder-val="{{ false }}"><span class="mono" style="align-self: flex-start; display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 1px dashed #2C3138; border-radius: 2px; font-size: 13px">+ {{s.cr}} CR</span></sc-if>
+</div>
+</sc-for>
+</div>
+<footer style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 14px 20px; border-top: 1px solid #1A1D22">
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{o.balanceLine}}</span>
+<sc-if value="{{o.albumLine}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #ECEDEF">{{o.albumText}}</span></sc-if>
+<span style="flex: 1 1 0"></span>
+<sc-if value="{{o.canAnswer}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" onClick="{{o.decline}}" style="height: 44px; padding: 0 14px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Decline</button>
+<a href="TradeNew.dc.html" class="btn-s" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 14px; font-weight: 500">Counter</a>
+<button type="button" class="btn-p" onClick="{{o.accept}}" style="height: 44px; padding: 0 22px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)">Accept trade</button>
+</div>
+</sc-if>
+<sc-if value="{{o.canCancel}}" hint-placeholder-val="{{ false }}">
+<button type="button" class="btn-s" onClick="{{o.cancel}}" style="height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer">Cancel offer</button>
+</sc-if>
+</footer>
+</article>
+</sc-for>
+</div>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1460}}'>
+const NAVDEF = [
+  ['home', 'Home', 'Main.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['market', 'Market', 'Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+  ['trades', 'Trades', 'Trades.dc.html', 'M4 8h15l-4-4M20 16H5l4 4'],
+  ['tradeup', 'Trade-up', 'TradeUp.dc.html', 'M12 20V5M6 11l6-6 6 6M5 20h14'],
+  ['friends', 'Friends', 'Friends.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'],
+  ['leaderboard', 'Leaderboard', 'Leaderboard.dc.html', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+];
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z'
+};
+const RAR = {
+  milspec: ['#4B69FF', 'rgba(75,105,255,0.30)'], restricted: ['#8847FF', 'rgba(136,71,255,0.32)'],
+  classified: ['#D32CE6', 'rgba(211,44,230,0.30)'], covert: ['#EB4B4B', 'rgba(235,75,75,0.32)']
+};
+// weapon, skin, rarity, art, meta, value, fills one of your albums
+const IT = {
+  inheritance: ['AK-47', 'Inheritance', 'covert', 'rifle', 'FT · 0.2381', 2500, false],
+  temukau: ['M4A4', 'Temukau', 'covert', 'rifle', 'MW · 0.0871', 3000, false],
+  block18: ['Glock-18', 'Block-18', 'restricted', 'pistol', 'ST™ · FT · 0.1876', 240, false],
+  lightbox: ['MAC-10', 'Light Box', 'milspec', 'smg', 'FT · 0.3121', 30, false],
+  olympus: ['Zeus x27', 'Olympus', 'classified', 'pistol', 'FT · 0.2650', 500, true],
+  duality: ['AWP', 'Duality', 'classified', 'sniper', 'MW · 0.1130', 600, false],
+  justsmile: ['MP7', 'Just Smile', 'restricted', 'smg', 'FT · 0.3011', 120, true],
+  hybrid: ['Five-SeveN', 'Hybrid', 'restricted', 'pistol', 'MW · 0.1302', 144, true],
+  analog: ['Sawed-Off', 'Analog Input', 'restricted', 'rifle', 'FT · 0.2290', 120, true],
+  slag: ['Tec-9', 'Slag', 'milspec', 'pistol', 'FT · 0.2911', 30, false],
+  sakkaku: ['MAC-10', 'Sakkaku', 'restricted', 'smg', 'MW · 0.1407', 144, false],
+  wildchild: ['UMP-45', 'Wild Child', 'classified', 'smg', 'FT · 0.3330', 500, false],
+  featherweight: ['MP9', 'Featherweight', 'milspec', 'smg', 'FT · 0.2290', 30, false]
+};
+// id, box, who, give, giveCr, get, getCr, status, when
+const START = [
+  [1, 'received', 'kenji', ['inheritance'], 0, ['temukau'], 0, 'pending', 'Expires in 2 d 04 h'],
+  [2, 'received', 'rhea', ['block18', 'lightbox'], 0, ['olympus'], 0, 'pending', 'Expires in 18 h'],
+  [3, 'sent', 'lou', ['duality'], 200, ['justsmile', 'hybrid', 'analog'], 0, 'pending', 'Expires in 2 d 21 h'],
+  [4, 'history', 'nyx', ['slag', 'featherweight'], 300, ['sakkaku'], 0, 'accepted', 'Oct 12'],
+  [5, 'history', 'ash', ['lightbox'], 0, ['wildchild'], 0, 'declined', 'Oct 10'],
+  [6, 'history', 'tomb', ['slag'], 0, ['analog'], 0, 'expired', 'Oct 8'],
+  [7, 'history', 'kenji', ['block18'], 150, ['temukau'], 0, 'cancelled', 'Oct 5']
+];
+const CHIP = {
+  pending: 'border: 1px solid #2C3138; color: #ECEDEF',
+  accepted: 'background: #ECEDEF; color: #0A0B0D',
+  declined: 'border: 1px dashed #2C3138; color: #858B94',
+  expired: 'border: 1px dashed #2C3138; color: #858B94',
+  cancelled: 'border: 1px dashed #2C3138; color: #858B94'
+};
+function fmt(n) { return n.toLocaleString('en-US'); }
+function item(k) {
+  const d = IT[k];
+  return { weapon: d[0], skin: d[1], full: d[0] + ' | ' + d[1], color: RAR[d[2]][0], glow: RAR[d[2]][1], art: ART[d[3]], meta: d[4], value: d[5], album: d[6] };
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'received', status: {}, toast: '' };
+  }
+  setStatus(id, s, toast) {
+    const next = Object.assign({}, this.state.status);
+    next[id] = s;
+    this.setState({ status: next, toast: toast });
+  }
+  renderVals() {
+    const st = this.state;
+    const nav = NAVDEF.map((n) => ({
+      label: n[1], href: n[2], icon: n[3],
+      current: n[0] === 'trades' ? 'page' : undefined,
+      style: n[0] === 'trades' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF'
+    }));
+    const all = START.map((o) => {
+      const status = st.status[o[0]] || o[7];
+      return { o, status, box: o[1] === 'history' || status !== 'pending' ? (o[1] === 'history' ? 'history' : o[1]) : o[1] };
+    });
+    const pending = (box) => all.filter((x) => x.o[1] === box && x.status === 'pending').length;
+    const tabs = [['received', 'Received'], ['sent', 'Sent'], ['history', 'History']].map((t) => {
+      const count = t[0] === 'history' ? 0 : pending(t[0]);
+      return {
+        label: t[1], on: st.tab === t[0], count: String(count), hasCount: count > 0,
+        style: st.tab === t[0] ? 'color: #ECEDEF; border-bottom: 2px solid #ECEDEF' : 'color: #A1A7AF; border-bottom: 2px solid transparent',
+        pick: () => this.setState({ tab: t[0], toast: '' })
+      };
+    });
+    const offers = all.filter((x) => x.o[1] === st.tab).map((x) => {
+      const o = x.o;
+      const give = o[3].map(item), get = o[5].map(item);
+      const giveTotal = give.reduce((a, b) => a + b.value, 0) + o[4];
+      const getTotal = get.reduce((a, b) => a + b.value, 0) + o[6];
+      const diff = getTotal - giveTotal;
+      const albums = get.filter((i) => i.album).length;
+      const fromYou = o[1] === 'sent' || (o[1] === 'history' && o[0] === 7);
+      const label = { pending: 'Pending', accepted: 'Accepted', declined: 'Declined', expired: 'Expired', cancelled: 'Cancelled' }[x.status];
+      return {
+        title: 'Trade with ' + o[2],
+        initial: o[2][0].toUpperCase(),
+        lead: fromYou ? 'You' : o[2], verb: fromYou ? 'offered' : 'offered you a trade', tail: fromYou ? o[2] : '',
+        when: x.status === 'pending' ? o[8] : (o[1] === 'history' ? o[8] : 'Just now'),
+        statusLabel: label, chipStyle: CHIP[x.status],
+        opacity: o[1] === 'history' && x.status !== 'accepted' ? '0.72' : '1',
+        sides: [
+          { label: 'You give', total: fmt(giveTotal), items: give, hasCr: o[4] > 0, cr: fmt(o[4]) },
+          { label: 'You get', total: fmt(getTotal), items: get, hasCr: o[6] > 0, cr: fmt(o[6]) }
+        ],
+        balanceLine: 'Estimated ' + (diff >= 0 ? '+' : '−') + fmt(Math.abs(diff)) + ' CR for you',
+        albumLine: albums > 0, albumText: albums === 1 ? 'Fills 1 empty album slot' : 'Fills ' + albums + ' empty album slots',
+        canAnswer: o[1] === 'received' && x.status === 'pending',
+        canCancel: o[1] === 'sent' && x.status === 'pending',
+        accept: () => this.setStatus(o[0], 'accepted', 'Trade done with ' + o[2] + '. ' + get.map((i) => i.full).join(', ') + ' added to your inventory.'),
+        decline: () => this.setStatus(o[0], 'declined', 'Offer from ' + o[2] + ' declined. Their items are unlocked.'),
+        cancel: () => this.setStatus(o[0], 'cancelled', 'Offer to ' + o[2] + ' cancelled. Your items are unlocked.')
+      };
+    });
+    return { nav, tabs, offers, toast: st.toast, hasToast: !!st.toast };
+  }
+}
+</script>
+</body>
+</html>

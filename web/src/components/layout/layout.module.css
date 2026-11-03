@@ -1,0 +1,292 @@
+/* ── Desktop shell: 248 px rail + content ── */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--text);
+}
+.sidebarFrame {
+  position: sticky;
+  top: 0;
+  flex: none;
+  width: var(--sidebar);
+  height: 100vh;
+  background: var(--rail);
+  border-right: 1px solid var(--border);
+}
+.sidebar {
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+}
+.sideTop {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 10px;
+  text-decoration: none;
+  color: var(--text);
+}
+.logoMark {
+  width: 16px;
+  height: 16px;
+  background: var(--text);
+  clip-path: var(--logo-cut);
+}
+.logoText {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+}
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: var(--radius-card);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  transition:
+    background-color var(--dur-base) ease,
+    color var(--dur-base) ease;
+}
+.navLink:hover {
+  background: var(--nav-hover);
+  color: var(--text-2);
+}
+.navLink[aria-current='page'] {
+  background: var(--nav-active);
+  color: var(--text);
+}
+.icon {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sideBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.balanceCard {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface-balance);
+}
+.balanceRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.player {
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.playerRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.playerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.playerName {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.playerSub {
+  font-size: 12px;
+  color: var(--text-2);
+}
+.signOut {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  color: var(--text-2);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.signOut:hover {
+  color: var(--text);
+}
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 40px var(--content-pad) 72px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Mobile shell: header + scroll area + 84 px tab bar ── */
+.mobileShell {
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--text);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: var(--tabbar);
+}
+.mobileHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 20px;
+}
+.mobileHeaderBack {
+  padding: 0 12px 0 8px;
+}
+.mobileLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  text-decoration: none;
+  color: var(--text);
+}
+.mobileLogo .logoMark {
+  width: 14px;
+  height: 14px;
+}
+.mobileLogo .logoText {
+  font-size: 14px;
+}
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 12px;
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 14px;
+}
+.balancePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  font-size: 13px;
+}
+.mobileContent {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 32px;
+}
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  height: var(--tabbar);
+  padding: 6px 6px 24px;
+  display: grid;
+  background: var(--rail);
+  border-top: 1px solid var(--border);
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 50px;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  transition: color var(--dur-base) ease;
+}
+.tab:active {
+  transform: scale(0.96);
+}
+.tab:hover {
+  color: var(--text-3);
+}
+.tab[aria-current='page'] {
+  color: var(--text);
+}
+
+/* ── Page header (label, 40 px title, subtitle, right slot) ── */
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+}
+.pageHeaderText {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pageTitle {
+  font-size: 40px;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.pageSub {
+  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+@media (max-width: 860px) {
+  .pageHeaderText {
+    gap: 8px;
+  }
+  .pageTitle {
+    font-size: 32px;
+  }
+  .pageSub {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}

@@ -1,0 +1,55 @@
+# Dependencies and build output
+node_modules/
+.pnpm-store/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+.eslintcache
+
+# Local-only tools and data (local Postgres, dev scripts)
+.local/
+.vercel/
+
+# Logs
+*.log
+
+# Secrets: every .env file stays local, only the examples are committed
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Database dumps and backups (migrations in db/migrations/ stay tracked)
+backups/
+*.dump
+*.sql.gz
+*.backup
+
+# AI assistants and agents
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+.mcp.json
+AGENTS.md
+GEMINI.md
+.gemini/
+.codex/
+.cursor/
+.cursorrules
+.cursorignore
+.windsurf/
+.windsurfrules
+.aider*
+.continue/
+.github/copilot-instructions.md
+
+# Editors and OS
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini

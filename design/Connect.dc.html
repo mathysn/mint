@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Save your collection</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.btn-p:hover{background:#FFFFFF}
+.btn-s:hover{border-color:#4A5059;background:#121417}
+.ghost:hover{color:#ECEDEF}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-rise{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes mint-pop{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="display: flex; flex-direction: column; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; padding: 0 48px; border-bottom: 1px solid #1C1F24; background: #0D0E11">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<a href="Main.dc.html" class="ghost" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; color: #A1A7AF; text-decoration: none; font-size: 14px">
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</header>
+
+<main style="flex: 1; width: 100%; max-width: 1180px; box-sizing: border-box; margin: 0 auto; padding: 56px 48px 72px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+
+<section aria-labelledby="c-title" style="flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<span class="lbl">// Save your collection</span>
+<h1 id="c-title" style="margin: 0; font-size: 56px; line-height: 1; font-weight: 600; letter-spacing: -0.03em; text-wrap: balance">Keep what you've pulled.</h1>
+<p style="margin: 0; max-width: 480px; font-size: 16px; line-height: 1.55; color: #A1A7AF">You're playing as a guest, so all of this lives in this browser only. Sign in with Discord and it moves to your account, on every device and inside the Discord activity.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 22px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span class="lbl">Your guest progress</span>
+<span class="mono" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: {{savedColor}}"><sc-if value="{{saved}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if>{{savedLabel}}</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px; background: #121417; overflow: hidden">
+<span style="position: relative; height: 76px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 8% 10%; background: radial-gradient(closest-side, {{it.glow}}, rgba(0,0,0,0))"></span><svg role="img" aria-label="{{it.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 82%; fill: #D3D6DB"><path d="{{it.art}}"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 1px; padding: 0 10px 10px"><span style="font-size: 11px; color: #A1A7AF">{{it.weapon}}</span><span style="font-size: 13px; font-weight: 600">{{it.skin}}</span><span class="mono" style="font-size: 10px; color: #A1A7AF">{{it.meta}}</span></span>
+<span aria-hidden="true" style="height: 3px; background: {{it.color}}"></span>
+</div>
+</sc-for>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<div style="display: flex; flex-direction: column-reverse; gap: 4px; padding: 14px 16px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">Balance</dt><dd class="mono" style="margin: 0; font-size: 18px">750 CR</dd></div>
+<div style="display: flex; flex-direction: column-reverse; gap: 4px; padding: 14px 16px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">Cases opened</dt><dd class="mono" style="margin: 0; font-size: 18px">3</dd></div>
+<div style="display: flex; flex-direction: column-reverse; gap: 4px; padding: 14px 16px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">Kilowatt album</dt><dd class="mono" style="margin: 0; font-size: 18px">3 / 17</dd></div>
+</dl>
+</div>
+
+<div style="display: flex; flex-direction: column">
+<span class="lbl" style="padding-bottom: 10px">// Also unlocks</span>
+<sc-for list="{{unlocks}}" as="u" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid #1A1D22">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: #A1A7AF; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{u.icon}}"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">{{u.title}}</span><span style="font-size: 13px; color: #A1A7AF">{{u.text}}</span></span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<aside aria-live="polite" style="flex: 1 1 400px; min-width: 0; position: relative; box-sizing: border-box; padding: 40px 36px 36px; border: 1px solid #2C3138; border-radius: 6px; background: {{cardBg}}">
+<span aria-hidden="true" style="position: absolute; left: 12px; top: 12px; width: 18px; height: 18px; border-left: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 12px; top: 12px; width: 18px; height: 18px; border-right: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; left: 12px; bottom: 12px; width: 18px; height: 18px; border-left: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 12px; bottom: 12px; width: 18px; height: 18px; border-right: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+
+<sc-if value="{{isIdle}}" hint-placeholder-val="{{ true }}">
+<div class="anim" style="display: flex; flex-direction: column; gap: 22px; animation: mint-rise 300ms ease-out both">
+<div style="display: flex; flex-direction: column; gap: 10px"><span class="lbl">Sign in</span><h2 style="margin: 0; font-size: 30px; line-height: 1.1; font-weight: 600; letter-spacing: -0.02em">One click, no password to remember.</h2></div>
+<button type="button" class="btn-p" onClick="{{connect}}" style="height: 56px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)">Continue with Discord</button>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{privacy}}" as="p" hint-placeholder-count="3">
+<li style="display: flex; gap: 10px; font-size: 14px; line-height: 1.45; color: #A1A7AF"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="flex: none; margin-top: 2px; fill: none; stroke: #ECEDEF; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span>{{p}}</span></li>
+</sc-for>
+</ul>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 18px; border-top: 1px solid #1A1D22">
+<span class="lbl" style="font-size: 10px">Inside the Discord activity</span>
+<span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">Discord asks you once when you launch Mint, then you're in. No separate step.</span>
+</div>
+<a href="Main.dc.html" class="ghost" style="align-self: center; display: inline-flex; align-items: center; height: 44px; color: #A1A7AF; font-size: 14px">Keep playing as a guest</a>
+</div>
+</sc-if>
+
+<sc-if value="{{isWaiting}}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 24px 0; text-align: center; animation: mint-rise 300ms ease-out both">
+<span aria-hidden="true" class="anim" style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 50%; border: 2px solid #2C3138; border-top-color: #ECEDEF; animation: mint-spin 900ms linear infinite"></span>
+<div style="display: flex; flex-direction: column; gap: 8px"><h2 style="margin: 0; font-size: 26px; font-weight: 600">Waiting for Discord…</h2><p style="margin: 0; max-width: 320px; font-size: 14px; line-height: 1.5; color: #A1A7AF">Approve Mint in the Discord window. This page carries on by itself.</p></div>
+<button type="button" class="btn-s" onClick="{{cancel}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="ghost" onClick="{{connect}}" style="height: 44px; padding: 0; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px">No window? Open it again</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isSuccess}}" hint-placeholder-val="{{ false }}">
+<div role="status" class="anim" style="display: flex; flex-direction: column; gap: 20px; animation: mint-rise 400ms ease-out both">
+<span class="anim" style="position: relative; width: 72px; height: 72px; animation: mint-pop 450ms cubic-bezier(.2,.9,.3,1.2) both">
+<span aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 28px; font-weight: 600">V</span>
+<span aria-hidden="true" style="position: absolute; right: -4px; bottom: -4px; width: 28px; height: 28px; border-radius: 50%; background: #ECEDEF; border: 3px solid #0E1013; display: grid; place-items: center"><svg width="14" height="14" viewBox="0 0 24 24" style="fill: none; stroke: #0A0B0D; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+</span>
+<div style="display: flex; flex-direction: column; gap: 10px"><span class="lbl" style="color: #ECEDEF">Saved</span><h2 style="margin: 0; font-size: 34px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Welcome, vex.</h2><p style="margin: 0; font-size: 15px; line-height: 1.55; color: #A1A7AF">Your 3 items, 750 CR and Kilowatt album progress are on your account now. Friends, trades and the market are open.</p></div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<a href="Inventory.dc.html" class="btn-p" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; background: #ECEDEF; color: #0A0B0D; text-decoration: none; font-size: 15px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Go to my inventory</a>
+<a href="Friends.dc.html" class="btn-s" style="display: inline-flex; align-items: center; height: 48px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 15px">Find friends</a>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isConflict}}" hint-placeholder-val="{{ false }}">
+<div role="alertdialog" aria-labelledby="cf-title" class="anim" style="display: flex; flex-direction: column; gap: 20px; animation: mint-rise 300ms ease-out both">
+<div style="display: flex; flex-direction: column; gap: 10px"><span class="lbl" style="color: #ECEDEF">Collection found</span><h2 id="cf-title" style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.02em">This Discord account already has a Mint collection.</h2><p style="margin: 0; font-size: 14px; line-height: 1.55; color: #A1A7AF">Guest progress only moves to a new account. Merging it into an existing one would let anyone farm free cases with guest sessions.</p></div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px dashed #4A5059; border-radius: 4px">
+<span class="lbl" style="font-size: 10px">If you switch, this guest session is lost</span>
+<span class="mono" style="font-size: 14px">3 items · 750 CR · Kilowatt 3/17</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<a href="Main.dc.html" class="btn-p" style="display: flex; align-items: center; justify-content: center; height: 48px; background: #ECEDEF; color: #0A0B0D; text-decoration: none; font-size: 15px; font-weight: 600">Switch to my collection</a>
+<button type="button" class="btn-s" onClick="{{connect}}" style="height: 48px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 15px; cursor: pointer">Use another Discord account</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+<div role="alert" class="anim" style="display: flex; flex-direction: column; gap: 20px; animation: mint-rise 300ms ease-out both">
+<div style="display: flex; flex-direction: column; gap: 10px"><span class="lbl">Not signed in</span><h2 style="margin: 0; font-size: 30px; line-height: 1.1; font-weight: 600; letter-spacing: -0.02em">Discord didn't confirm.</h2><p style="margin: 0; font-size: 14px; line-height: 1.55; color: #A1A7AF">The window was closed or the request was declined. Nothing is lost: your guest progress is still here.</p></div>
+<button type="button" class="btn-p" onClick="{{connect}}" style="height: 52px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Try again</button>
+<a href="Main.dc.html" class="ghost" style="align-self: center; display: inline-flex; align-items: center; height: 44px; color: #A1A7AF; font-size: 14px">Keep playing as a guest</a>
+</div>
+</sc-if>
+</aside>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["idle","waiting","success","conflict","error"],"default":"idle","section":"Flow"},"$preview":{"width":1440,"height":1020}}'>
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z'
+};
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { phase: null };
+    this.to = null;
+  }
+  componentDidUpdate(prev) { if (prev.state !== this.props.state) { clearTimeout(this.to); this.setState({ phase: null }); } }
+  componentWillUnmount() { clearTimeout(this.to); }
+  connect() {
+    clearTimeout(this.to);
+    this.setState({ phase: 'waiting' });
+    this.to = setTimeout(() => this.setState({ phase: 'success' }), 2400);
+  }
+  renderVals() {
+    const s = this.state.phase || this.props.state || 'idle';
+    const saved = s === 'success';
+    return {
+      isIdle: s === 'idle', isWaiting: s === 'waiting', isSuccess: saved, isConflict: s === 'conflict', isError: s === 'error',
+      saved, savedLabel: saved ? 'Saved to vex' : 'Not saved yet', savedColor: saved ? '#ECEDEF' : '#858B94',
+      cardBg: saved ? 'radial-gradient(ellipse at 30% 0%, rgba(236,237,239,0.06), rgba(14,16,19,0) 60%), #0E1013' : '#0E1013',
+      items: [
+        ['MAC-10', 'Light Box', '#4B69FF', 'rgba(75,105,255,0.30)', 'smg', 'FT · 0.3121'],
+        ['Glock-18', 'Block-18', '#8847FF', 'rgba(136,71,255,0.32)', 'pistol', 'ST™ · FT · 0.1876'],
+        ['Nova', 'Dark Sigil', '#4B69FF', 'rgba(75,105,255,0.30)', 'rifle', 'MW · 0.0812']
+      ].map((i) => ({ weapon: i[0], skin: i[1], full: i[0] + ' | ' + i[1], color: i[2], glow: i[3], art: ART[i[4]], meta: i[5] })),
+      unlocks: [
+        ['Friends and trades', 'Add friends by name and swap skins with them.', 'M4 8h15l-4-4M20 16H5l4 4'],
+        ['The market', 'Bid on other players’ skins and sell yours.', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+        ['Showcase and leaderboard', 'Pick 5 items for your profile and climb the rankings.', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+      ].map((u) => ({ title: u[0], text: u[1], icon: u[2] })),
+      privacy: [
+        'Mint only gets your Discord name and avatar.',
+        'It can’t read your messages, servers or friends list.',
+        'Mint never sells anything for real money.'
+      ],
+      connect: () => this.connect(),
+      cancel: () => { clearTimeout(this.to); this.setState({ phase: 'idle' }); },
+      done: () => this.setState({ phase: 'success' })
+    };
+  }
+}
+</script>
+</body>
+</html>

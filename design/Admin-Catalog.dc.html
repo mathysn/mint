@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Catalog</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">// Catalog</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Catalog</h1>
+<p style="margin: 0; font-size: 14px; color: #A1A7AF">{{caseCount}} cases from ByMykel <span class="mono" style="color: #ECEDEF">{{current}}</span>, imported {{importedOn}}. Changes reach players right away. All times UTC.</p>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
+<button type="button" class="btn-s" onClick="{{openCotd}}" disabled="{{cantAdmin}}" title="{{adminHint}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Change case of the day</button>
+<sc-if value="{{cantAdmin}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 11px; color: #858B94">Read-only: catalog changes are for admins.</span></sc-if>
+</div>
+</header>
+
+<sc-if value="{{hasPending}}" hint-placeholder-val="{{ false }}">
+<div role="alertdialog" aria-labelledby="pd-t" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 2px"><span id="pd-t" style="font-size: 14px; font-weight: 600">{{pend.title}}</span><span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">{{pend.text}}</span></div>
+<sc-if value="{{pend.blocked}}" hint-placeholder-val="{{ false }}">
+<button type="button" class="btn-s" onClick="{{cancelPending}}" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">OK</button>
+</sc-if>
+<sc-if value="{{pend.ok}}" hint-placeholder-val="{{ true }}">
+<label style="display: flex; align-items: center; gap: 8px; flex: 1 1 260px"><span style="font-size: 13px; color: #A1A7AF">Reason</span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="Shown in the admin log" style="box-sizing: border-box; flex: 1; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+<button type="button" onClick="{{cancelPending}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-p" onClick="{{applyPending}}" disabled="{{noReason}}" style="height: 40px; padding: 0 16px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{pend.button}}</button>
+</sc-if>
+</div>
+</sc-if>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<section aria-label="Cases" style="flex: 999 1 720px; min-width: 0; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<div role="table" aria-label="Cases" style="min-width: 920px">
+<div role="row" style="display: grid; grid-template-columns: 84px minmax(0, 1fr) 110px 92px 70px 80px 62px 100px; align-items: center; min-height: 44px; padding: 0 18px; border-bottom: 1px solid #1C1F24; background: #0D0E11">
+<span role="columnheader"><span class="sr">Image</span></span><span role="columnheader" class="lbl" style="font-size: 10px">Case</span><span role="columnheader" class="lbl" style="font-size: 10px">Released ↓</span><span role="columnheader" class="lbl" style="font-size: 10px">Contents</span><span role="columnheader" class="lbl" style="font-size: 10px">Active</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right; padding-right: 18px">Price</span><span role="columnheader" class="lbl" style="font-size: 10px">New</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right; white-space: nowrap">Opened 7 d</span>
+</div>
+<sc-for list="{{cases}}" as="c" hint-placeholder-count="8">
+<div role="row" class="row" style="display: grid; grid-template-columns: 84px minmax(0, 1fr) 110px 92px 70px 80px 62px 100px; align-items: center; min-height: 72px; padding: 0 18px; border-bottom: 1px solid #1A1D22; {{c.rowStyle}}">
+<span role="cell"><span style="width: 64px; height: 48px; display: grid; place-items: center; border-radius: 4px; background: radial-gradient(closest-side, rgba(236,237,239,0.16), rgba(0,0,0,0))"><svg role="img" aria-label="{{c.name}} (placeholder art)" viewBox="0 0 240 120" style="width: 54px; fill: #C3C7CD; fill-rule: evenodd; opacity: {{c.op}}"><path d="{{caseArt}}"></path></svg></span></span>
+<span role="cell" style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0">
+<button type="button" class="stretch" onClick="{{c.open}}" style="font-size: 15px; font-weight: 500; color: {{c.nameColor}}">{{c.name}}</button>
+<sc-if value="{{c.hasMeta}}" hint-placeholder-val="{{ false }}"><span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px">
+<sc-if value="{{c.cotd}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; height: 20px; padding: 0 6px; background: #ECEDEF; color: #0A0B0D; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Case of the day</span></sc-if>
+<sc-if value="{{c.hasWarn}}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #A1A7AF"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span>{{c.warn}}</span></sc-if>
+</span></sc-if>
+</span>
+<span role="cell" class="mono" style="font-size: 13px; color: #A1A7AF">{{c.released}}</span>
+<span role="cell" class="mono" style="font-size: 13px">{{c.contents}}</span>
+<span role="cell"><button type="button" role="switch" class="sw above" aria-checked="{{c.active}}" aria-label="{{c.activeLabel}}" title="{{adminHint}}" onClick="{{c.toggleActive}}" disabled="{{cantAdmin}}"></button></span>
+<span role="cell" class="mono" style="font-size: 13px; text-align: right; padding-right: 18px">{{c.price}}</span>
+<span role="cell"><button type="button" role="switch" class="sw above" aria-checked="{{c.isNew}}" aria-label="{{c.newLabel}}" title="{{adminHint}}" onClick="{{c.toggleNew}}" disabled="{{cantAdmin}}"></button></span>
+<span role="cell" class="mono" style="font-size: 14px; text-align: right">{{c.openings}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 18px">
+<span class="mono" style="font-size: 12px; color: #A1A7AF">{{footer}}</span>
+<button type="button" class="btn-s" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Show all {{caseCount}}</button>
+</div>
+</section>
+
+<section aria-labelledby="imp-t" style="flex: 1 1 340px; display: flex; flex-wrap: wrap; gap: 20px 40px; padding: 20px 22px 22px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h2 id="imp-t" class="lbl" style="margin: 0">// Import catalog from ByMykel</h2>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #A1A7AF">Now on <span class="mono" style="color: #ECEDEF">{{current}}</span> · {{importedOn}} · {{caseCount}} cases, {{skinCount}} skins. A dry run changes nothing.</p>
+</div>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Commit</span>
+<input type="text" class="field mono" value="{{commit}}" onChange="{{onCommit}}" placeholder="main or a commit hash" style="box-sizing: border-box; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 14px"></label>
+<button type="button" class="btn-s" onClick="{{dryRun}}" disabled="{{imp.busy}}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer"><sc-if value="{{imp.running}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 12px; height: 12px; border: 2px solid #4A5059; border-top-color: #ECEDEF; border-radius: 50%; animation: mint-spin .8s linear infinite"></span></sc-if>{{imp.dryLabel}}</button>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid #1A1D22">
+<span class="lbl" style="font-size: 10px">Previous imports</span>
+<sc-for list="{{history}}" as="h" hint-placeholder-count="3">
+<span style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: #A1A7AF"><span><span class="mono" style="color: #ECEDEF">{{h.c}}</span> · {{h.what}}</span><span class="mono" style="font-size: 12px">{{h.when}}</span></span>
+</sc-for>
+</div>
+</div>
+<div style="flex: 2 1 420px; min-width: 0; display: flex; flex-direction: column">
+
+<sc-if value="{{imp.hasReport}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span class="lbl" style="font-size: 10px">Dry run · {{imp.from}} → {{imp.to}}</span>
+<dl style="margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<sc-for list="{{imp.stats}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column-reverse; gap: 4px; padding: 12px 14px; background: #121417"><dt style="font-size: 12px; color: #A1A7AF">{{s.k}}</dt><dd class="mono" style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 500"><sc-if value="{{s.alert}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #C8382F"></span></sc-if>{{s.v}}</dd></div>
+</sc-for>
+</dl>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{imp.lines}}" as="l" hint-placeholder-count="4">
+<li style="display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1A1D22; font-size: 13px; line-height: 1.45"><span class="mono" style="flex: none; width: 14px; color: #858B94">{{l.sign}}</span><span style="color: #A1A7AF"><span style="color: #ECEDEF">{{l.head}}</span> {{l.text}}</span></li>
+</sc-for>
+</ul>
+<sc-if value="{{imp.confirming}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Apply import" style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<span style="font-size: 14px; font-weight: 600">Apply import {{imp.to}}</span>
+<span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">New cases start off. Odds and prices don't change. Items players own are never touched.</span>
+<input type="text" class="field" aria-label="Reason" value="{{reason}}" onChange="{{onReason}}" placeholder="Reason, shown in the admin log" style="box-sizing: border-box; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px">
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" class="btn-s" onClick="{{cancelApply}}" style="height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-p" onClick="{{apply}}" disabled="{{noReason}}" style="height: 44px; padding: 0 16px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Apply import</button>
+</div>
+<span class="mono" style="font-size: 11px; color: #858B94">Logged as {{staffName}}</span>
+</div>
+</sc-if>
+<sc-if value="{{imp.canAsk}}" hint-placeholder-val="{{ true }}">
+<button type="button" class="btn-p" onClick="{{askApply}}" disabled="{{cantAdmin}}" title="{{adminHint}}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Apply import…</button>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{imp.noReport}}" hint-placeholder-val="{{ false }}"><div style="flex: 1; min-height: 160px; display: grid; place-items: center; padding: 24px; border: 1px dashed #2C3138; border-radius: 4px; font-size: 14px; color: #A1A7AF; text-align: center">{{imp.emptyText}}</div></sc-if>
+</div>
+</section>
+</div>
+</div>
+</main>
+<sc-if value="{{drawerOpen}}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" onClick="{{close}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(5,6,8,0.62)"></div>
+<aside role="dialog" aria-modal="true" aria-labelledby="dr-t" style="position: absolute; top: 0; right: 0; bottom: 0; z-index: 31; width: min(520px, 100%); box-sizing: border-box; display: flex; flex-direction: column; background: #0E1013; border-left: 1px solid #2C3138; box-shadow: -24px 0 60px rgba(0,0,0,0.5)">
+<div class="dscroll" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 22px; padding: 20px 28px 28px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span class="lbl">{{dr.label}}</span>
+<button type="button" aria-label="Close" onClick="{{close}}" style="width: 44px; height: 44px; margin-right: -12px; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+
+<sc-if value="{{dr.isCase}}" hint-placeholder-val="{{ true }}">
+<div style="position: relative; height: 180px; display: grid; place-items: center; background: #0A0B0D; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<span aria-hidden="true" style="position: absolute; inset: 8% 18%; background: radial-gradient(closest-side, rgba(236,237,239,0.14), rgba(0,0,0,0))"></span>
+<span aria-hidden="true" style="position: absolute; left: 14px; top: 14px; width: 14px; height: 14px; border-left: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 14px; top: 14px; width: 14px; height: 14px; border-right: 1px solid #5A616B; border-top: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; left: 14px; bottom: 14px; width: 14px; height: 14px; border-left: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<span aria-hidden="true" style="position: absolute; right: 14px; bottom: 14px; width: 14px; height: 14px; border-right: 1px solid #5A616B; border-bottom: 1px solid #5A616B"></span>
+<svg role="img" aria-label="{{cs.name}} (placeholder art)" viewBox="0 0 240 120" style="position: relative; width: 46%; fill: #D7DADF; fill-rule: evenodd; opacity: {{cs.op}}"><path d="{{caseArt}}"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="dr-t" style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.01em">{{cs.name}}</h2>
+<span style="font-size: 13px; color: #A1A7AF">Released <span class="mono">{{cs.released}}</span> · <span class="mono">{{cs.price}}</span> · {{cs.contentsLong}}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span class="mono" style="height: 26px; display: inline-flex; align-items: center; padding: 0 8px; border-radius: 2px; font-size: 11px; {{cs.activeChip}}">{{cs.activeText}}</span>
+<sc-if value="{{cs.isNew}}" hint-placeholder-val="{{ false }}"><span class="mono" style="height: 26px; display: inline-flex; align-items: center; padding: 0 8px; background: #ECEDEF; color: #0A0B0D; border-radius: 2px; font-size: 11px; font-weight: 600">New</span></sc-if>
+<sc-if value="{{cs.cotd}}" hint-placeholder-val="{{ false }}"><span class="mono" style="height: 26px; display: inline-flex; align-items: center; padding: 0 8px; background: #ECEDEF; color: #0A0B0D; border-radius: 2px; font-size: 11px; font-weight: 600">Case of the day</span></sc-if>
+</div>
+</div>
+
+<sc-if value="{{cs.hasWarn}}" hint-placeholder-val="{{ false }}">
+<div role="note" style="display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border: 1px solid #2C3138; border-radius: 4px; background: #111316">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #C8382F"></span>{{cs.warn}}</span>
+<sc-for list="{{cs.warnLines}}" as="w" hint-placeholder-count="2">
+<span style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px"><span>{{w.a}}</span><span class="mono" style="font-size: 12px; color: #A1A7AF">{{w.b}}</span></span>
+</sc-for>
+<span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">Turned off by mathys on Oct 22 so nobody opens a skin without art. Re-run the import once ByMykel has the images.</span>
+</div>
+</sc-if>
+
+<section aria-label="Contents" style="display: flex; flex-direction: column; gap: 16px">
+<sc-for list="{{cs.groups}}" as="g" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span aria-hidden="true" style="width: 8px; height: 8px; background: {{g.color}}"></span><span style="color: {{g.text}}">{{g.name}}</span><span class="mono" style="color: #858B94; font-size: 12px">{{g.count}}</span></span>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px">
+<sc-for list="{{g.items}}" as="it" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; border-radius: 4px; overflow: hidden; background: #121417; {{it.box}}">
+<span style="position: relative; height: 58px; display: grid; place-items: center">
+<sc-if value="{{it.hasArt}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="position: absolute; inset: 6% 12%; background: radial-gradient(closest-side, {{g.glow}}, rgba(0,0,0,0))"></span><svg role="img" aria-label="{{it.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 70%; fill: {{it.fill}}"><path d="{{it.art}}"></path></svg></sc-if>
+<sc-if value="{{it.broken}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #A1A7AF"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span>No image</span></sc-if>
+</span>
+<span style="display: flex; flex-direction: column; padding: 6px 10px 8px"><span style="font-size: 11px; color: #A1A7AF">{{it.weapon}}</span><span style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.skin}}</span></span>
+<span aria-hidden="true" style="height: 3px; background: {{g.color}}"></span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</section>
+
+<section aria-labelledby="dr30" style="display: flex; flex-direction: column; gap: 10px">
+<h3 id="dr30" class="lbl" style="margin: 0">// Last 30 days · {{cs.openings30}} openings</h3>
+<div style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px">
+<sc-for list="{{cs.drops}}" as="x" hint-placeholder-count="5">
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr) 64px 64px; align-items: center; gap: 12px; min-height: 40px; padding: 0 14px; border-bottom: 1px solid #1A1D22; font-size: 13px">
+<span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 8px; height: 8px; background: {{x.color}}"></span>{{x.name}}</span>
+<span aria-hidden="true" style="height: 4px; background: #1E2227"><span style="display: block; height: 4px; width: {{x.w}}; background: {{x.color}}"></span></span>
+<span class="mono" style="text-align: right">{{x.n}}</span>
+<span class="mono" style="text-align: right; color: #A1A7AF">{{x.pct}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{dr.isCotd}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 id="dr-t" style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.01em">Change case of the day</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #A1A7AF">The case players get for free every 4 hours. The change applies from the next free case at <span class="mono" style="color: #ECEDEF">16:00 UTC</span>. Cases that are off can't be picked.</p>
+</div>
+<div role="radiogroup" aria-label="Case of the day" style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px">
+<sc-for list="{{cotdList}}" as="o" hint-placeholder-count="6">
+<button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" disabled="{{o.off}}" style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 14px; border: 0; border-bottom: 1px solid #1A1D22; background: {{o.bg}}; color: #ECEDEF; font: inherit; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="flex: none; width: 18px; height: 18px; box-sizing: border-box; border-radius: 50%; border: 1px solid {{o.ring}}; display: grid; place-items: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{o.dot}}"></span></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 500; color: {{o.color}}">{{o.name}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{o.meta}}</span></span>
+<sc-if value="{{o.current}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 11px; color: #A1A7AF">Current</span></sc-if>
+</button>
+</sc-for>
+</div>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Reason <span style="color: #858B94">· required, shown in the admin log</span></span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="e.g. weekly rotation" style="box-sizing: border-box; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" class="btn-s" onClick="{{close}}" style="height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-p" onClick="{{saveCotd}}" disabled="{{cotdBlocked}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{cotdButton}}</button>
+</div>
+<span class="mono" style="font-size: 11px; color: #858B94">Logged as {{staffName}}</span>
+</sc-if>
+</div>
+</aside>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"drawer":{"editor":"enum","options":["fever","kilowatt","cotd","none"],"default":"fever","section":"State"},"import":{"editor":"enum","options":["report","idle"],"default":"report","section":"State"},"role":{"editor":"enum","options":["admin","moderator","viewer"],"default":"admin","section":"State"},"$preview":{"width":1440,"height":1300}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const CASE_ART = 'M38 34H202A8 8 0 0 1 210 42V96A8 8 0 0 1 202 104H38A8 8 0 0 1 30 96V42A8 8 0 0 1 38 34Z M98 18H142V34H134V25H106V34H98Z M30 58H210V61H30Z M120 66L132 78L120 90L108 78Z M52 44H68V50H52Z M172 44H188V50H172Z';
+const RAR = {
+  milspec: ['#4B69FF', 'rgba(75,105,255,0.30)', '#8197FF', 'Mil-Spec'],
+  restricted: ['#8847FF', 'rgba(136,71,255,0.32)', '#A983FF', 'Restricted'],
+  classified: ['#D32CE6', 'rgba(211,44,230,0.30)', '#E57AF0', 'Classified'],
+  covert: ['#EB4B4B', 'rgba(235,75,75,0.32)', '#F27D7D', 'Covert'],
+  gold: ['#E4AE39', 'rgba(228,174,57,0.36)', '#ECC163', '★ Rare special']
+};
+
+// id, name, released, contents, active, new, opened 7 d, case of the day, warning
+const CASES = [
+  ['fever', 'Fever Case', '2025-03-31', '17 + ★', false, true, 412, false, '2 broken images'],
+  ['gallery', 'Gallery Case', '2024-10-02', '17 + ★', true, false, 356, false, ''],
+  ['kilowatt', 'Kilowatt Case', '2024-02-06', '17 + ★', true, false, 288, true, ''],
+  ['revolution', 'Revolution Case', '2023-02-09', '17 + ★', true, false, 301, false, ''],
+  ['recoil', 'Recoil Case', '2022-07-01', '17 + ★', true, false, 164, false, ''],
+  ['dreams', 'Dreams & Nightmares Case', '2022-01-20', '17 + ★', true, false, 142, false, ''],
+  ['snakebite', 'Snakebite Case', '2021-05-03', '17 + ★', true, false, 119, false, ''],
+  ['phoenix', 'Operation Phoenix Weapon Case', '2014-02-20', '13 + ★', true, false, 97, false, '']
+];
+const COUNTS = { phoenix: [2, 3, 4, 4] };
+const CONTENTS = {
+  fever: {
+    covert: [['AWP', 'Printstream', 'sniper'], ['FAMAS', 'Bad Trip', 'rifle']],
+    classified: [['AK-47', 'Searing Rage', 'rifle'], ['Glock-18', 'Shinobu', 'pistol'], ['UMP-45', 'K.O. Factory', 'smg']],
+    restricted: [['Desert Eagle', 'Serpent Strike', 'pistol'], ['Galil AR', 'Control', 'rifle'], ['Nova', 'Rising Sun', 'rifle'], ['P90', 'Wave Breaker', 'smg'], ['Zeus x27', 'Tosai', 'pistol', true]],
+    milspec: [['M4A4', 'Choppa', 'rifle'], ['MAG-7', 'Resupply', 'smg'], ['MP9', 'Nexus', 'smg', true], ['P2000', 'Sure Grip', 'pistol'], ['SSG 08', 'Memorial', 'sniper'], ['USP-S', 'PC-GRN', 'pistol'], ['XM1014', 'Mockingbird', 'rifle']],
+    gold: ['★ 4 knives', '52 finishes'],
+    warnLines: [['MP9 | Nexus', 'image 404'], ['Zeus x27 | Tosai', 'image 404']]
+  },
+  kilowatt: {
+    covert: [['AK-47', 'Inheritance', 'rifle'], ['AWP', 'Chrome Cannon', 'sniper']],
+    classified: [['M4A1-S', 'Black Lotus', 'rifle'], ['Zeus x27', 'Olympus', 'pistol'], ['USP-S', 'Jawbreaker', 'pistol']],
+    restricted: [['M4A4', 'Etch Lord', 'rifle'], ['Glock-18', 'Block-18', 'pistol'], ['Five-SeveN', 'Hybrid', 'pistol'], ['MP7', 'Just Smile', 'smg'], ['Sawed-Off', 'Analog Input', 'rifle']],
+    milspec: [['Tec-9', 'Slag', 'pistol'], ['Dual Berettas', 'Hideout', 'pistol'], ['MAC-10', 'Light Box', 'smg'], ['Nova', 'Dark Sigil', 'rifle'], ['SSG 08', 'Dezastre', 'sniper'], ['UMP-45', 'Motorized', 'smg'], ['XM1014', 'Irezumi', 'rifle']],
+    gold: ['★ Kukri Knife', '13 finishes'],
+    warnLines: []
+  }
+};
+const DROPS = { fever: [964, 191, 38, 9, 4], kilowatt: [951, 190, 38, 8, 3] };
+const GROUPS = [['covert', 'Covert'], ['classified', 'Classified'], ['restricted', 'Restricted'], ['milspec', 'Mil-Spec'], ['gold', '★ Rare special']];
+const DIST = [0.7992, 0.1598, 0.032, 0.0064, 0.0026];
+const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { dr: undefined, ov: {}, pending: null, reason: '', cotdPick: null, imp: undefined, commit: 'f9e8d7c', applied: false, toast: '' };
+  }
+  componentDidUpdate(prev) {
+    if (prev.drawer !== this.props.drawer || prev.import !== this.props.import || prev.role !== this.props.role) this.setState({ dr: undefined, imp: undefined, pending: null, toast: '' });
+  }
+  renderVals() {
+    const st = this.state;
+    const sh = SHELL(this.props.role, 'catalog');
+    const isAdmin = sh.rank >= 2;
+    const list = CASES.map((c) => {
+      const o = st.ov[c[0]] || {};
+      return { id: c[0], name: c[1], released: c[2], contents: c[3], active: o.active !== undefined ? o.active : c[4], isNew: o.isNew !== undefined ? o.isNew : c[5], opened: c[6], cotd: o.cotd !== undefined ? o.cotd : c[7], warn: c[8] };
+    });
+    const dr = st.dr !== undefined ? st.dr : (this.props.drawer === 'none' ? null : (this.props.drawer || 'fever'));
+    const ask = (id, field) => () => this.setState({ pending: { id, field }, reason: '' });
+    const cases = list.map((c) => ({
+      name: c.name, released: c.released, contents: c.contents, active: c.active, isNew: c.isNew, cotd: c.cotd,
+      hasWarn: !!c.warn, warn: c.warn, hasMeta: c.cotd || !!c.warn,
+      op: c.active ? '1' : '0.4', nameColor: c.active ? '#ECEDEF' : '#A1A7AF',
+      price: '250 CR', openings: fmt(c.opened),
+      activeLabel: (c.active ? 'Turn off ' : 'Turn on ') + c.name, newLabel: (c.isNew ? 'Remove NEW badge from ' : 'Mark as new: ') + c.name,
+      toggleActive: ask(c.id, 'active'), toggleNew: ask(c.id, 'isNew'),
+      rowStyle: dr === c.id ? 'background: #16181C' : '',
+      open: () => this.setState({ dr: c.id })
+    }));
+    // pending toggle
+    let pend = { title: '', text: '', button: '', blocked: false, ok: false, toast: '', apply: null };
+    if (st.pending) {
+      const c = list.find((x) => x.id === st.pending.id);
+      if (st.pending.field === 'active') {
+        if (c.active && c.cotd) pend = { title: 'Turn off ' + c.name, text: 'It’s today’s case of the day. Pick another case of the day first, then turn it off.', button: '', blocked: true, ok: false };
+        else if (c.active) pend = { title: 'Turn off ' + c.name, text: 'Players can’t buy it or get it for free anymore. Items already opened stay where they are. ' + fmt(c.opened) + ' openings in the last 7 days.', button: 'Turn off ' + c.name, ok: true, toast: 'Turned off ' + c.name + ' · logged', apply: { active: false } };
+        else pend = { title: 'Turn on ' + c.name, text: c.warn ? c.warn + ' are still there: players would open skins with a blank card.' : 'Players can buy it right away for 250 CR.', button: c.warn ? 'Turn on anyway' : 'Turn on ' + c.name, ok: true, toast: 'Turned on ' + c.name + ' · logged', apply: { active: true } };
+      } else {
+        pend = c.isNew
+          ? { title: 'Remove the NEW badge from ' + c.name, text: 'The shop stops highlighting it. Nothing else changes.', button: 'Remove NEW badge', ok: true, toast: 'Removed NEW badge from ' + c.name + ' · logged', apply: { isNew: false } }
+          : { title: 'Mark ' + c.name + ' as new', text: 'Shows a NEW badge on it in the shop.', button: 'Mark as new', ok: true, toast: 'Marked ' + c.name + ' as new · logged', apply: { isNew: true } };
+      }
+    }
+    // drawer: case
+    const cur = list.find((x) => x.id === dr) || null;
+    let cs = { name: '', released: '', price: '', contentsLong: '', activeChip: '', activeText: '', isNew: false, cotd: false, hasWarn: false, warn: '', warnLines: [], groups: [], openings30: '', drops: [], op: '1' };
+    if (cur) {
+      const ct = CONTENTS[cur.id];
+      const counts = COUNTS[cur.id] || [2, 3, 5, 7];
+      const drops = DROPS[cur.id] || DIST.map((p) => Math.round(cur.opened * 4.2 * p));
+      const total = drops.reduce((a, b) => a + b, 0);
+      cs = {
+        name: cur.name, released: cur.released, price: '250 CR', op: cur.active ? '1' : '0.45',
+        contentsLong: (cur.id === 'phoenix' ? '13' : '17') + ' skins + ★',
+        activeChip: cur.active ? 'border: 1px solid #2C3138; color: #ECEDEF' : 'border: 1px dashed #4A5059; color: #858B94',
+        activeText: cur.active ? 'Active' : 'Off', isNew: cur.isNew, cotd: cur.cotd,
+        hasWarn: !!cur.warn, warn: cur.warn, warnLines: ct ? ct.warnLines.map((w) => ({ a: w[0], b: w[1] })) : [],
+        groups: GROUPS.map((g, gi) => {
+          const r = RAR[g[0]];
+          let items = [];
+          if (ct && g[0] !== 'gold') items = ct[g[0]].map((i) => ({ weapon: i[0], skin: i[1], full: i[0] + ' | ' + i[1], art: ART[i[2]], fill: '#D3D6DB', hasArt: !i[3], broken: !!i[3], box: i[3] ? 'border: 1px dashed #4A5059' : '' }));
+          if (ct && g[0] === 'gold') items = [{ weapon: ct.gold[0], skin: ct.gold[1], full: ct.gold[0], art: ART.knife, fill: '#EFE6D2', hasArt: true, broken: false, box: '' }];
+          return { name: g[1], color: r[0], text: r[2], glow: r[1], count: g[0] === 'gold' ? (ct ? ct.gold[1] : 'pool') : String(ct ? ct[g[0]].length : counts[gi]), items };
+        }),
+        openings30: fmt(total),
+        drops: GROUPS.map((g, i) => ({ name: g[0] === 'gold' ? '★' : g[1], color: RAR[g[0]][0], n: fmt(drops[i]), pct: (drops[i] / total * 100).toFixed(1) + '%', w: (drops[i] / total * 100).toFixed(1) + '%' }))
+      };
+    }
+    // drawer: case of the day
+    const curCotd = list.find((x) => x.cotd) || list[2];
+    const pick = st.cotdPick || curCotd.id;
+    const pickCase = list.find((x) => x.id === pick);
+    const cotdList = list.map((c) => ({
+      name: c.name, on: c.id === pick, off: !c.active, current: c.id === curCotd.id,
+      meta: c.active ? fmt(c.opened) + ' openings in 7 d · ' + c.contents : 'Off · can’t be picked',
+      color: c.active ? '#ECEDEF' : '#858B94', bg: c.id === pick ? '#16181C' : 'transparent',
+      ring: c.id === pick ? '#ECEDEF' : '#4A5059', dot: c.id === pick ? '#ECEDEF' : 'transparent',
+      pick: () => this.setState({ cotdPick: c.id })
+    }));
+    // import
+    const impState = st.imp !== undefined ? st.imp : (this.props.import === 'idle' ? 'idle' : 'report');
+    const current = st.applied ? st.commit : 'a1b2c3d';
+    const imp = {
+      busy: impState === 'running', running: impState === 'running',
+      dryLabel: impState === 'running' ? 'Running dry run…' : (impState === 'report' || impState === 'confirm') ? 'Run the dry run again' : 'Dry run',
+      hasReport: impState === 'report' || impState === 'confirm', noReport: impState === 'idle' || impState === 'running', emptyText: impState === 'running' ? 'Comparing ' + (st.commit || 'main') + ' with ' + (st.applied ? st.commit : 'a1b2c3d') + '…' : st.applied ? 'Catalog is on ' + st.commit + '. Run a dry run to check a newer commit.' : 'Run a dry run to see what would change.', confirming: impState === 'confirm', canAsk: impState === 'report',
+      from: 'a1b2c3d', to: st.commit || 'main',
+      stats: [['+3', 'cases', false], ['+58', 'skins', false], ['2', 'skins removed', false], ['1', 'broken image', true]].map((s) => ({ v: s[0], k: s[1], alert: s[2] })),
+      lines: [['+', '3 cases', 'added. They start off: you turn them on when ready.'], ['+', '58 skins', 'added: 51 in the new cases, 7 new finishes in existing ones.'], ['−', '2 skins', 'gone from the source. Players keep the copies they own, they just stop dropping.'], ['!', '1 broken image:', 'MP9 | Nexus still has none. Zeus x27 | Tosai is fixed.']].map((l) => ({ sign: l[0], head: l[1], text: l[2] }))
+    };
+    const history = (st.applied ? [[st.commit, '45 cases · by ' + sh.staffName, 'Oct 23']] : []).concat([['a1b2c3d', '42 cases · by mathys', 'Oct 20'], ['9f31e02', '41 cases · by mathys', 'Sep 28'], ['5c07aa1', 'first import · by mathys', 'Sep 14']]).map((h) => ({ c: h[0], what: h[1], when: h[2] }));
+    return Object.assign(sh, {
+      caseArt: CASE_ART,
+      caseCount: st.applied ? '45' : '42', skinCount: st.applied ? '1,868' : '1,812', current, importedOn: st.applied ? 'Oct 23' : 'Oct 20',
+      cantAdmin: !isAdmin, adminHint: isAdmin ? '' : 'Admins only',
+      cases, footer: list.length + ' of ' + (st.applied ? 45 : 42) + ' cases · newest first',
+      hasPending: !!st.pending, pend,
+      reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }), noReason: !st.reason.trim(),
+      cancelPending: () => this.setState({ pending: null }),
+      applyPending: () => {
+        if (!st.pending || !pend.apply) return;
+        const ov = Object.assign({}, st.ov);
+        ov[st.pending.id] = Object.assign({}, ov[st.pending.id] || {}, pend.apply);
+        this.setState({ ov, pending: null, reason: '', toast: pend.toast });
+      },
+      drawerOpen: !!dr, close: () => this.setState({ dr: null }),
+      openCotd: () => this.setState({ dr: 'cotd', cotdPick: null, reason: '' }),
+      dr: { isCase: !!cur, isCotd: dr === 'cotd', label: dr === 'cotd' ? '// Case of the day' : '// Case' },
+      cs, cotdList,
+      cotdBlocked: pick === curCotd.id || !st.reason.trim() || !isAdmin,
+      cotdButton: pick === curCotd.id ? 'Pick another case' : 'Make it ' + pickCase.name,
+      saveCotd: () => {
+        if (pick === curCotd.id) return;
+        const ov = Object.assign({}, st.ov);
+        ov[curCotd.id] = Object.assign({}, ov[curCotd.id] || {}, { cotd: false });
+        ov[pick] = Object.assign({}, ov[pick] || {}, { cotd: true });
+        this.setState({ ov, dr: null, reason: '', toast: pickCase.name + ' is the case of the day from 16:00 · logged' });
+      },
+      commit: st.commit, onCommit: (e) => this.setState({ commit: e.target.value, imp: 'idle' }),
+      imp,
+      dryRun: () => { this.setState({ imp: 'running' }); setTimeout(() => this.setState({ imp: 'report' }), 1600); },
+      askApply: () => this.setState({ imp: 'confirm', reason: '' }),
+      cancelApply: () => this.setState({ imp: 'report' }),
+      apply: () => this.setState({ imp: 'idle', applied: true, reason: '', toast: 'Imported catalog ' + st.commit + ': +3 cases, +58 skins · logged' }),
+      history,
+      hasToast: !!st.toast, toast: st.toast
+    });
+  }
+}
+</script>
+</body>
+</html>

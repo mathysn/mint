@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Moderation</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">// Moderation</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Moderation &amp; announcements</h1>
+<p style="margin: 0; font-size: 14px; color: #A1A7AF">Player reports, the banner everyone sees, and game-wide events. All times UTC.</p>
+</header>
+<sc-if value="{{hasRoleHint}}" hint-placeholder-val="{{ false }}"><span class="mono" style="margin-top: -8px; font-size: 11px; color: #858B94">{{roleHint}}</span></sc-if>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+
+<section aria-labelledby="rep-t" style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 16px 20px 12px"><h2 id="rep-t" class="lbl" style="margin: 0">// Reports</h2><span class="mono" style="font-size: 12px; color: #A1A7AF">{{openReports}} open</span></div>
+<sc-for list="{{reports}}" as="r" hint-placeholder-count="4">
+<article aria-label="{{r.aria}}" style="display: flex; flex-direction: column; gap: 10px; padding: 16px 20px; border-top: 1px solid #1A1D22; opacity: {{r.op}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+<span class="mono" style="height: 22px; display: inline-flex; align-items: center; gap: 6px; padding: 0 7px; border-radius: 2px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; {{r.catStyle}}"><sc-if value="{{r.urgent}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span></sc-if>{{r.category}}</span>
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600"><a href="Admin-Player.dc.html">{{r.target}}</a><sc-if value="{{r.hidden}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{r.reveal}}" style="height: 28px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #A1A7AF; font: inherit; font-size: 12px; font-weight: 400; cursor: pointer">Show name</button></sc-if></span>
+<span class="mono" style="margin-left: auto; font-size: 11px; color: #858B94">{{r.meta}}</span>
+</div>
+<p style="margin: 0; padding-left: 12px; border-left: 2px solid #2C3138; font-size: 14px; line-height: 1.5; color: #A1A7AF">“{{r.message}}”</p>
+<sc-if value="{{r.hasHandled}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 12px; color: #A1A7AF">{{r.handled}}</span></sc-if>
+<sc-if value="{{r.confirming}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="{{r.confirmTitle}}" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<span style="flex: 1 1 100%; font-size: 14px; font-weight: 600">{{r.confirmTitle}}</span>
+<span style="flex: 1 1 100%; font-size: 13px; color: #A1A7AF">{{r.confirmText}}</span>
+<input type="text" class="field" aria-label="Reason" value="{{reason}}" onChange="{{onReason}}" placeholder="Reason, shown in the admin log" style="box-sizing: border-box; flex: 1 1 240px; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px">
+<button type="button" onClick="{{cancelConfirm}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-p" onClick="{{r.go}}" disabled="{{noReason}}" style="height: 40px; padding: 0 16px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{r.confirmButton}}</button>
+</div>
+</sc-if>
+<sc-if value="{{r.showActions}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" class="btn-s" onClick="{{r.rename}}" disabled="{{cantMod}}" title="{{modHint}}" style="height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Rename</button>
+<sc-if value="{{canMod}}" hint-placeholder-val="{{ true }}"><a href="Admin-Dlg-Ban.dc.html" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid #F27D7D; border-radius: 2px; color: #F27D7D; text-decoration: none; font-size: 13px">Ban</a></sc-if>
+<sc-if value="{{cantMod}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn-d" disabled="{{ true }}" title="Moderators and admins" style="height: 40px; padding: 0 14px; border: 1px solid #F27D7D; border-radius: 2px; background: transparent; color: #F27D7D; font: inherit; font-size: 13px">Ban</button></sc-if>
+<button type="button" class="btn-s" onClick="{{r.dismiss}}" disabled="{{cantMod}}" title="{{modHint}}" style="height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Dismiss</button>
+</div>
+</sc-if>
+</article>
+</sc-for>
+</section>
+
+<section aria-labelledby="gd-t" style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 20px 12px"><h2 id="gd-t" class="lbl" style="margin: 0">// Global drop</h2><span style="font-size: 13px; color: #A1A7AF">Every ★ drop shows in the players' banner for 30 s. Hide one when the name or timing is a problem.</span></div>
+<sc-for list="{{drops}}" as="d" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: 8px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; min-height: 60px; padding: 8px 20px; border-top: 1px solid #1A1D22">
+<span aria-hidden="true" style="width: 8px; height: 8px; background: #E4AE39; opacity: {{d.op}}"></span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 14px; color: {{d.itemColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.item}} <span class="mono" style="font-size: 12px; color: #858B94">{{d.wear}}</span></span><span style="font-size: 12px; color: #A1A7AF">by <a href="Admin-Player.dc.html">{{d.who}}</a> · <span class="mono">{{d.when}}</span></span></span>
+<span class="mono" style="font-size: 11px; color: #A1A7AF; text-align: right">{{d.state}}</span>
+<button type="button" class="btn-s" onClick="{{d.toggle}}" disabled="{{cantMod}}" title="{{modHint}}" style="height: 36px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap">{{d.action}}</button>
+</div>
+</sc-for>
+</section>
+</div>
+
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+<section aria-labelledby="an-t" style="display: flex; flex-direction: column; gap: 14px; padding: 16px 20px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="an-t" class="lbl" style="margin: 0">// Announcements</h2>
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{anns}}" as="a" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid #1A1D22">
+<span style="display: flex; justify-content: space-between; gap: 10px"><span class="mono" style="height: 20px; display: inline-flex; align-items: center; padding: 0 6px; border-radius: 2px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; {{a.chip}}">{{a.state}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{a.when}}</span></span>
+<span style="font-size: 14px; color: {{a.color}}">{{a.text}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px">
+<span style="font-size: 14px; font-weight: 600">New announcement</span>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Text</span><span class="mono" style="font-size: 12px; color: {{countColor}}">{{count}} / 140</span></span><textarea class="field" rows="2" value="{{text}}" onChange="{{onText}}" disabled="{{cantMod}}" maxlength="160" style="box-sizing: border-box; width: 100%; padding: 10px 12px; border: 1px solid {{textBorder}}; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px; resize: vertical"></textarea></label>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<label style="flex: 1 1 140px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Start</span><input type="text" class="field mono" value="Oct 24, 05:30" disabled="{{cantMod}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 13px"></label>
+<label style="flex: 1 1 140px; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">End</span><input type="text" class="field mono" value="Oct 24, 06:30" disabled="{{cantMod}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 13px"></label>
+</div>
+<span style="font-size: 12px; color: #A1A7AF">Preview, as players see it</span>
+<div aria-label="Banner preview" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 14px; border: 1px solid #1C1F24; background: #0D0E11; overflow: hidden">
+<span class="lbl" style="flex: none; font-size: 10px">// Announcement</span>
+<span style="flex: 1; min-width: 0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{previewText}}</span>
+<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</div>
+<sc-if value="{{tooLong}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 13px; color: #F27D7D">{{tooLongText}}</span></sc-if>
+<button type="button" class="btn-p" onClick="{{schedule}}" disabled="{{cantSchedule}}" title="{{modHint}}" style="align-self: flex-start; height: 44px; padding: 0 18px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Schedule announcement</button>
+</div>
+</section>
+
+<section aria-labelledby="ev-t" style="display: flex; flex-direction: column; gap: 14px; padding: 16px 20px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="ev-t" class="lbl" style="margin: 0">// Events</h2>
+<sc-for list="{{events}}" as="e" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #1C1F24; border-radius: 4px; background: #121417">
+<span style="font-size: 15px; font-weight: 600">{{e.title}}</span>
+<span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">{{e.text}}</span>
+<sc-if value="{{e.hasAmount}}" hint-placeholder-val="{{ false }}"><label style="display: flex; align-items: center; gap: 8px"><span style="font-size: 13px; color: #A1A7AF">Each player gets</span><input type="text" class="field mono" value="{{giftAmount}}" onChange="{{onGift}}" disabled="{{cantAdmin}}" style="box-sizing: border-box; width: 100px; height: 40px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 14px; text-align: right"><span class="mono" style="font-size: 12px; color: #858B94">CR</span></label></sc-if>
+<dl style="margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 2px; overflow: hidden">
+<sc-for list="{{e.costs}}" as="c" hint-placeholder-count="2"><div style="display: flex; flex-direction: column-reverse; gap: 2px; padding: 10px 12px; background: #0E1013"><dt style="font-size: 11px; color: #A1A7AF">{{c.k}}</dt><dd class="mono" style="margin: 0; font-size: 15px">{{c.v}}</dd></div></sc-for>
+</dl>
+<sc-if value="{{e.confirming}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="{{e.button}}" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<input type="text" class="field" aria-label="Reason" value="{{reason}}" onChange="{{onReason}}" placeholder="Reason, shown in the admin log" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px">
+<div style="display: flex; justify-content: flex-end; gap: 8px"><button type="button" onClick="{{cancelConfirm}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button><button type="button" class="btn-p" onClick="{{e.go}}" disabled="{{noReason}}" style="height: 40px; padding: 0 14px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">{{e.button}}</button></div>
+</div>
+</sc-if>
+<sc-if value="{{e.idle}}" hint-placeholder-val="{{ true }}"><button type="button" class="btn-s" onClick="{{e.ask}}" disabled="{{e.disabled}}" title="{{adminHint}}" style="align-self: flex-start; height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">{{e.button}}…</button></sc-if>
+</div>
+</sc-for>
+</section>
+</div>
+</div>
+</div>
+</main>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"role":{"editor":"enum","options":["admin","moderator","viewer"],"default":"admin","section":"State"},"$preview":{"width":1440,"height":1560}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+// id, category, urgent, target, hidden name, reporter, when, message, handled
+const REPORTS = [
+  ['r317', 'Offensive name', false, 'l0ser_dune', true, 'dune', 'Oct 23, 12:31', 'This name is about me. He also shows up in the drop banner with it.', ''],
+  ['r315', 'Scam', true, 'kenji', false, 'ash', 'Oct 23, 09:20', 'Said he’d send 2,000 CR in a second trade for my AWP. Never did, then blocked me.', ''],
+  ['r314', 'Scam', false, 'nyx', false, 'lou', 'Oct 23, 10:48', 'Asked me to send my items first to “check them”, then went offline.', 'Handled · nyx banned 7 days by lea, Oct 23 11:02'],
+  ['r311', 'Offensive name', false, 'player_8841', false, 'rhea', 'Oct 21, 19:58', 'Name is an insult.', 'Handled · renamed by lea, Oct 21 20:14']
+];
+const DROPS = [
+  ['vex', '★ Karambit | Fade', 'FN 0.0312', 'Oct 19, 21:06', 'shown'],
+  ['l0ser_dune', '★ Nomad Knife | Marble Fade', 'FN 0.0108', 'Oct 21, 23:40', 'hidden'],
+  ['dune', '★ Paracord Knife | Damascus Steel', 'MW 0.1120', 'Oct 21, 17:02', 'shown'],
+  ['vex', '★ Kukri Knife | Fade', 'FN 0.0213', 'Oct 18, 12:44', 'shown']
+];
+const ANNS = [['Live', 'Fever Case is off for a fix. It’s back soon, your items are safe.', 'Oct 22, 09:35 → Oct 25, 00:00'], ['Scheduled', 'Maintenance Oct 24, 06:00 to 06:20 UTC. Openings and the market pause.', 'Oct 24, 05:30 → 06:30'], ['Ended', 'Kilowatt Case is the case of the day all week.', 'Oct 14 → Oct 21']];
+const PLAYERS = 1284;
+const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { revealed: false, confirm: null, reason: '', done: {}, dropHidden: {}, text: 'Double recycle values this weekend, from Friday 18:00 UTC.', anns: ANNS.slice(), gift: '500', events: {}, toast: '' };
+  }
+  componentDidUpdate(prev) { if (prev.role !== this.props.role) this.setState({ confirm: null, toast: '' }); }
+  renderVals() {
+    const st = this.state;
+    const sh = SHELL(this.props.role, 'moderation');
+    const canMod = sh.rank >= 1, isAdmin = sh.rank >= 2;
+    const reports = REPORTS.map((r) => {
+      const done = st.done[r[0]];
+      const handled = done || r[8];
+      const name = r[4] && !st.revealed ? 'Name hidden' : r[3];
+      const ck = st.confirm && st.confirm.split(':');
+      const confirming = !handled && ck && ck[1] === r[0];
+      let ct = '', cx = '', cb = '', toast = '', handledText = '';
+      if (confirming && ck[0] === 'rename') { ct = 'Rename ' + r[3] + ' to player_5120'; cx = 'They pick a new name at next sign-in. Their drops in the banner show the new name.'; cb = 'Rename to player_5120'; toast = 'Renamed ' + r[3] + ' to player_5120 · logged'; handledText = 'Handled · renamed by ' + sh.staffName + ', just now'; }
+      if (confirming && ck[0] === 'dismiss') { ct = 'Dismiss this report'; cx = r[5] + ' isn’t told. The report stays in the history.'; cb = 'Dismiss report'; toast = 'Dismissed report on ' + r[3] + ' · logged'; handledText = 'Dismissed by ' + sh.staffName + ', just now'; }
+      return {
+        aria: 'Report on ' + r[3], category: r[1], urgent: r[2] && !handled, target: r[4] && !st.revealed ? '[offensive name hidden]' : r[3], hidden: r[4] && !st.revealed, reveal: () => this.setState({ revealed: true }),
+        meta: 'reported by ' + r[5] + ' · ' + r[6], message: r[7],
+        catStyle: r[2] && !handled ? 'border: 1px solid #2C3138; color: #ECEDEF' : 'border: 1px solid #2C3138; color: #A1A7AF',
+        op: handled ? '0.6' : '1', hasHandled: !!handled, handled: typeof done === 'string' ? done : r[8],
+        showActions: !handled && !confirming, confirming, confirmTitle: ct, confirmText: cx, confirmButton: cb,
+        rename: () => this.setState({ confirm: 'rename:' + r[0], reason: '' }), dismiss: () => this.setState({ confirm: 'dismiss:' + r[0], reason: '' }),
+        go: () => { if (!this.state.reason.trim()) return; const d = Object.assign({}, this.state.done); d[r[0]] = handledText; this.setState({ done: d, confirm: null, reason: '', toast }); }
+      };
+    });
+    const openReports = REPORTS.filter((r) => !r[8] && !st.done[r[0]]).length;
+    const drops = DROPS.map((d, i) => {
+      const hidden = st.dropHidden[i] !== undefined ? st.dropHidden[i] : d[4] === 'hidden';
+      return {
+        who: d[0] === 'l0ser_dune' && !st.revealed ? '[name hidden]' : d[0], item: d[1], wear: d[2], when: d[3], itemColor: hidden ? '#A1A7AF' : '#ECC163', op: hidden ? '0.4' : '1',
+        state: hidden ? (st.dropHidden[i] !== undefined ? 'Hidden by ' + sh.staffName : 'Hidden by lea · name') : 'Shown in banner',
+        action: hidden ? 'Show again' : 'Hide from banner',
+        toggle: () => { const h = Object.assign({}, this.state.dropHidden); h[i] = !hidden; this.setState({ dropHidden: h, toast: (hidden ? 'Showing ' : 'Hid ') + (d[0] === 'l0ser_dune' ? 'the drop' : d[0] + '’s drop') + ' ' + (hidden ? 'in the banner again' : 'from the banner') + ' · logged' }); }
+      };
+    });
+    const text = st.text;
+    const n = text.length;
+    const giftN = parseInt(String(st.gift).replace(/[^0-9]/g, ''), 10) || 0;
+    const total = giftN * PLAYERS;
+    const circ = 3412880;
+    const events = [
+      { key: 'free', title: 'Free case for everyone', text: 'Every player gets one extra free case of the day (Kilowatt Case), on top of their timer.', hasAmount: false,
+        costs: [['Players', fmt(PLAYERS)], ['Expected credits added', '≈ ' + fmt(PLAYERS * 113) + ' CR']], button: 'Give everyone a free case', toast: 'Gave ' + fmt(PLAYERS) + ' players a free case · logged' },
+      { key: 'gift', title: 'Gift credits to all players', text: 'Added to every balance right away, with a gift entry in each ledger.', hasAmount: true,
+        costs: [['Total cost', fmt(total) + ' CR'], ['In circulation after, +' + (total / circ * 100).toFixed(1) + '%', fmt(circ + total) + ' CR']], button: 'Gift ' + fmt(giftN) + ' CR to ' + fmt(PLAYERS) + ' players', toast: 'Gifted ' + fmt(giftN) + ' CR to ' + fmt(PLAYERS) + ' players · logged' }
+    ].map((e) => Object.assign(e, {
+      costs: e.costs.map((c) => ({ k: c[0], v: c[1] })),
+      confirming: st.confirm === 'event:' + e.key, idle: st.confirm !== 'event:' + e.key,
+      disabled: !isAdmin || (e.key === 'gift' && giftN <= 0),
+      ask: () => this.setState({ confirm: 'event:' + e.key, reason: '' }),
+      go: () => { if (this.state.reason.trim()) this.setState({ confirm: null, reason: '', toast: e.toast }); }
+    }));
+    return Object.assign(sh, {
+      canMod, cantMod: !canMod, modHint: canMod ? '' : 'Moderators and admins', cantAdmin: !isAdmin, adminHint: isAdmin ? '' : 'Admins only',
+      hasRoleHint: !isAdmin, roleHint: canMod ? 'Events are for admins. Reports, banner and announcements are open to moderators.' : 'Read-only: you’re a Viewer. Actions here are for moderators and admins.',
+      reports, openReports: String(openReports), drops,
+      anns: st.anns.map((a) => ({ state: a[0], text: a[1], when: a[2], chip: a[0] === 'Live' ? 'background: #ECEDEF; color: #0A0B0D' : a[0] === 'Scheduled' ? 'border: 1px solid #2C3138; color: #ECEDEF' : 'border: 1px dashed #4A5059; color: #858B94', color: a[0] === 'Ended' ? '#858B94' : '#ECEDEF' })),
+      text, onText: (e) => this.setState({ text: e.target.value }), count: String(n), countColor: n > 140 ? '#F27D7D' : '#858B94', textBorder: n > 140 ? '#F27D7D' : '#2C3138',
+      previewText: text || 'Your announcement shows here.', tooLong: n > 140, tooLongText: 'Keep it to 140 characters: ' + (n - 140) + ' too many.',
+      cantSchedule: !canMod || !text.trim() || n > 140,
+      schedule: () => { if (!text.trim() || n > 140) return; this.setState({ anns: [['Scheduled', text.trim(), 'Oct 24, 05:30 → 06:30']].concat(st.anns), text: '', toast: 'Scheduled the announcement for Oct 24, 05:30 · logged' }); },
+      giftAmount: st.gift, onGift: (e) => this.setState({ gift: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) }),
+      events,
+      reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }), noReason: !st.reason.trim(),
+      cancelConfirm: () => this.setState({ confirm: null }),
+      hasToast: !!st.toast, toast: st.toast
+    });
+  }
+}
+</script>
+</body>
+</html>

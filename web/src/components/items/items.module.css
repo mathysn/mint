@@ -1,0 +1,448 @@
+/* Skin art: the real image from the API, centred over a rarity halo. */
+.art {
+  position: relative;
+  width: 76%;
+  max-height: 86%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.rareStar {
+  position: relative;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--gold-text);
+}
+
+/* ── Item card (inventory) ── */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  outline: 1px solid transparent;
+  transition:
+    outline-color var(--dur-base) ease,
+    border-color var(--dur-base) ease,
+    transform var(--dur-base) var(--ease-out);
+}
+.card:hover {
+  outline-color: var(--tile-hover-border);
+  transform: translateY(-2px);
+}
+.card[data-selected='true'] {
+  border-color: var(--text);
+}
+/* The image leans in a little on hover (cards and case tiles). */
+.card .art,
+.caseArt {
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.card:hover .art,
+.caseTile:hover .caseArt {
+  transform: scale(1.04);
+}
+.cardImage {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+}
+.cardST {
+  position: absolute;
+  right: 12px;
+  top: 14px;
+}
+.cardLock {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+}
+.cardBody {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.weapon {
+  font-size: 12px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.skinName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+a.skinName {
+  text-decoration: none;
+}
+/* The name link covers the whole card. */
+.stretch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.wearLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.wearSquare {
+  width: 6px;
+  height: 6px;
+  flex: none;
+}
+.value {
+  font-size: 13px;
+}
+.rarityBar {
+  height: 3px;
+  flex: none;
+}
+.mobile .cardImage {
+  aspect-ratio: auto;
+  height: 104px;
+}
+.mobile .art {
+  width: 80%;
+}
+.mobile .cardST {
+  right: 8px;
+  top: 10px;
+  padding: 1px 5px;
+  font-size: 9px;
+}
+.mobile .cardLock {
+  left: 10px;
+  top: 12px;
+  gap: 5px;
+  font-size: 9px;
+}
+.mobile .cardBody {
+  padding: 8px 10px 10px;
+  gap: 2px;
+}
+.mobile .weapon {
+  font-size: 11px;
+}
+.mobile .skinName {
+  font-size: 14px;
+}
+.mobile .cardMeta {
+  margin-top: 6px;
+  gap: 6px;
+}
+.mobile .wearLine {
+  gap: 5px;
+  font-size: 11px;
+}
+.mobile .wearSquare {
+  width: 5px;
+  height: 5px;
+}
+.mobile .value {
+  font-size: 11px;
+}
+
+/* Selection checkbox: 44 px target, 20 px box; checked = white box with a dark tick. */
+.check {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.checkBox {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-control);
+  display: grid;
+  place-items: center;
+  background: rgba(10, 11, 13, 0.7);
+  border: 1px solid var(--border-hover);
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-out);
+}
+.check:active .checkBox {
+  transform: scale(0.9);
+}
+.check[aria-pressed='true'] .checkBox {
+  background: var(--text);
+  border-color: var(--text);
+}
+.checkBox svg {
+  animation: mint-pop 220ms var(--pop-ease) both;
+  fill: none;
+  stroke: var(--primary-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Skin tile (What's inside) ── */
+.tile {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.tileImage {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  display: grid;
+  place-items: center;
+}
+.tileImage .art {
+  width: 78%;
+}
+.inAlbum {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  font-size: 10px;
+  color: var(--text-2);
+}
+.tileBody {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.tileBody .skinName {
+  font-size: 14px;
+}
+.mobile.tile .tileImage {
+  aspect-ratio: auto;
+  height: 84px;
+}
+.mobile.tile .art {
+  width: 80%;
+}
+.mobile.tile .tileBody {
+  padding: 8px 10px 10px;
+  gap: 1px;
+}
+.mobile.tile .weapon {
+  font-size: 11px;
+}
+.mobile.tile .skinName {
+  font-size: 13px;
+}
+
+/* ── Case tiles ── */
+.caseTile {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-base) ease,
+    background-color var(--dur-base) ease,
+    transform var(--dur-base) var(--ease-out);
+}
+.caseTile:hover {
+  border-color: var(--tile-hover-border);
+  background: var(--surface-raised);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+.caseImage {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.caseArt {
+  object-fit: contain;
+  max-height: 84%;
+}
+.caseTag {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+}
+.caseFooter {
+  display: flex;
+  border-top: 1px solid var(--separator);
+}
+.caseName {
+  font-weight: 600;
+}
+.casePrice {
+  flex: none;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+/* Weapon finder: "Drops ■ AK-47 | Redline +2" at the bottom of a case tile. */
+.caseDrops {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--separator);
+  color: var(--text);
+  animation: mint-fade var(--dur-base) var(--ease-out) both;
+}
+.dropSquare {
+  flex: none;
+  width: 8px;
+  height: 8px;
+}
+.dropName {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dropMore {
+  flex: none;
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+/* "What's inside" tile found by the weapon finder. */
+.tileMatch {
+  border-color: var(--text);
+  animation: mint-pop 480ms var(--pop-ease) both;
+}
+.matchTag {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  font-size: 10px;
+  color: var(--text);
+}
+
+/* ── Pills (reveal) ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  font-size: 13px;
+}
+.pillSquare {
+  width: 8px;
+  height: 8px;
+}
+.pillMono {
+  font-size: 12px;
+  color: var(--text-2);
+}
+.pillST {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-control);
+  background: var(--primary-bg);
+  color: var(--primary-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.mobile.pill,
+.mobile.pillST {
+  height: 28px;
+  padding: 0 8px;
+  gap: 6px;
+  font-size: 12px;
+}
+.mobile .pillSquare {
+  width: 7px;
+  height: 7px;
+}
+.mobile.pillMono,
+.mobile.pillST {
+  font-size: 11px;
+}
+
+/* ── Float bar: 5 zones to scale, 2 px gaps, 2 px white cursor ── */
+.floatBar {
+  position: relative;
+  padding: 8px 0 0;
+}
+.zones {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  height: 6px;
+}
+.zone {
+  flex-basis: 0;
+  flex-shrink: 1;
+}
+.hatch {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(135deg, rgba(10, 11, 13, 0.82) 0 4px, rgba(10, 11, 13, 0.6) 4px 8px);
+}
+.cursor {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 22px;
+  margin-left: -1px;
+  background: var(--text);
+  /* Slides in from the left when it first shows, then follows the float (trade-up average). */
+  animation: cursor-in 700ms var(--ease-out) backwards;
+  transition: left 400ms var(--ease-out);
+}
+@keyframes cursor-in {
+  from {
+    left: 0;
+    opacity: 0;
+  }
+}
+.zoneLabels {
+  display: flex;
+  gap: 2px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--text-3);
+}

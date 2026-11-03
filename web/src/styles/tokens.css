@@ -1,0 +1,82 @@
+/* Values copied from docs/DESIGN.md §2 — no rounding, no extra accent colour. */
+:root {
+  /* Interface */
+  --page: #0a0b0d;
+  --rail: #0d0e11;
+  --surface: #0e1013;
+  --surface-raised: #121417;
+  --surface-bar: #111316;
+  --surface-balance: #0f1114;
+  --nav-active: #16181c;
+  --nav-hover: #15171b;
+  --border: #1c1f24;
+  --separator: #1a1d22;
+  --border-strong: #2c3138;
+  --border-hover: #4a5059;
+  --tile-hover-border: #2f343b;
+  --hud: #5a616b;
+  --track: #1e2227;
+  --avatar: #1a1d22;
+  --text: #ecedef;
+  --text-2: #a1a7af;
+  --text-3: #858b94;
+  --disabled-bg: #3a3f46;
+  --disabled-text: #a1a7af;
+  --primary-bg: #ecedef;
+  --primary-text: #0a0b0d;
+  --primary-hover: #ffffff;
+  --error: #f27d7d;
+  /* Album, skin not collected (design/Foundations.dc.html, design/Album.dc.html) */
+  --surface-missing: #0b0c0e;
+  --silhouette: #262a30;
+  --urgent: #c8382f;
+
+  /* Rarities: colour (bars, dots) · text on dark · halo */
+  --milspec: #4b69ff;
+  --milspec-text: #8197ff;
+  --milspec-halo: rgba(75, 105, 255, 0.3);
+  --restricted: #8847ff;
+  --restricted-text: #a983ff;
+  --restricted-halo: rgba(136, 71, 255, 0.32);
+  --classified: #d32ce6;
+  --classified-text: #e57af0;
+  --classified-halo: rgba(211, 44, 230, 0.3);
+  --covert: #eb4b4b;
+  --covert-text: #f27d7d;
+  --covert-halo: rgba(235, 75, 75, 0.32);
+  --gold: #e4ae39;
+  --gold-text: #ecc163;
+  --gold-halo: rgba(228, 174, 57, 0.36);
+
+  /* Wear (float bar only) */
+  --wear-fn: #3fb950;
+  --wear-mw: #9bc53d;
+  --wear-ft: #e3b341;
+  --wear-ww: #f0883e;
+  --wear-bs: #f05d52;
+
+  /* Type */
+  --font-text: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Shapes and sizes */
+  --radius-control: 2px;
+  --radius-card: 4px;
+  --radius-panel: 6px;
+  --bevel: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  --bevel-10: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  --bevel-14: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  --logo-cut: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%);
+  --sidebar: 248px;
+  --content-max: 1680px;
+  --content-pad: 48px;
+  --tabbar: 84px;
+
+  /* Motion (the roulette is driven by lib/spin.ts, each spin with its own curve) */
+  --pop-ease: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+}

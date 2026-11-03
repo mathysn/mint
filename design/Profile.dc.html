@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.side-inner{min-height:860px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover{background:#FFFFFF}
+.btn-s:hover{border-color:#4A5059;background:#121417}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Main" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: #0F1114">
+<span class="lbl">Balance</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span class="mono" style="font-size: 24px; font-weight: 600">4,870</span><span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Free case</span><span class="mono" style="color: #ECEDEF">Ready</span></div>
+</div>
+<a href="Profile.dc.html" aria-current="{{selfCurrent}}" style="display: flex; gap: 10px; align-items: center; padding: 8px 4px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">V</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">vex</span><span style="font-size: 12px; color: #A1A7AF">View profile</span></span>
+</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div role="status" style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; min-height: 40px; padding: 8px 32px; box-sizing: border-box; border-bottom: 1px solid #1C1F24; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px"><span style="font-weight: 600">nyx</span><span style="color: #A1A7AF">unboxed</span><span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span><span class="mono" style="font-size: 12px; color: #A1A7AF">FN · 0.0081</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+
+<div style="width: 100%; max-width: 1240px; box-sizing: border-box; margin: 0 auto; padding: 40px 48px 72px; display: flex; flex-direction: column; gap: 40px">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px">
+<div style="display: flex; align-items: center; gap: 22px">
+<span aria-hidden="true" style="flex: none; width: 80px; height: 80px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 30px; font-weight: 600">{{p.initial}}</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 40px; line-height: 1; font-weight: 600; letter-spacing: -0.02em">{{p.name}}</h1>
+<span style="font-size: 14px; color: #A1A7AF">{{p.meta}}</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<a href="Leaderboard.dc.html" class="mono" style="display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; font-size: 12px; color: #ECEDEF; text-decoration: none">{{p.rankValue}}</a>
+<a href="Leaderboard.dc.html" class="mono" style="display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; font-size: 12px; color: #ECEDEF; text-decoration: none">{{p.rankAlbums}}</a>
+</div>
+</div>
+</div>
+<sc-if value="{{isSelf}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; gap: 10px">
+<button type="button" class="btn-s" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer">Edit showcase</button>
+</div>
+</sc-if>
+<sc-if value="{{isFriend}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<a href="TradeNew.dc.html" class="btn-p" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; background: #ECEDEF; color: #0A0B0D; text-decoration: none; font-size: 14px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)">Propose a trade</a>
+<a href="#" class="btn-s" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 14px">Inventory</a>
+<a href="#" class="btn-s" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 14px">Albums</a>
+<button type="button" style="height: 44px; padding: 0 10px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Remove friend</button>
+</div>
+</sc-if>
+</header>
+
+<section aria-labelledby="sc-title" style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px">
+<h2 id="sc-title" class="lbl" style="margin: 0">// Showcase</h2>
+<span style="font-size: 13px; color: #A1A7AF">{{p.showcaseNote}}</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<article style="flex: 2 1 440px; position: relative; min-height: 460px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden; background: radial-gradient(ellipse at 50% 42%, {{feat.glowSoft}}, rgba(14,16,19,0) 70%), #0E1013">
+<span aria-hidden="true" style="position: absolute; left: 22px; top: 22px; width: 22px; height: 22px; border-left: 1px solid {{feat.text}}; border-top: 1px solid {{feat.text}}"></span>
+<span aria-hidden="true" style="position: absolute; right: 22px; top: 22px; width: 22px; height: 22px; border-right: 1px solid {{feat.text}}; border-top: 1px solid {{feat.text}}"></span>
+<span aria-hidden="true" style="position: absolute; left: 22px; bottom: 22px; width: 22px; height: 22px; border-left: 1px solid {{feat.text}}; border-bottom: 1px solid {{feat.text}}"></span>
+<span aria-hidden="true" style="position: absolute; right: 22px; bottom: 22px; width: 22px; height: 22px; border-right: 1px solid {{feat.text}}; border-bottom: 1px solid {{feat.text}}"></span>
+<div style="display: flex; justify-content: space-between; padding: 36px 40px 0"><span class="lbl">01</span><span class="lbl" style="color: {{feat.text}}">{{feat.rarName}}</span></div>
+<div style="position: relative; flex: 1; display: grid; place-items: center; padding: 8px 0">
+<span aria-hidden="true" style="position: absolute; inset: 4% 10%; background: radial-gradient(closest-side, {{feat.glow}}, rgba(0,0,0,0))"></span>
+<svg role="img" aria-label="{{feat.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 78%; fill: {{feat.fill}}"><path d="{{feat.art}}"></path></svg>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; padding: 0 40px 36px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; color: {{feat.text}}">{{feat.weapon}}</span><span style="font-size: 30px; font-weight: 600; letter-spacing: -0.02em">{{feat.skin}}</span></div>
+<span class="mono" style="font-size: 12px; color: #A1A7AF; text-align: right">{{feat.meta}}</span>
+</div>
+</article>
+<div style="flex: 1 1 380px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{rest}}" as="s" hint-placeholder-count="4">
+<article style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden; background: #0E1013">
+<div style="display: flex; justify-content: space-between; padding: 14px 16px 0"><span class="lbl" style="font-size: 10px">{{s.index}}</span><sc-if value="{{s.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="padding: 1px 5px; background: #ECEDEF; color: #0A0B0D; font-size: 9px; font-weight: 600">ST™</span></sc-if></div>
+<div style="position: relative; flex: 1; min-height: 110px; display: grid; place-items: center">
+<span aria-hidden="true" style="position: absolute; inset: 6% 10%; background: radial-gradient(closest-side, {{s.glow}}, rgba(0,0,0,0))"></span>
+<svg role="img" aria-label="{{s.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 80%; fill: #D3D6DB"><path d="{{s.art}}"></path></svg>
+</div>
+<div style="padding: 0 16px 14px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; color: #A1A7AF">{{s.weapon}}</span>
+<span style="font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{s.skin}}</span>
+<span class="mono" style="margin-top: 4px; font-size: 11px; color: #A1A7AF">{{s.meta}}</span>
+</div>
+<span aria-hidden="true" style="height: 3px; background: {{s.color}}"></span>
+</article>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="st-title" style="display: flex; flex-direction: column; gap: 16px">
+<h2 id="st-title" class="lbl" style="margin: 0">// Stats</h2>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 6px; overflow: hidden">
+<sc-for list="{{p.stats}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column-reverse; gap: 8px; padding: 22px 24px; background: #0E1013">
+<dt style="font-size: 13px; color: #A1A7AF">{{s.k}}</dt>
+<dd class="mono" style="margin: 0; font-size: 26px; font-weight: 500">{{s.v}}</dd>
+</div>
+</sc-for>
+</dl>
+</section>
+
+<section aria-labelledby="al-title" style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="al-title" class="lbl" style="margin: 0">// Albums</h2><a href="Album.dc.html" style="font-size: 14px; color: #A1A7AF">{{p.albumsLink}}</a></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px">
+<sc-for list="{{p.albums}}" as="a" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 18px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px"><span style="font-size: 14px; font-weight: 600">{{a.name}}</span><span class="mono" style="font-size: 13px; color: #A1A7AF">{{a.have}} / 17</span></div>
+<span aria-hidden="true" style="position: relative; height: 3px; background: #1E2227"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{a.pct}}%; background: #ECEDEF"></span></span>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"viewing":{"editor":"enum","options":["self","friend"],"default":"self","section":"State"},"$preview":{"width":1440,"height":1400}}'>
+const NAVDEF = [
+  ['home', 'Home', 'Main.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['market', 'Market', 'Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+  ['trades', 'Trades', 'Trades.dc.html', 'M4 8h15l-4-4M20 16H5l4 4'],
+  ['tradeup', 'Trade-up', 'TradeUp.dc.html', 'M12 20V5M6 11l6-6 6 6M5 20h14'],
+  ['friends', 'Friends', 'Friends.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'],
+  ['leaderboard', 'Leaderboard', 'Leaderboard.dc.html', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+];
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const RAR = {
+  restricted: { name: 'Restricted', color: '#8847FF', text: '#A983FF', glow: 'rgba(136,71,255,0.32)', soft: 'rgba(136,71,255,0.10)' },
+  classified: { name: 'Classified', color: '#D32CE6', text: '#E57AF0', glow: 'rgba(211,44,230,0.30)', soft: 'rgba(211,44,230,0.10)' },
+  covert: { name: 'Covert', color: '#EB4B4B', text: '#F27D7D', glow: 'rgba(235,75,75,0.32)', soft: 'rgba(235,75,75,0.10)' },
+  gold: { name: '★ Rare special', color: '#E4AE39', text: '#ECC163', glow: 'rgba(228,174,57,0.40)', soft: 'rgba(228,174,57,0.12)' }
+};
+// weapon, skin, rarity, art, meta, stattrak
+const PROFILES = {
+  self: {
+    name: 'vex', initial: 'V', meta: 'Joined Sep 14, 2026 · signed in with Discord',
+    rankValue: '#18 by inventory value', rankAlbums: '#7 by albums',
+    showcaseNote: 'Picked by you · visible to every player', albumsLink: 'Open albums',
+    showcase: [
+      ['★ Kukri Knife', 'Fade', 'gold', 'knife', 'FN · 0.0213 · 15,000 CR', false],
+      ['AWP', 'Chrome Cannon', 'covert', 'sniper', 'MW · 0.0934 · 6,000 CR', true],
+      ['AK-47', 'Inheritance', 'covert', 'rifle', 'FT · 0.2381 · 2,500 CR', false],
+      ['M4A1-S', 'Black Lotus', 'classified', 'rifle', 'FN · 0.0512 · 750 CR', false],
+      ['USP-S', 'Jawbreaker', 'classified', 'pistol', 'WW · 0.4012 · 450 CR', false]
+    ],
+    stats: [['Cases opened', '142'], ['Inventory value', '28,790 CR'], ['Trades completed', '9'], ['Skins collected', '96']],
+    albums: [['The Kilowatt Collection', 11], ['The Revolution Collection', 4], ['The Fracture Collection', 3], ['The Gallery Collection', 2], ['The Recoil Collection', 1], ['The Fever Collection', 0]]
+  },
+  friend: {
+    name: 'kenji', initial: 'K', meta: 'Joined Sep 3, 2026 · friends since Sep 20',
+    rankValue: '#4 by inventory value', rankAlbums: '#8 by albums',
+    showcaseNote: 'Picked by kenji', albumsLink: 'Compare with yours',
+    showcase: [
+      ['★ Survival Knife', 'Crimson Web', 'gold', 'knife', 'FT · 0.2870 · 10,000 CR', false],
+      ['M4A4', 'Temukau', 'covert', 'rifle', 'MW · 0.0871 · 3,000 CR', false],
+      ['AK-47', 'Head Shot', 'covert', 'rifle', 'FT · 0.2210 · 2,500 CR', false],
+      ['P2000', 'Wicked Sick', 'classified', 'pistol', 'WW · 0.4120 · 900 CR', true],
+      ['AWP', 'Duality', 'classified', 'sniper', 'FN · 0.0388 · 750 CR', false]
+    ],
+    stats: [['Cases opened', '311'], ['Inventory value', '41,200 CR'], ['Trades completed', '17'], ['Skins collected', '88']],
+    albums: [['The Revolution Collection', 12], ['The Fracture Collection', 9], ['The Dreams & Nightmares Collection', 6], ['The Kilowatt Collection', 5], ['The Recoil Collection', 3], ['The Snakebite Collection', 2]]
+  }
+};
+function card(e, i) {
+  const r = RAR[e[2]];
+  return { index: '0' + (i + 1), weapon: e[0], skin: e[1], full: e[0] + ' | ' + e[1], art: ART[e[3]], meta: e[4], st: e[5], color: r.color, text: r.text, glow: r.glow, glowSoft: r.soft, rarName: r.name, fill: e[2] === 'gold' ? '#EFE6D2' : '#DADDE2' };
+}
+class Component extends DCLogic {
+  renderVals() {
+    const viewing = this.props.viewing === 'friend' ? 'friend' : 'self';
+    const d = PROFILES[viewing];
+    const items = d.showcase.map(card);
+    const nav = NAVDEF.map((n) => ({
+      label: n[1], href: n[2], icon: n[3],
+      current: viewing === 'friend' && n[0] === 'friends' ? 'page' : undefined,
+      style: viewing === 'friend' && n[0] === 'friends' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF'
+    }));
+    return {
+      nav,
+      isSelf: viewing === 'self', isFriend: viewing === 'friend',
+      selfCurrent: viewing === 'self' ? 'page' : undefined,
+      feat: items[0], rest: items.slice(1),
+      p: {
+        name: d.name, initial: d.initial, meta: d.meta, rankValue: d.rankValue, rankAlbums: d.rankAlbums,
+        showcaseNote: d.showcaseNote, albumsLink: d.albumsLink,
+        stats: d.stats.map((s) => ({ k: s[0], v: s[1] })),
+        albums: d.albums.map((a) => ({ name: a[0], have: a[1], pct: Math.round((a[1] / 17) * 100) }))
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

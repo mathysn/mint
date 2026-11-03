@@ -1,0 +1,125 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--text);
+  transition: color var(--dur-fast) ease;
+}
+a:hover {
+  color: var(--primary-hover);
+}
+
+button {
+  font: inherit;
+}
+
+img {
+  display: block;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+/* Every number is mono with tabular figures (DESIGN.md §2 Typographie). */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* HUD label: mono 11 px, 500, upper case, .14em, tertiary grey. */
+.lbl {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+
+/* Native scrollbars take layout width: hidden everywhere. Vertical scrollers show an overlay
+   thumb instead (components/ui/Scrollbar.tsx); scrolling itself stays native. */
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Horizontal rows (chips, cases): no thumb at all, and a swipe never turns into a back navigation. */
+.hscroll {
+  overscroll-behavior-x: contain;
+}
+
+/* No spinner arrows on number fields: amounts are typed (or picked from the quick chips). */
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* List rows whose name link covers the row (friend requests, search results, leaderboard). */
+.row-link,
+.albumLink {
+  transition: background-color var(--dur-fast) ease;
+}
+.row-link:hover {
+  background: var(--nav-hover);
+}
+
+.albumLink:hover:not([aria-current='page']) {
+  background: var(--nav-hover);
+}
+
+/* Market cards (design/Market.dc.html: .tile:hover), profile albums: lift slightly on hover. */
+.tile-link {
+  transition:
+    border-color var(--dur-base) ease,
+    background-color var(--dur-base) ease,
+    transform var(--dur-base) var(--ease-out);
+}
+.tile-link:hover {
+  border-color: var(--tile-hover-border) !important;
+  background: var(--surface-raised) !important;
+  transform: translateY(-2px);
+}
+.chip-quick {
+  transition: border-color var(--dur-fast) ease;
+}
+.chip-quick:hover {
+  border-color: var(--border-hover) !important;
+}

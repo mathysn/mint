@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — New offer (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.hscroll{scrollbar-width:none}.hscroll::-webkit-scrollbar{display:none}
+.btn-p:disabled{background:#3A3F46;color:#A1A7AF}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<div style="position: absolute; left: 0; right: 0; top: 0; bottom: 172px; overflow-y: auto; box-sizing: border-box; padding-top: 50px">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 8px">
+<a href="Mobile-Trades.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Trades</a>
+</header>
+
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 8px 20px 24px">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<h1 style="margin: 0; font-size: 28px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">New offer</h1>
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #A1A7AF">to <span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 11px; font-weight: 600; color: #ECEDEF">K</span><strong style="color: #ECEDEF">kenji</strong></span>
+</div>
+
+<div role="tablist" aria-label="Side" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013">
+<sc-for list="{{sides}}" as="s" hint-placeholder-count="2">
+<button type="button" role="tab" aria-selected="{{s.on}}" onClick="{{s.pick}}" style="height: 44px; border: 0; border-radius: 2px; font: inherit; font-size: 14px; font-weight: 600; {{s.style}}">{{s.label}}</button>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-if value="{{trayEmpty}}" hint-placeholder-val="{{ false }}"><div style="display: grid; place-items: center; min-height: 60px; border: 1px dashed #2C3138; border-radius: 4px; font-size: 13px; color: #858B94">{{emptyText}}</div></sc-if>
+<sc-for list="{{tray}}" as="it" hint-placeholder-count="2">
+<div style="position: relative; display: flex; align-items: center; gap: 10px; padding: 6px 4px 8px 6px; background: #121417; border: 1px solid #2C3138; border-radius: 4px; overflow: hidden">
+<span style="position: relative; flex: none; width: 56px; height: 32px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(closest-side, {{it.glow}}, rgba(0,0,0,0))"></span><svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 100%; fill: #D3D6DB"><path d="{{it.art}}"></path></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.full}}</span><span class="mono" style="font-size: 10px; color: #A1A7AF">{{it.tag}} · {{it.valueFmt}} CR</span></span>
+<button type="button" aria-label="Remove {{it.full}}" onClick="{{it.toggle}}" style="flex: none; width: 44px; height: 44px; border: 0; background: none; color: #A1A7AF; display: grid; place-items: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: {{it.color}}"></span>
+</div>
+</sc-for>
+<label style="display: flex; align-items: center; gap: 10px; padding-top: 4px">
+<span style="flex: 1; font-size: 14px; color: #A1A7AF">{{crLabel}}</span>
+<input type="number" min="0" step="10" class="mono" value="{{cr}}" onChange="{{onCr}}" style="box-sizing: border-box; width: 110px; height: 44px; padding: 0 10px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font-size: 15px; text-align: right">
+<span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span>
+</label>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 6px"><span class="lbl">{{poolTitle}}</span><span style="font-size: 11px; color: #858B94">{{poolHint}}</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{pool}}" as="p" hint-placeholder-count="9">
+<button type="button" aria-pressed="{{p.on}}" disabled="{{p.locked}}" onClick="{{p.toggle}}" style="position: relative; display: flex; flex-direction: column; padding: 0; border-radius: 4px; overflow: hidden; background: #0E1013; color: #ECEDEF; font: inherit; text-align: left; {{p.frame}}">
+<span style="position: relative; height: 54px; display: grid; place-items: center; opacity: {{p.op}}"><span aria-hidden="true" style="position: absolute; inset: 8% 8%; background: radial-gradient(closest-side, {{p.glow}}, rgba(0,0,0,0))"></span><svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 84%; fill: #D3D6DB"><path d="{{p.art}}"></path></svg></span>
+<span style="display: flex; flex-direction: column; padding: 0 6px 7px"><span style="font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.skin}}</span><span class="mono" style="font-size: 9px; color: #A1A7AF">{{p.tag}}</span></span>
+<sc-if value="{{p.on}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="position: absolute; left: 5px; top: 5px; width: 15px; height: 15px; border-radius: 2px; background: #ECEDEF; display: grid; place-items: center"><svg width="10" height="10" viewBox="0 0 24 24" style="fill: none; stroke: #0A0B0D; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></sc-if>
+<sc-if value="{{p.album}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="position: absolute; right: 4px; top: 5px; font-size: 7px; color: #ECEDEF">Album +1</span></sc-if>
+<span aria-hidden="true" style="height: 2px; background: {{p.color}}"></span>
+</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<section aria-label="Offer summary" style="position: absolute; left: 0; right: 0; bottom: 84px; z-index: 5; box-sizing: border-box; height: 88px; display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #111316; border-top: 1px solid #2C3138">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 3px">
+<span class="mono" style="font-size: 13px">{{giveTotal}} <span style="color: #858B94">⇄</span> {{getTotal}} CR</span>
+<span class="mono" style="font-size: 11px; color: #A1A7AF">{{diffLine}}</span>
+</div>
+<button type="button" class="btn-p" onClick="{{send}}" disabled="{{cantSend}}" style="height: 48px; padding: 0 20px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 15px; font-weight: 600; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)">{{sendLabel}}</button>
+</section>
+
+<nav aria-label="Main" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 6px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #0D0E11; border-top: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<a href="{{t.href}}" aria-current="{{t.current}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; text-decoration: none; font-size: 11px; font-weight: 500; color: {{t.color}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg>
+<span>{{t.label}}</span>
+</a>
+</sc-for>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+const TABS = [
+  ['home', 'Home', 'Mobile-Home.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Mobile-Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Mobile-Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Mobile-Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['more', 'More', 'Mobile-More.dc.html', 'M4 6h16M4 12h16M4 18h16']
+];
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const RAR = {
+  milspec: ['#4B69FF', 'rgba(75,105,255,0.30)'], restricted: ['#8847FF', 'rgba(136,71,255,0.32)'],
+  classified: ['#D32CE6', 'rgba(211,44,230,0.30)'], covert: ['#EB4B4B', 'rgba(235,75,75,0.32)'], gold: ['#E4AE39', 'rgba(228,174,57,0.36)']
+};
+const MINE = [
+  ['m1', '★ Kukri Knife', 'Fade', 'gold', 'knife', 'FN', 15000, false, false], ['m2', 'AWP', 'Chrome Cannon', 'covert', 'sniper', 'ST MW', 6000, false, false],
+  ['m3', 'AK-47', 'Inheritance', 'covert', 'rifle', 'FT', 2500, false, false], ['m4', 'AK-47', 'Head Shot', 'covert', 'rifle', 'Listed', 2500, true, false],
+  ['m5', 'M4A1-S', 'Black Lotus', 'classified', 'rifle', 'FN', 750, false, false], ['m7', 'USP-S', 'Jawbreaker', 'classified', 'pistol', 'WW', 450, false, false],
+  ['m8', 'Glock-18', 'Block-18', 'restricted', 'pistol', 'ST FT', 240, false, false], ['m10', 'M4A4', 'Etch Lord', 'restricted', 'rifle', 'MW', 144, false, false],
+  ['m13', 'Nova', 'Dark Sigil', 'milspec', 'rifle', 'MW', 36, false, false]
+];
+const THEIRS = [
+  ['t1', '★ Survival Knife', 'Crimson Web', 'gold', 'knife', 'FT', 10000, false, false], ['t2', 'M4A4', 'Temukau', 'covert', 'rifle', 'MW', 3000, false, false],
+  ['t3', 'AK-47', 'Head Shot', 'covert', 'rifle', 'FT', 2500, false, false], ['t4', 'P2000', 'Wicked Sick', 'classified', 'pistol', 'ST WW', 900, false, false],
+  ['t6', 'Zeus x27', 'Olympus', 'classified', 'pistol', 'FT', 500, false, true], ['t7', 'Five-SeveN', 'Hybrid', 'restricted', 'pistol', 'MW', 144, false, true],
+  ['t8', 'MP7', 'Just Smile', 'restricted', 'smg', 'FT', 120, false, true], ['t9', 'UMP-45', 'Motorized', 'milspec', 'smg', 'FT', 30, false, true],
+  ['t10', 'Dual Berettas', 'Hideout', 'milspec', 'pistol', 'BS', 24, false, true]
+];
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { side: 'give', give: ['m8', 'm13'], ask: ['t6'], giveCr: '100', askCr: '0', sent: false };
+  }
+  renderVals() {
+    const st = this.state;
+    const key = st.side === 'give' ? 'give' : 'ask';
+    const build = (d, side) => {
+      const on = st[side].indexOf(d[0]) >= 0;
+      return {
+        skin: d[2], full: d[1] + ' | ' + d[2], color: RAR[d[3]][0], glow: RAR[d[3]][1], art: ART[d[4]], tag: d[5], value: d[6], valueFmt: fmt(d[6]),
+        locked: d[7], album: d[8], on, op: d[7] ? '0.35' : '1',
+        frame: on ? 'border: 1px solid #ECEDEF' : 'border: 1px solid #1C1F24',
+        toggle: () => { const l = this.state[side]; const n = {}; n[side] = l.indexOf(d[0]) >= 0 ? l.filter((x) => x !== d[0]) : l.concat([d[0]]); n.sent = false; this.setState(n); }
+      };
+    };
+    const mine = MINE.map((d) => build(d, 'give'));
+    const theirs = THEIRS.map((d) => build(d, 'ask'));
+    const giveSel = mine.filter((i) => i.on), askSel = theirs.filter((i) => i.on);
+    const giveCr = Math.max(0, parseInt(st.giveCr, 10) || 0), askCr = Math.max(0, parseInt(st.askCr, 10) || 0);
+    const give = giveSel.reduce((a, b) => a + b.value, 0) + giveCr;
+    const get = askSel.reduce((a, b) => a + b.value, 0) + askCr;
+    const diff = get - give;
+    const tray = key === 'give' ? giveSel : askSel;
+    return {
+      tabs: TABS.map((t) => ({ label: t[1], href: t[2], icon: t[3], current: t[0] === 'more' ? 'page' : undefined, color: t[0] === 'more' ? '#ECEDEF' : '#858B94' })),
+      sides: [['give', 'You give · ' + giveSel.length], ['ask', 'You ask · ' + askSel.length]].map((s) => ({
+        label: s[1], on: key === s[0],
+        style: key === s[0] ? 'background: #ECEDEF; color: #0A0B0D' : 'background: transparent; color: #A1A7AF',
+        pick: () => this.setState({ side: s[0] })
+      })),
+      tray, trayEmpty: tray.length === 0,
+      emptyText: key === 'give' ? 'Tap your items below' : 'Tap kenji’s items below',
+      crLabel: key === 'give' ? 'Add credits' : 'Ask for credits',
+      cr: key === 'give' ? st.giveCr : st.askCr,
+      onCr: (e) => this.setState(key === 'give' ? { giveCr: e.target.value, sent: false } : { askCr: e.target.value, sent: false }),
+      poolTitle: key === 'give' ? 'Your inventory' : 'kenji’s inventory',
+      poolHint: key === 'give' ? 'Listed items are locked' : 'Album +1 fills a gap',
+      pool: key === 'give' ? mine : theirs,
+      giveTotal: fmt(give), getTotal: fmt(get),
+      diffLine: st.sent ? 'Sent · expires in 3 days' : (diff >= 0 ? '+' : '−') + fmt(Math.abs(diff)) + ' CR for you',
+      cantSend: st.sent || giveSel.length + askSel.length === 0,
+      sendLabel: st.sent ? 'Sent' : 'Send offer',
+      send: () => this.setState({ sent: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

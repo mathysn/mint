@@ -1,0 +1,194 @@
+.root {
+  position: relative;
+  display: inline-flex;
+}
+.fieldRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Trigger, field look (same box as the old native select). */
+.field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.field:hover:not(:disabled) {
+  border-color: var(--border-hover);
+}
+.field[aria-expanded='true'] {
+  border-color: var(--border-hover);
+}
+.field:disabled {
+  color: var(--disabled-text);
+  cursor: default;
+}
+.block {
+  width: 100%;
+}
+
+/* Trigger, inline look: "Sort: Ending soon ⌄". */
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.prefix {
+  color: var(--text-2);
+}
+.value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.chevron {
+  flex: none;
+  margin-left: 4px;
+  fill: none;
+  stroke: var(--text-2);
+  stroke-width: 2;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Popover: over everything, sheets and dialogs included. */
+.popover {
+  position: fixed;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: popover-in 160ms var(--ease-out) both;
+}
+.popover[data-up] {
+  animation-name: popover-up-in;
+}
+.popover[data-closing] {
+  animation: mint-fade-out var(--dur-fast) var(--ease-in-out) both;
+  pointer-events: none;
+}
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes popover-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+.searchRow {
+  flex: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--separator);
+}
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.search {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px 0 34px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+}
+.search::placeholder {
+  color: var(--text-3);
+}
+.search:focus {
+  outline: none;
+}
+.listFrame {
+  flex: 1 1 auto;
+}
+.list {
+  padding: 4px;
+}
+.list:focus {
+  outline: none;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: var(--radius-control);
+  color: var(--text-2);
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+.option[aria-selected='true'] {
+  color: var(--text);
+  font-weight: 500;
+}
+.optionActive {
+  background: var(--nav-hover);
+  color: var(--text);
+}
+.optionLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.hint {
+  flex: none;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.check {
+  flex: none;
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.empty {
+  padding: 10px;
+  font-size: 13px;
+  color: var(--text-3);
+}

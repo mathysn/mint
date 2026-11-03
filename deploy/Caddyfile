@@ -1,0 +1,7 @@
+# HTTPS for Mint (certificates from Let's Encrypt, renewed by Caddy). MINT_DOMAIN comes from .env.
+# Security headers are set by the app itself (server/main.ts), so any proxy works the same.
+# The domain's DNS A record must point at this server before the first start.
+{$MINT_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:3000
+}

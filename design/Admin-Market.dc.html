@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Market & trades</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">// Market &amp; trades</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Market &amp; trades</h1>
+<p style="margin: 0; font-size: 14px; color: #A1A7AF">Live auctions, trade offers and what the monitors flagged. Every cancel refunds bids and releases items. All times UTC.</p>
+</header>
+
+<div role="tablist" aria-label="Market and trades" style="display: flex; flex-wrap: wrap; gap: 4px 28px; border-bottom: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+<button type="button" role="tab" class="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0; margin-bottom: -1px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; {{t.style}}">{{t.label}}<span class="mono" style="font-size: 11px; {{t.countStyle}}">{{t.count}}</span></button>
+</sc-for>
+</div>
+
+<sc-if value="{{hasRoleHint}}" hint-placeholder-val="{{ false }}"><span class="mono" style="margin-top: -8px; font-size: 11px; color: #858B94">{{roleHint}}</span></sc-if>
+
+<sc-if value="{{tab.auctions}}" hint-placeholder-val="{{ true }}">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<div role="table" aria-label="Auctions" style="min-width: 1000px">
+<div role="row" style="display: grid; grid-template-columns: 70px minmax(0, 1fr) 90px 150px 100px 130px 140px; align-items: center; min-height: 44px; padding: 0 18px; border-bottom: 1px solid #1C1F24; background: #0D0E11">
+<span role="columnheader" class="lbl" style="font-size: 10px">#</span><span role="columnheader" class="lbl" style="font-size: 10px">Item</span><span role="columnheader" class="lbl" style="font-size: 10px">Seller</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right">Current bid</span><span role="columnheader" class="lbl" style="font-size: 10px; text-align: right">Buy now</span><span role="columnheader" class="lbl" style="font-size: 10px; padding-left: 24px">Ends ↑</span><span role="columnheader" class="lbl" style="font-size: 10px">Status</span>
+</div>
+<sc-for list="{{auctions}}" as="a" hint-placeholder-count="8">
+<div role="row" class="row" style="display: grid; grid-template-columns: 70px minmax(0, 1fr) 90px 150px 100px 130px 140px; align-items: center; min-height: 52px; padding: 0 18px; border-bottom: 1px solid #1A1D22; font-size: 14px; {{a.rowStyle}}">
+<span role="cell" class="mono" style="font-size: 12px; color: #858B94">{{a.id}}</span>
+<span role="cell" style="display: flex; align-items: center; gap: 10px; min-width: 0"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; background: {{a.color}}"></span><button type="button" class="stretch" onClick="{{a.open}}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: {{a.nameColor}}">{{a.name}}</button><sc-if value="{{a.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="flex: none; padding: 1px 5px; background: #ECEDEF; color: #0A0B0D; font-size: 9px; font-weight: 600">ST™</span></sc-if><span class="mono" style="flex: none; font-size: 11px; color: #858B94">{{a.wear}}</span></span>
+<span role="cell"><a href="Admin-Player.dc.html" class="above">{{a.seller}}</a></span>
+<span role="cell" style="display: flex; flex-direction: column; align-items: flex-end; gap: 1px"><span class="mono">{{a.bid}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{a.bids}}</span></span>
+<span role="cell" class="mono" style="text-align: right; color: #A1A7AF">{{a.buy}}</span>
+<span role="cell" style="padding-left: 24px"><span class="mono" style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 8px; border-radius: 2px; font-size: 12px; {{a.timerStyle}}"><sc-if value="{{a.urgent}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #0A0B0D; animation: mint-blink 1s steps(1) infinite"></span></sc-if>{{a.ends}}</span></span>
+<span role="cell" style="display: flex; align-items: center; gap: 6px; font-size: 13px; {{a.statusStyle}}"><sc-if value="{{a.flag}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span></sc-if>{{a.status}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px"><span class="mono" style="font-size: 12px; color: #A1A7AF">23 live · 1 overdue · 134 sold in 24 h</span><button type="button" class="btn-s" style="height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Show more</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{tab.trades}}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{hasTradeConfirm}}" hint-placeholder-val="{{ false }}">
+<div role="alertdialog" aria-labelledby="tc-t" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 2px"><span id="tc-t" style="font-size: 14px; font-weight: 600">{{tc.title}}</span><span style="font-size: 13px; color: #A1A7AF">{{tc.text}}</span></div>
+<label style="display: flex; align-items: center; gap: 8px; flex: 1 1 260px"><span style="font-size: 13px; color: #A1A7AF">Reason</span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="Shown in the admin log" style="box-sizing: border-box; flex: 1; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+<button type="button" onClick="{{cancelConfirm}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Keep offer</button>
+<button type="button" class="btn-p" onClick="{{doTradeCancel}}" disabled="{{noReason}}" style="height: 40px; padding: 0 16px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancel offer</button>
+</div>
+</sc-if>
+<div style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<div role="table" aria-label="Trade offers" style="min-width: 1000px">
+<div role="row" style="display: grid; grid-template-columns: 70px 170px minmax(0, 1fr) minmax(0, 1fr) 150px 110px 120px; gap: 0 12px; align-items: center; min-height: 44px; padding: 0 18px; border-bottom: 1px solid #1C1F24; background: #0D0E11">
+<span role="columnheader" class="lbl" style="font-size: 10px">Offer</span><span role="columnheader" class="lbl" style="font-size: 10px">From → to</span><span role="columnheader" class="lbl" style="font-size: 10px">Sender gives</span><span role="columnheader" class="lbl" style="font-size: 10px">Receiver gives</span><span role="columnheader" class="lbl" style="font-size: 10px">Status</span><span role="columnheader" class="lbl" style="font-size: 10px">Expires</span><span role="columnheader"><span class="sr">Action</span></span>
+</div>
+<sc-for list="{{trades}}" as="t" hint-placeholder-count="6">
+<div role="row" style="display: grid; grid-template-columns: 70px 170px minmax(0, 1fr) minmax(0, 1fr) 150px 110px 120px; gap: 0 12px; align-items: center; min-height: 60px; padding: 6px 18px; border-bottom: 1px solid #1A1D22; font-size: 14px">
+<span role="cell" class="mono" style="font-size: 12px; color: #858B94">{{t.id}}</span>
+<span role="cell"><a href="Admin-Player.dc.html">{{t.from}}</a> <span style="color: #858B94">→</span> <a href="Admin-Player.dc.html">{{t.to}}</a></span>
+<span role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{t.give}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{t.giveV}}</span></span>
+<span role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{t.get}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{t.getV}}</span></span>
+<span role="cell" style="display: flex; flex-direction: column; gap: 3px"><span class="mono" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 2px; font-size: 11px; {{t.chip}}"><sc-if value="{{t.flag}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span></sc-if>{{t.status}}</span><sc-if value="{{t.hasNote}}" hint-placeholder-val="{{ false }}"><a href="{{t.noteHref}}" style="font-size: 11px; color: #A1A7AF">{{t.note}}</a></sc-if></span>
+<span role="cell" class="mono" style="font-size: 12px; color: #A1A7AF">{{t.expires}}</span>
+<span role="cell" style="text-align: right"><sc-if value="{{t.live}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn-s" onClick="{{t.cancel}}" disabled="{{cantMod}}" title="{{modHint}}" style="height: 36px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; cursor: pointer">Cancel offer</button></sc-if></span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{tab.flags}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(520px, 100%), 1fr)); gap: 16px">
+<sc-for list="{{flags}}" as="f" hint-placeholder-count="4">
+<article aria-labelledby="{{f.hid}}" style="display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; border: 1px {{f.border}} #2C3138; border-radius: 6px; background: {{f.bg}}">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 id="{{f.hid}}" style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: {{f.titleColor}}"><sc-if value="{{f.urgent}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #C8382F"></span><span class="sr">High importance:</span></sc-if>{{f.type}}</h2>
+<span class="mono" style="font-size: 11px; color: #858B94">{{f.raised}}</span>
+</div>
+<span class="mono" style="flex: none; height: 24px; display: inline-flex; align-items: center; padding: 0 8px; border-radius: 2px; font-size: 11px; {{f.chip}}">{{f.state}}</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{f.players}}" as="p" hint-placeholder-count="2"><a href="Admin-Player.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 1px {{p.border}} #2C3138; border-radius: 2px; font-size: 13px; text-decoration: none; color: #ECEDEF">{{p.name}}</a></sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<sc-for list="{{f.evidence}}" as="e" hint-placeholder-count="3"><div style="flex: 1 1 120px; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: #121417"><span class="mono" style="font-size: 20px; font-weight: 500">{{e.v}}</span><span style="font-size: 12px; color: #A1A7AF">{{e.k}}</span></div></sc-for>
+</div>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #A1A7AF">{{f.text}}</p>
+<sc-if value="{{f.dismissing}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<input type="text" class="field" aria-label="Reason to dismiss" value="{{reason}}" onChange="{{onReason}}" placeholder="Why it's fine, shown in the admin log" style="box-sizing: border-box; flex: 1 1 220px; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px">
+<button type="button" onClick="{{cancelConfirm}}" style="height: 40px; padding: 0 12px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="btn-p" onClick="{{f.doDismiss}}" disabled="{{noReason}}" style="height: 40px; padding: 0 16px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Dismiss flag</button>
+</div>
+</sc-if>
+<sc-if value="{{f.showActions}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; border-top: 1px solid #1A1D22">
+<a href="{{f.review}}" class="btn-s" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 13px; font-weight: 500">Review player</a>
+<button type="button" class="btn-s" onClick="{{f.dismiss}}" disabled="{{cantMod}}" title="{{modHint}}" style="height: 40px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer">Dismiss</button>
+<sc-if value="{{canMod}}" hint-placeholder-val="{{ true }}"><a href="Admin-Dlg-Ban.dc.html" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid #F27D7D; border-radius: 2px; color: #F27D7D; text-decoration: none; font-size: 13px; font-weight: 500">Ban</a></sc-if>
+<sc-if value="{{cantMod}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn-d" disabled="{{ true }}" title="Moderators and admins" style="height: 40px; padding: 0 14px; border: 1px solid #F27D7D; border-radius: 2px; background: transparent; color: #F27D7D; font: inherit; font-size: 13px; font-weight: 500">Ban</button></sc-if>
+</div>
+</sc-if>
+</article>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</main>
+<sc-if value="{{drawerOpen}}" hint-placeholder-val="{{ false }}">
+<div aria-hidden="true" onClick="{{close}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(5,6,8,0.62)"></div>
+<aside role="dialog" aria-modal="true" aria-labelledby="au-t" style="position: absolute; top: 0; right: 0; bottom: 0; z-index: 31; width: min(520px, 100%); box-sizing: border-box; display: flex; flex-direction: column; background: #0E1013; border-left: 1px solid #2C3138; box-shadow: -24px 0 60px rgba(0,0,0,0.5)">
+<div class="dscroll" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding: 20px 28px 28px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="lbl">// Auction <span class="mono" style="color: #ECEDEF; letter-spacing: .04em">{{au.id}}</span></span><button type="button" aria-label="Close" onClick="{{close}}" style="width: 44px; height: 44px; margin-right: -12px; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<div style="display: flex; gap: 16px; align-items: center">
+<div style="position: relative; flex: none; width: 160px; height: 110px; display: grid; place-items: center; border: 1px solid #1C1F24; border-radius: 4px; background: #0A0B0D; overflow: hidden"><span aria-hidden="true" style="position: absolute; inset: 8% 6%; background: radial-gradient(closest-side, {{au.glow}}, rgba(0,0,0,0))"></span><svg role="img" aria-label="{{au.name}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 84%; fill: #D3D6DB"><path d="{{au.art}}"></path></svg><span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: {{au.color}}"></span></div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<span style="font-size: 12px; color: #A1A7AF">{{au.weapon}}</span>
+<h2 id="au-t" style="margin: 0; font-size: 24px; line-height: 1.1; font-weight: 600">{{au.skin}}</h2>
+<span style="display: flex; flex-wrap: wrap; gap: 6px"><span class="mono" style="height: 24px; display: inline-flex; align-items: center; padding: 0 7px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px">{{au.wear}}</span><sc-if value="{{au.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="height: 24px; display: inline-flex; align-items: center; padding: 0 7px; background: #ECEDEF; color: #0A0B0D; border-radius: 2px; font-size: 11px; font-weight: 600">StatTrak™</span></sc-if></span>
+</div>
+</div>
+<span class="mono" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 2px; font-size: 13px; {{au.timerStyle}}">{{au.timer}}</span>
+<dl style="margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<sc-for list="{{au.facts}}" as="x" hint-placeholder-count="6"><div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: #0E1013"><dt style="font-size: 12px; color: #A1A7AF">{{x.k}}</dt><dd class="mono" style="margin: 0; font-size: 13px">{{x.v}}</dd></div></sc-for>
+</dl>
+<section aria-labelledby="bh-t" style="display: flex; flex-direction: column; gap: 8px">
+<h3 id="bh-t" class="lbl" style="margin: 0">// Bids · {{au.bidCount}}</h3>
+<div style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px">
+<sc-for list="{{au.history}}" as="b" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 110px 110px; gap: 10px; align-items: center; min-height: 44px; padding: 0 14px; border-bottom: 1px solid #1A1D22; font-size: 13px"><span style="display: flex; align-items: center; gap: 8px"><a href="Admin-Player.dc.html">{{b.who}}</a><sc-if value="{{b.lead}}" hint-placeholder-val="{{ false }}"><span class="mono" style="padding: 1px 5px; background: #ECEDEF; color: #0A0B0D; font-size: 9px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase">Leading</span></sc-if></span><span class="mono" style="text-align: right">{{b.amount}}</span><span class="mono" style="text-align: right; font-size: 12px; color: #858B94">{{b.when}}</span></div>
+</sc-for>
+</div>
+</section>
+</div>
+<div style="flex: none; padding: 16px 28px 20px; border-top: 1px solid #1C1F24; background: #0E1013">
+<sc-if value="{{hasAuConfirm}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-labelledby="ac-t" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<span id="ac-t" style="font-size: 15px; font-weight: 600">{{ac.title}}</span>
+<ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.5; color: #A1A7AF"><sc-for list="{{ac.lines}}" as="l" hint-placeholder-count="2"><li>{{l.text}}</li></sc-for></ul>
+<input type="text" class="field" aria-label="Reason" value="{{reason}}" onChange="{{onReason}}" placeholder="Reason, shown in the admin log" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px">
+<div style="display: flex; justify-content: flex-end; gap: 8px"><button type="button" class="btn-s" onClick="{{cancelConfirm}}" style="height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Back</button><button type="button" class="btn-p" onClick="{{doAu}}" disabled="{{noReason}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{ac.button}}</button></div>
+<span class="mono" style="font-size: 11px; color: #858B94">Logged as {{staffName}}</span>
+</div>
+</sc-if>
+<sc-if value="{{noAuConfirm}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-if value="{{au.overdue}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn-p" onClick="{{askSettle}}" disabled="{{cantMod}}" title="{{modHint}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Settle now</button></sc-if>
+<button type="button" class="btn-s" onClick="{{askCancel}}" disabled="{{au.cantCancel}}" title="{{au.cancelHint}}" style="height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel auction</button>
+</div>
+</sc-if>
+</div>
+</aside>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tab":{"editor":"enum","options":["auctions","auction-live","auction-overdue","trades","flags"],"default":"flags","section":"State"},"role":{"editor":"enum","options":["admin","moderator","viewer"],"default":"admin","section":"State"},"$preview":{"width":1440,"height":1200}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const CASE_ART = 'M38 34H202A8 8 0 0 1 210 42V96A8 8 0 0 1 202 104H38A8 8 0 0 1 30 96V42A8 8 0 0 1 38 34Z M98 18H142V34H134V25H106V34H98Z M30 58H210V61H30Z M120 66L132 78L120 90L108 78Z M52 44H68V50H52Z M172 44H188V50H172Z';
+const RAR = {
+  milspec: ['#4B69FF', 'rgba(75,105,255,0.30)', '#8197FF', 'Mil-Spec'],
+  restricted: ['#8847FF', 'rgba(136,71,255,0.32)', '#A983FF', 'Restricted'],
+  classified: ['#D32CE6', 'rgba(211,44,230,0.30)', '#E57AF0', 'Classified'],
+  covert: ['#EB4B4B', 'rgba(235,75,75,0.32)', '#F27D7D', 'Covert'],
+  gold: ['#E4AE39', 'rgba(228,174,57,0.36)', '#ECC163', '★ Rare special']
+};
+
+// id, weapon, skin, rarity, art, wear, st, seller, bid, bids, leader, buy, ends, kind (live|urgent|overdue|settled|cancelled), status text
+const AUCTIONS = [
+  ['#8817', 'Glock-18', 'Umbral Rabbit', 'restricted', 'pistol', 'FN', false, 'kenji', 210, 6, 'lou', '—', '1:42', 'urgent', 'Live'],
+  ['#8818', 'M4A4', 'Temukau', 'covert', 'rifle', 'MW', false, 'lou', 1200, 3, 'vex', '3,500 CR', '58 min', 'live', 'Live'],
+  ['#8820', 'AK-47', 'Redline', 'classified', 'rifle', 'FT', true, 'vex', 1380, 4, 'kenji', '2,500 CR', '4 h 51 min', 'live', 'Live'],
+  ['#8803', 'Zeus x27', 'Olympus', 'classified', 'pistol', 'FT', false, 'dune', 640, 2, 'lou', '—', 'ended 13:58', 'overdue', 'Overdue'],
+  ['#8812', 'AK-47', 'Inheritance', 'covert', 'rifle', 'FT', false, 'rhea', 5600, 7, 'dune', '—', 'Oct 22, 22:00', 'settled', 'Settled · refund bug'],
+  ['#8809', 'AWP', 'Duality', 'classified', 'sniper', 'FN', false, 'nyx', 450, 1, 'kenji', '—', 'Oct 23, 11:02', 'cancelled', 'Cancelled by ban'],
+  ['#8806', 'Five-SeveN', 'Hybrid', 'restricted', 'pistol', 'MW', false, 'vex', 1450, 5, 'lou', '—', 'Oct 22, 21:15', 'settled', 'Settled'],
+  ['#8790', 'AWP', 'Duality', 'classified', 'sniper', 'FT', false, 'lou', 610, 2, 'kenji', '—', 'Oct 19, 10:05', 'cancelled', 'Cancelled by lea']
+];
+const BIDS = {
+  '#8820': [['kenji', '1,380 CR', '13:51'], ['lou', '1,250 CR', '12:02'], ['kenji', '1,100 CR', '10:40'], ['dune', '1,000 CR', '09:12']],
+  '#8803': [['lou', '640 CR', '13:56'], ['ash', '600 CR', '11:20']]
+};
+const FACTS = {
+  '#8820': [['Seller', 'vex'], ['Start price', '1,000 CR'], ['Buy now', '2,500 CR'], ['Started', 'Oct 23, 09:00'], ['Ends', 'Oct 23, 19:03'], ['Anti-sniping', 'not triggered']],
+  '#8803': [['Seller', 'dune'], ['Start price', '500 CR'], ['Buy now', '—'], ['Started', 'Oct 22, 13:58'], ['Ended', 'Oct 23, 13:58'], ['Settlement', 'missed 2 runs']]
+};
+const TRADES = [
+  ['#2245', 'vex', 'kenji', '★ Kukri Knife | Fade', '1 item · 15,000 CR', 'nothing', '0 CR', 'Pending · flagged', 'flag', 'in 2 d 23 h', true, '', ''],
+  ['#2243', 'lou', 'dune', 'M4A1-S | Black Lotus, Tec-9 | Slag', '2 items · 780 CR', 'P90 | Neoqueen + 300 CR', '1 item · 540 CR', 'Pending', 'outline', 'in 6 d', true, '', ''],
+  ['#2244', 'nyx', 'kenji', 'AWP | Duality', '1 item · 600 CR', '4,000 CR', '4,000 CR', 'Cancelled by ban', 'dashed', '—', false, '', ''],
+  ['#2242', 'rhea', 'ash', 'UMP-45 | Wild Child', '1 item · 500 CR', 'MAC-10 | Sakkaku', '1 item · 144 CR', 'Accepted', 'solid', '—', false, '', ''],
+  ['#2239', 'lou', 'kenji', '900 CR', '900 CR', 'Tec-9 | Slag', '1 item · 30 CR', 'Accepted', 'solid', '—', false, '', ''],
+  ['#2231', 'vex', 'kenji', 'MP7 | Skulls', '1 item · 45 CR', '900 CR', '900 CR', 'Expired Oct 19', 'dashed', '—', false, 'Item still locked', 'Admin-Items.dc.html']
+];
+const CHIP = { outline: 'border: 1px solid #2C3138; color: #ECEDEF', dashed: 'border: 1px dashed #4A5059; color: #858B94', solid: 'background: #ECEDEF; color: #0A0B0D', flag: 'border: 1px solid #2C3138; color: #ECEDEF' };
+// id, urgent, type, raised, players [name, banned], evidence, text, open, handled text
+const FLAGS = [
+  ['f1', true, 'Repeated trades', 'Raised Oct 23, 08:00 · trade monitor', [['vex', false], ['kenji', false]], [['6', 'trades in 2 days'], ['41,000 CR', 'moved one way'], ['1', 'still pending (#2245)']], 'Every trade sends items from vex to kenji for almost nothing. Could be a gift, an alt account or a sale for real money.', true, ''],
+  ['f2', true, 'Many accounts, 1 IP', 'Raised Oct 22, 23:10 · sign-up monitor', [['nyx', true], ['Guest #2b7e', false], ['+5 more', false]], [['7', 'accounts created Oct 22'], ['1', 'address'], ['18,500 CR', 'of items sent to nyx']], 'Same address, created within 40 minutes, all sent their items to nyx.', true, ''],
+  ['f3', false, 'Unusual price', 'Raised Oct 23, 06:12 · market monitor', [['ash', false], ['dune', false]], [['12,000 CR', 'sale price'], ['1,380 CR', '30-day average'], ['×8.7', 'above average']], 'AK-47 | Redline (FT) sold by ash to dune. Credits may be moving between accounts through the market.', true, ''],
+  ['f4', false, 'New account', 'Raised Oct 22, 20:35 · trade monitor', [['nyx', true]], [['2 days', 'account age'], ['18,500 CR', 'of items received']], 'nyx received 18,500 CR of items two days after joining.', false, 'Handled · nyx banned by lea, Oct 23 11:02']
+];
+const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.initial(props);
+  }
+  initial(p) {
+    const tab = p.tab === 'trades' ? 'trades' : p.tab === 'flags' ? 'flags' : 'auctions';
+    return { tab, drawer: p.tab === 'auction-overdue' ? '#8803' : p.tab === 'auction-live' ? '#8820' : null, au: {}, confirm: null, reason: '', tradeDone: {}, flagDone: {}, toast: '' };
+  }
+  componentDidUpdate(prev) { if (prev.tab !== this.props.tab || prev.role !== this.props.role) this.setState(this.initial(this.props)); }
+  renderVals() {
+    const st = this.state;
+    const sh = SHELL(this.props.role, 'market');
+    const canMod = sh.rank >= 1;
+    const openFlags = FLAGS.filter((f) => f[7] && !st.flagDone[f[0]]).length;
+    const tabs = [['auctions', 'Auctions', '23 live'], ['trades', 'Trades', '2 pending'], ['flags', 'Flags', String(openFlags)]].map((t) => ({
+      label: t[1], count: t[2], on: st.tab === t[0], pick: () => this.setState({ tab: t[0], confirm: null }),
+      style: st.tab === t[0] ? 'color: #ECEDEF; border-bottom: 2px solid #ECEDEF' : 'color: #A1A7AF; border-bottom: 2px solid transparent',
+      countStyle: t[0] === 'flags' && openFlags ? 'min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 9px; background: #ECEDEF; color: #0A0B0D; display: inline-grid; place-items: center; font-weight: 600' : 'color: #858B94'
+    }));
+    const auctions = AUCTIONS.map((a) => {
+      const o = st.au[a[0]] || {};
+      const kind = o.kind || a[13];
+      const r = RAR[a[3]];
+      const ended = kind === 'settled' || kind === 'cancelled';
+      return {
+        id: a[0], name: a[1] + ' | ' + a[2], wear: a[5], st: a[6], color: r[0], seller: a[7], nameColor: ended ? '#A1A7AF' : '#ECEDEF',
+        bid: fmt(a[8]) + ' CR', bids: a[9] + (a[9] === 1 ? ' bid · ' : ' bids · ') + a[10], buy: a[11], ends: o.ends || a[12], urgent: kind === 'urgent', flag: kind === 'overdue' || a[0] === '#8812',
+        timerStyle: kind === 'urgent' ? 'background: #ECEDEF; color: #0A0B0D' : ended ? 'color: #858B94; padding-left: 0' : kind === 'overdue' ? 'border: 1px dashed #4A5059; color: #ECEDEF' : 'border: 1px solid #2C3138; color: #ECEDEF',
+        status: o.status || a[14], statusStyle: ended ? 'color: #858B94' : 'color: #ECEDEF',
+        rowStyle: st.drawer === a[0] ? 'background: #16181C' : '',
+        open: () => this.setState({ drawer: a[0], confirm: null })
+      };
+    });
+    const A = AUCTIONS.find((a) => a[0] === st.drawer);
+    let au = { id: '', name: '', weapon: '', skin: '', wear: '', st: false, color: 'transparent', glow: 'transparent', art: '', timer: '', timerStyle: '', facts: [], history: [], bidCount: '0', overdue: false, cantCancel: true, cancelHint: '' };
+    let ac = { title: '', lines: [], button: '' };
+    if (A) {
+      const o = st.au[A[0]] || {};
+      const kind = o.kind || A[13];
+      const r = RAR[A[3]];
+      const ended = kind === 'settled' || kind === 'cancelled';
+      const hist = (BIDS[A[0]] || [[A[10], fmt(A[8]) + ' CR', '—']]).map((b, i) => ({ who: b[0], amount: b[1], when: b[2], lead: i === 0 && !ended }));
+      au = {
+        id: A[0], name: A[1] + ' | ' + A[2], weapon: A[1], skin: A[2], wear: { FN: 'Factory New', MW: 'Minimal Wear', FT: 'Field-Tested' }[A[5]] || A[5], st: A[6], color: r[0], glow: r[1], art: ART[A[4]],
+        timer: ended ? (o.status || A[14]) : kind === 'overdue' ? 'Ended 14 min ago · not settled' : 'Ends in ' + A[12],
+        timerStyle: kind === 'overdue' ? 'border: 1px dashed #4A5059; color: #ECEDEF' : ended ? 'border: 1px dashed #4A5059; color: #858B94' : 'border: 1px solid #2C3138; color: #ECEDEF',
+        facts: (FACTS[A[0]] || [['Seller', A[7]], ['Current bid', fmt(A[8]) + ' CR'], ['Bids', String(A[9])], ['Ends', A[12]]]).map((f) => ({ k: f[0], v: f[1] })),
+        history: hist, bidCount: String(A[9]), overdue: kind === 'overdue',
+        cantCancel: !canMod || ended, cancelHint: !canMod ? 'Moderators and admins' : ended ? 'Already ' + (o.status || A[14]).toLowerCase() : ''
+      };
+      const lead = hist[0] || { who: '', amount: '' };
+      if (st.confirm === 'cancel') ac = { title: 'Cancel auction ' + A[0], lines: [{ text: au.name + ' goes back to ' + A[7] + '’s inventory.' }, { text: 'Leading bid ' + lead.amount + ' refunded to ' + lead.who + '. Earlier bids were already refunded when they were outbid.' }, { text: A[7] + ' pays no fee.' }], button: 'Cancel auction', toast: 'Cancelled auction ' + A[0] + ', refunded ' + lead.who + ' · logged', apply: { kind: 'cancelled', status: 'Cancelled by ' + sh.staffName, ends: 'Oct 23, 14:12' } };
+      if (st.confirm === 'settle') ac = { title: 'Settle auction ' + A[0] + ' now', lines: [{ text: au.name + ' goes to ' + lead.who + ' for ' + lead.amount + '.' }, { text: A[7] + ' gets 608 CR (640 CR minus the 5% fee, 32 CR).' }, { text: 'The settlement job skipped it twice. Logs & tools › Jobs has the details.' }], button: 'Settle now', toast: 'Settled auction ' + A[0] + ': ' + lead.who + ' wins · logged', apply: { kind: 'settled', status: 'Settled by ' + sh.staffName, ends: 'Oct 23, 14:12' } };
+    }
+    const T = st.confirm && st.confirm.indexOf('trade:') === 0 ? TRADES.find((t) => t[0] === st.confirm.slice(6)) : null;
+    const tc = T ? { title: 'Cancel offer ' + T[0] + ' (' + T[1] + ' → ' + T[2] + ')', text: T[3] + ' goes back to ' + T[1] + ' and ' + T[5] + ' stays with ' + T[2] + '. Both are notified.' } : { title: '', text: '' };
+    const trades = TRADES.map((t) => {
+      const done = st.tradeDone[t[0]];
+      return {
+        id: t[0], from: t[1], to: t[2], give: t[3], giveV: t[4], get: t[5], getV: t[6],
+        status: done ? 'Cancelled by ' + sh.staffName : t[7], chip: done ? CHIP.dashed : CHIP[t[8]], flag: t[8] === 'flag' && !done,
+        expires: done ? '—' : t[9], live: t[10] && !done, note: t[11], hasNote: !!t[11], noteHref: t[12] || '#',
+        cancel: () => this.setState({ confirm: 'trade:' + t[0], reason: '' })
+      };
+    });
+    const flags = FLAGS.map((f) => {
+      const done = st.flagDone[f[0]];
+      const open = f[7] && !done;
+      return {
+        hid: 'fl-' + f[0], urgent: f[1] && open, type: f[2], raised: f[3], text: f[6],
+        players: f[4].map((p) => ({ name: p[0] + (p[1] ? ' · banned' : ''), border: p[1] ? 'dashed' : 'solid' })),
+        evidence: f[5].map((e) => ({ v: e[0], k: e[1] })),
+        state: open ? 'Open' : done ? 'Dismissed by ' + sh.staffName : f[8].split(' · ')[0],
+        chip: open ? 'border: 1px solid #2C3138; color: #ECEDEF' : 'border: 1px dashed #4A5059; color: #858B94',
+        border: open ? 'solid' : 'dashed', bg: open ? '#0E1013' : 'transparent', titleColor: open ? '#ECEDEF' : '#A1A7AF',
+        showActions: open && st.confirm !== 'flag:' + f[0], dismissing: open && st.confirm === 'flag:' + f[0],
+        review: 'Admin-Player.dc.html',
+        dismiss: () => this.setState({ confirm: 'flag:' + f[0], reason: '' }),
+        doDismiss: () => { if (!this.state.reason.trim()) return; const flagDone = Object.assign({}, this.state.flagDone); flagDone[f[0]] = true; this.setState({ flagDone, confirm: null, reason: '', toast: 'Dismissed flag “' + f[2] + '” · logged' }); }
+      };
+    }).map((f, i) => (FLAGS[i][8] && !FLAGS[i][7] ? Object.assign(f, { raised: FLAGS[i][3] + ' · ' + FLAGS[i][8].split(' · ')[1] }) : f));
+    return Object.assign(sh, {
+      tabs, tab: { auctions: st.tab === 'auctions', trades: st.tab === 'trades', flags: st.tab === 'flags' },
+      hasRoleHint: !canMod, roleHint: 'Read-only: you’re a Viewer. Cancelling, settling and dismissing are for moderators and admins.',
+      canMod, cantMod: !canMod, modHint: canMod ? '' : 'Moderators and admins',
+      auctions, trades, flags,
+      drawerOpen: !!A && st.tab === 'auctions', close: () => this.setState({ drawer: null, confirm: null }), au,
+      hasAuConfirm: !!A && (st.confirm === 'cancel' || st.confirm === 'settle'), noAuConfirm: !(st.confirm === 'cancel' || st.confirm === 'settle'), ac,
+      askCancel: () => this.setState({ confirm: 'cancel', reason: '' }), askSettle: () => this.setState({ confirm: 'settle', reason: '' }),
+      doAu: () => {
+        if (!A || !ac.apply || !st.reason.trim()) return;
+        const auS = Object.assign({}, st.au); auS[A[0]] = ac.apply;
+        this.setState({ au: auS, confirm: null, reason: '', toast: ac.toast });
+      },
+      hasTradeConfirm: !!T, tc,
+      doTradeCancel: () => { if (!T || !st.reason.trim()) return; const tradeDone = Object.assign({}, st.tradeDone); tradeDone[T[0]] = true; this.setState({ tradeDone, confirm: null, reason: '', toast: 'Cancelled offer ' + T[0] + ', items and credits released · logged' }); },
+      reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }), noReason: !st.reason.trim(),
+      cancelConfirm: () => this.setState({ confirm: null }),
+      hasToast: !!st.toast, toast: st.toast
+    });
+  }
+}
+</script>
+</body>
+</html>

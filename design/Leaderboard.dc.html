@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Leaderboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.side-inner{min-height:860px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.tab:hover{color:#ECEDEF}
+.chip:hover{border-color:#4A5059}
+td,th{padding:0}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Main" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Main.dc.html" aria-label="Mint, home" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span>{{n.label}}</span>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="border: 1px solid #1C1F24; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: #0F1114">
+<span class="lbl">Balance</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span class="mono" style="font-size: 24px; font-weight: 600">4,870</span><span class="mono" style="font-size: 12px; color: #A1A7AF">CR</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #A1A7AF"><span>Free case</span><span class="mono" style="color: #ECEDEF">Ready</span></div>
+</div>
+<a href="Profile.dc.html" style="display: flex; gap: 10px; align-items: center; padding: 8px 4px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">V</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">vex</span><span style="font-size: 12px; color: #A1A7AF">View profile</span></span>
+</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div role="status" style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; min-height: 40px; padding: 8px 32px; box-sizing: border-box; border-bottom: 1px solid #1C1F24; background: #0D0E11; font-size: 13px">
+<span class="lbl" style="color: #E4AE39">★ Global drop</span>
+<span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px"><span style="font-weight: 600">nyx</span><span style="color: #A1A7AF">unboxed</span><span style="color: #ECC163; font-weight: 600">★ Butterfly Knife | Doppler</span><span class="mono" style="font-size: 12px; color: #A1A7AF">FN · 0.0081</span></span>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">2 min ago</span>
+</div>
+
+<div style="width: 100%; max-width: 1240px; box-sizing: border-box; margin: 0 auto; padding: 40px 48px 72px; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-direction: column; gap: 12px">
+<span class="lbl">// Leaderboard</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Leaderboard</h1>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; border-bottom: 1px solid #1C1F24">
+<div role="tablist" aria-label="Ranking" style="display: flex; gap: 28px">
+<sc-for list="{{boards}}" as="b" hint-placeholder-count="2">
+<button type="button" role="tab" class="tab" aria-selected="{{b.on}}" onClick="{{b.pick}}" style="height: 48px; padding: 0; margin-bottom: -1px; border: 0; background: none; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; {{b.style}}">{{b.label}}</button>
+</sc-for>
+</div>
+<div role="radiogroup" aria-label="Who" style="display: flex; gap: 6px; padding-bottom: 8px">
+<sc-for list="{{scopes}}" as="s" hint-placeholder-count="2">
+<button type="button" role="radio" class="chip" aria-checked="{{s.on}}" onClick="{{s.pick}}" style="height: 36px; padding: 0 14px; border-radius: 2px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; {{s.style}}">{{s.label}}</button>
+</sc-for>
+</div>
+</div>
+<p style="margin: -8px 0 0; font-size: 13px; color: #A1A7AF">{{explain}}</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 16px">
+<sc-for list="{{podium}}" as="p" hint-placeholder-count="3">
+<article style="position: relative; display: flex; flex-direction: column; gap: 18px; padding: 26px; border-radius: 6px; background: #0E1013; {{p.frame}}">
+<sc-if value="{{p.first}}" hint-placeholder-val="{{ false }}">
+<span aria-hidden="true" style="position: absolute; left: 10px; top: 10px; width: 16px; height: 16px; border-left: 1px solid #ECEDEF; border-top: 1px solid #ECEDEF"></span>
+<span aria-hidden="true" style="position: absolute; right: 10px; bottom: 10px; width: 16px; height: 16px; border-right: 1px solid #ECEDEF; border-bottom: 1px solid #ECEDEF"></span>
+</sc-if>
+<div style="display: flex; justify-content: space-between; align-items: flex-start">
+<span class="mono" style="font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -0.03em; color: {{p.rankColor}}">{{p.rank}}</span>
+<sc-if value="{{p.tag}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="font-size: 10px; color: #ECEDEF">{{p.tagText}}</span></sc-if>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 15px; font-weight: 600">{{p.initial}}</span>
+<div style="display: flex; flex-direction: column; gap: 2px"><a href="Profile.dc.html" style="font-size: 17px; font-weight: 600; color: #ECEDEF; text-decoration: none">{{p.name}}</a><span class="mono" style="font-size: 15px; color: #A1A7AF">{{p.metric}}</span></div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid #1A1D22">
+<span style="position: relative; flex: none; width: 72px; height: 36px; display: grid; place-items: center"><span aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(closest-side, {{p.glow}}, rgba(0,0,0,0))"></span><svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 100%; fill: #D3D6DB"><path d="{{p.art}}"></path></svg></span>
+<span style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="lbl" style="font-size: 9px">{{p.subLabel}}</span><span style="font-size: 13px; font-weight: 600; color: {{p.text}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.sub}}</span></span>
+</div>
+</article>
+</sc-for>
+</div>
+
+<div style="overflow-x: auto; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div role="table" aria-label="{{metricHead}} ranking" style="min-width: 620px; display: flex; flex-direction: column">
+<div role="row" style="display: grid; grid-template-columns: 72px minmax(0, 1.2fr) minmax(0, 1.6fr) 160px; align-items: center; border-bottom: 1px solid #1C1F24">
+<span role="columnheader" class="lbl" style="padding: 14px 20px">Rank</span>
+<span role="columnheader" class="lbl" style="padding: 14px 12px">Player</span>
+<span role="columnheader" class="lbl" style="padding: 14px 12px">{{subHead}}</span>
+<span role="columnheader" class="lbl" style="padding: 14px 20px; text-align: right">{{metricHead}}</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="9">
+<div role="row" style="display: grid; grid-template-columns: 72px minmax(0, 1.2fr) minmax(0, 1.6fr) 160px; align-items: center; min-height: 52px; border-bottom: 1px solid #1A1D22; {{r.rowStyle}}">
+<span role="cell" class="mono" style="padding: 0 20px; font-size: 14px; color: #A1A7AF">{{r.rank}}</span>
+<span role="cell" style="padding: 0 12px; display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 12px; font-weight: 600; color: #A1A7AF">{{r.initial}}</span><span style="font-size: 14px; font-weight: {{r.weight}}">{{r.name}}</span><sc-if value="{{r.tag}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="font-size: 9px">{{r.tagText}}</span></sc-if></span>
+<span role="cell" style="padding: 0 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; min-width: 0"><sc-if value="{{r.hasDot}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="flex: none; width: 7px; height: 7px; background: {{r.color}}"></span></sc-if><span style="color: {{r.text}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span></span>
+<span role="cell" class="mono" style="padding: 0 20px; font-size: 14px; text-align: right">{{r.metric}}</span>
+</div>
+</sc-for>
+<sc-if value="{{pinYou}}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" class="mono" style="padding: 8px 20px; border-bottom: 1px solid #1A1D22; font-size: 12px; color: #5A616B">· · ·</div>
+<div role="row" style="display: grid; grid-template-columns: 72px minmax(0, 1.2fr) minmax(0, 1.6fr) 160px; align-items: center; min-height: 52px; background: #15171B; outline: 1px solid #ECEDEF; outline-offset: -1px">
+<span role="cell" class="mono" style="padding: 0 20px; font-size: 14px; color: #ECEDEF">{{you.rank}}</span>
+<span role="cell" style="padding: 0 12px; display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 50%; background: #2C3138; display: grid; place-items: center; font-size: 12px; font-weight: 600">V</span><span style="font-size: 14px; font-weight: 600">vex</span><span class="lbl" style="font-size: 9px; color: #ECEDEF">You</span></span>
+<span role="cell" style="padding: 0 12px; display: flex; align-items: center; gap: 8px; font-size: 13px"><span aria-hidden="true" style="flex: none; width: 7px; height: 7px; background: {{you.color}}"></span><span style="color: {{you.text}}">{{you.sub}}</span></span>
+<span role="cell" class="mono" style="padding: 0 20px; font-size: 14px; text-align: right">{{you.metric}}</span>
+</div>
+</sc-if>
+</div>
+</div>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1460}}'>
+const NAVDEF = [
+  ['home', 'Home', 'Main.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['market', 'Market', 'Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z'],
+  ['trades', 'Trades', 'Trades.dc.html', 'M4 8h15l-4-4M20 16H5l4 4'],
+  ['tradeup', 'Trade-up', 'TradeUp.dc.html', 'M12 20V5M6 11l6-6 6 6M5 20h14'],
+  ['friends', 'Friends', 'Friends.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'],
+  ['leaderboard', 'Leaderboard', 'Leaderboard.dc.html', 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7']
+];
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z',
+  album: 'M70 20H170V90H70Z M80 30H110V52H80Z M130 30H160V52H130Z M80 60H110V82H80Z M130 60H160V82H130Z'
+};
+const RAR = {
+  covert: ['#EB4B4B', '#F27D7D', 'rgba(235,75,75,0.32)'],
+  gold: ['#E4AE39', '#ECC163', 'rgba(228,174,57,0.38)']
+};
+const FRIENDS = ['nyx', 'kenji', 'lou', 'ash', 'rhea', 'tomb'];
+// name, value, best item, rarity, art
+const VALUE = [
+  ['nyx', 64800, '★ Butterfly Knife | Doppler', 'gold', 'knife'], ['orbit', 58300, '★ Kukri Knife | Case Hardened', 'gold', 'knife'],
+  ['hexa', 51040, '★ Falchion Knife | Slaughter', 'gold', 'knife'], ['kenji', 41200, '★ Survival Knife | Crimson Web', 'gold', 'knife'],
+  ['zephyr', 37900, 'AK-47 | Head Shot', 'covert', 'rifle'], ['milo', 33450, '★ Kukri Knife | Night Stripe', 'gold', 'knife'],
+  ['quill', 32980, 'M4A4 | Temukau', 'covert', 'rifle'], ['pax', 32410, 'AWP | Chrome Cannon', 'covert', 'sniper'],
+  ['juno', 31870, 'AK-47 | Inheritance', 'covert', 'rifle'], ['rook', 31200, '★ Kukri Knife | Fade', 'gold', 'knife'],
+  ['sol', 30650, 'M4A4 | Temukau', 'covert', 'rifle'], ['ivy', 30020, 'AK-47 | Head Shot', 'covert', 'rifle']
+];
+const VALUE_YOU = [18, 28790, '★ Kukri Knife | Fade', 'gold', 'knife'];
+const VALUE_FRIENDS = [['nyx', 64800, '★ Butterfly Knife | Doppler', 'gold', 'knife'], ['kenji', 41200, '★ Survival Knife | Crimson Web', 'gold', 'knife'], ['vex', 28790, '★ Kukri Knife | Fade', 'gold', 'knife'], ['lou', 18950, 'M4A4 | Temukau', 'covert', 'rifle'], ['ash', 12600, 'AK-47 | Head Shot', 'covert', 'rifle'], ['rhea', 9400, 'P2000 | Wicked Sick', 'classified', 'rifle'], ['tomb', 3120, 'MAC-10 | Sakkaku', 'restricted', 'rifle']];
+// name, skins collected, complete albums
+const ALB = [['rhea', 214, 6], ['dune', 198, 5], ['lou', 187, 4], ['orbit', 160, 3], ['quill', 141, 3], ['hexa', 120, 2], ['vex', 96, 0], ['kenji', 88, 0], ['juno', 84, 1], ['pax', 79, 0], ['ivy', 72, 1], ['sol', 70, 0]];
+const ALB_FRIENDS = [['rhea', 214, 6], ['lou', 187, 4], ['vex', 96, 0], ['kenji', 88, 0], ['ash', 64, 0], ['nyx', 51, 0], ['tomb', 23, 0]];
+const OTHER = { classified: ['#D32CE6', '#E57AF0', 'rgba(211,44,230,0.30)'], restricted: ['#8847FF', '#A983FF', 'rgba(136,71,255,0.32)'] };
+function fmt(n) { return n.toLocaleString('en-US'); }
+function pad(n) { return n < 10 ? '0' + n : String(n); }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { board: 'value', scope: 'all' };
+  }
+  renderVals() {
+    const st = this.state;
+    const nav = NAVDEF.map((n) => ({
+      label: n[1], href: n[2], icon: n[3],
+      current: n[0] === 'leaderboard' ? 'page' : undefined,
+      style: n[0] === 'leaderboard' ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF'
+    }));
+    const isValue = st.board === 'value';
+    const src = isValue ? (st.scope === 'all' ? VALUE : VALUE_FRIENDS) : (st.scope === 'all' ? ALB : ALB_FRIENDS);
+    const col = (r) => RAR[r] || OTHER[r];
+    const entry = (e, i) => {
+      const me = e[0] === 'vex';
+      const friend = FRIENDS.indexOf(e[0]) >= 0;
+      const c = isValue ? col(e[3]) : ['#ECEDEF', '#A1A7AF', 'rgba(236,237,239,0.12)'];
+      return {
+        rank: pad(i + 1), name: e[0], initial: e[0][0].toUpperCase(),
+        metric: isValue ? fmt(e[1]) + ' CR' : fmt(e[1]) + ' skins',
+        sub: isValue ? e[2] : (e[2] === 0 ? 'No complete album yet' : e[2] + (e[2] > 1 ? ' complete albums' : ' complete album')),
+        subLabel: isValue ? 'Best item' : 'Albums',
+        art: isValue ? ART[e[4]] : ART.album,
+        color: c[0], text: isValue ? c[1] : '#A1A7AF', glow: c[2], hasDot: isValue,
+        tag: me || (friend && st.scope === 'all'), tagText: me ? 'You' : 'Friend',
+        weight: me ? '600' : '400',
+        rowStyle: me ? 'background: #15171B; outline: 1px solid #ECEDEF; outline-offset: -1px' : '',
+        first: i === 0,
+        frame: me ? 'border: 1px solid #ECEDEF' : i === 0 ? 'border: 1px solid #4A5059' : 'border: 1px solid #1C1F24',
+        rankColor: i === 0 ? '#ECEDEF' : '#5A616B'
+      };
+    };
+    const all = src.map(entry);
+    const inList = src.some((e) => e[0] === 'vex');
+    const pinYou = isValue && st.scope === 'all' && !inList;
+    const yv = VALUE_YOU;
+    return {
+      nav,
+      boards: [['value', 'Inventory value'], ['albums', 'Album completion']].map((b) => ({
+        label: b[1], on: st.board === b[0],
+        style: st.board === b[0] ? 'color: #ECEDEF; border-bottom: 2px solid #ECEDEF' : 'color: #A1A7AF; border-bottom: 2px solid transparent',
+        pick: () => this.setState({ board: b[0] })
+      })),
+      scopes: [['all', 'Everyone'], ['friends', 'Friends']].map((s) => ({
+        label: s[1], on: st.scope === s[0],
+        style: st.scope === s[0] ? 'background: #ECEDEF; color: #0A0B0D; border: 1px solid #ECEDEF' : 'background: transparent; color: #A1A7AF; border: 1px solid #2C3138',
+        pick: () => this.setState({ scope: s[0] })
+      })),
+      explain: isValue
+        ? 'Each item counts at its recent average sale price, or its recycle value if it has never sold.'
+        : 'Skins collected across every album, with the number of albums completed.',
+      podium: all.slice(0, 3), rows: all.slice(3),
+      subHead: isValue ? 'Best item' : 'Albums', metricHead: isValue ? 'Inventory value' : 'Skins collected',
+      pinYou,
+      you: { rank: pad(yv[0]), sub: yv[2], color: RAR.gold[0], text: RAR.gold[1], hasDot: true, metric: fmt(yv[1]) + ' CR' }
+    };
+  }
+}
+</script>
+</body>
+</html>

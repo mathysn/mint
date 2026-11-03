@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Open Kilowatt Case (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.btn-p:disabled{background:#3A3F46;color:#A1A7AF}
+@keyframes mint-pop{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}
+@keyframes mint-rise{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
+@keyframes mint-pulse{0%,100%{opacity:.7}50%{opacity:1}}
+@keyframes mint-flare{0%{opacity:0;transform:scale(.55)}60%{opacity:1}100%{opacity:1;transform:scale(1)}}
+@keyframes mint-fade{from{opacity:0}to{opacity:1}}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<div style="position: absolute; left: 0; right: 0; top: 0; bottom: 84px; overflow-y: auto; box-sizing: border-box; padding-top: 50px">
+
+<header style="display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 12px 0 8px">
+<a href="Mobile-Cases.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; color: #A1A7AF; text-decoration: none; font-size: 14px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Cases</a>
+<span class="mono" style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; font-size: 13px">{{balance}} <span style="color: #A1A7AF">CR</span></span>
+</header>
+
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 8px 20px 32px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+<h1 style="margin: 0; font-size: 28px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Kilowatt Case</h1>
+<span class="mono" style="font-size: 14px; color: #A1A7AF">250 CR</span>
+</div>
+
+<section aria-label="Case opening" style="margin: 0 -20px; border-top: 1px solid #1C1F24; border-bottom: 1px solid #1C1F24; background: {{stageBg}}">
+<sc-if value="{{rollVisible}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 24px 0">
+<div style="position: relative; width: 100%; height: 176px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0), #000 12%, #000 88%, rgba(0,0,0,0)); mask-image: linear-gradient(90deg, rgba(0,0,0,0), #000 12%, #000 88%, rgba(0,0,0,0))">
+<div style="position: absolute; left: 50%; top: 16px; display: flex; gap: 8px; transform: translateX({{stripX}}px); transition: {{stripTransition}}; will-change: transform">
+<sc-for list="{{strip}}" as="s" hint-placeholder-count="8">
+<div style="flex: none; width: 112px; height: 144px; display: flex; flex-direction: column; box-sizing: border-box; background: #121417; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<div style="position: relative; flex: 1; display: grid; place-items: center">
+<span aria-hidden="true" style="position: absolute; inset: 12% 8%; background: radial-gradient(closest-side, {{s.glow}}, rgba(0,0,0,0))"></span>
+<svg aria-hidden="true" viewBox="0 0 240 100" style="position: relative; width: 84%; fill: #CDD1D6"><path d="{{s.art}}"></path></svg>
+</div>
+<span style="padding: 0 8px 8px; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{s.skin}}</span>
+<span aria-hidden="true" style="height: 3px; background: {{s.color}}"></span>
+</div>
+</sc-for>
+</div>
+<span aria-hidden="true" style="position: absolute; left: 50%; top: 6px; bottom: 6px; width: 2px; margin-left: -1px; background: #ECEDEF"></span>
+<span aria-hidden="true" style="position: absolute; left: 50%; top: 0; margin-left: -6px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #ECEDEF"></span>
+<span aria-hidden="true" style="position: absolute; left: 50%; bottom: 0; margin-left: -6px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid #ECEDEF"></span>
+</div>
+<div style="width: 100%; box-sizing: border-box; padding: 0 20px; display: flex; flex-direction: column; gap: 10px">
+<button type="button" class="btn-p" onClick="{{open}}" disabled="{{spinning}}" style="width: 100%; height: 52px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">{{openLabel}}</button>
+<span class="mono" style="font-size: 11px; color: #858B94; text-align: center">Drawn on the server before the roll</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{revealPanel}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column">
+<div style="position: relative; height: 230px; display: grid; place-items: center">
+<span aria-hidden="true" class="anim" style="position: absolute; inset: {{grade.haloInset}}; background: radial-gradient(closest-side, {{res.glow}}, rgba(0,0,0,0)); animation: {{grade.haloAnim}}"></span>
+<sc-if value="{{grade.brackets}}" hint-placeholder-val="{{ true }}">
+<span aria-hidden="true" class="anim" style="position: absolute; inset: 18px; animation: mint-fade 600ms 200ms ease-out both">
+<span style="position: absolute; left: 0; top: 0; width: 16px; height: 16px; border-left: 1px solid {{res.text}}; border-top: 1px solid {{res.text}}"></span>
+<span style="position: absolute; right: 0; top: 0; width: 16px; height: 16px; border-right: 1px solid {{res.text}}; border-top: 1px solid {{res.text}}"></span>
+<span style="position: absolute; left: 0; bottom: 0; width: 16px; height: 16px; border-left: 1px solid {{res.text}}; border-bottom: 1px solid {{res.text}}"></span>
+<span style="position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; border-right: 1px solid {{res.text}}; border-bottom: 1px solid {{res.text}}"></span>
+</span>
+</sc-if>
+<svg role="img" aria-label="{{res.full}} (placeholder art)" class="anim" viewBox="0 0 240 100" style="position: relative; width: 84%; fill: #DADDE2; animation: mint-pop 480ms cubic-bezier(.2,.9,.3,1.2) both"><path d="{{res.art}}"></path></svg>
+</div>
+<div class="anim" style="display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 24px; animation: mint-rise 500ms 150ms ease-out both">
+<div style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 8px; height: 8px; background: {{res.color}}"></span><span class="lbl" style="color: {{res.text}}">{{res.rarName}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 14px; color: #A1A7AF">{{res.weapon}}</span>
+<h2 style="margin: 0; font-size: 32px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">{{res.skin}}</h2>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 12px"><span aria-hidden="true" style="width: 7px; height: 7px; background: {{res.wearColor}}"></span>{{res.wearName}}</span>
+<sc-if value="{{res.st}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; height: 28px; padding: 0 8px; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600">STATTRAK™</span></sc-if>
+<span class="mono" style="display: inline-flex; align-items: center; height: 28px; padding: 0 8px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #A1A7AF">#{{res.pattern}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="lbl">Float</span><span class="mono" style="font-size: 16px">{{res.floatLong}}</span></div>
+<div style="position: relative; padding-top: 7px">
+<div aria-hidden="true" style="display: flex; gap: 2px; height: 6px"><span style="flex: 7 1 0; background: #3FB950"></span><span style="flex: 8 1 0; background: #9BC53D"></span><span style="flex: 23 1 0; background: #E3B341"></span><span style="flex: 7 1 0; background: #F0883E"></span><span style="flex: 55 1 0; background: #F05D52"></span></div>
+<span aria-hidden="true" style="position: absolute; top: 0; left: {{res.floatPct}}%; width: 2px; height: 20px; margin-left: -1px; background: #ECEDEF"></span>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 12px; border-top: 1px solid #1A1D22"><span style="font-size: 14px; color: #A1A7AF">Recycle value</span><span class="mono" style="font-size: 15px">{{res.valueFmt}} CR</span></div>
+<sc-if value="{{noConfirm}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<button type="button" onClick="{{keep}}" style="width: 100%; height: 52px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Keep</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button type="button" onClick="{{recycle}}" style="height: 48px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer">Recycle +{{res.valueFmt}}</button>
+<a href="Mobile-Sell.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; box-sizing: border-box; border: 1px solid #2C3138; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 14px; font-weight: 500">List on market</a>
+</div>
+<button type="button" onClick="{{again}}" style="height: 44px; border: 0; background: none; color: #A1A7AF; font: inherit; font-size: 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px">Open another · 250 CR</button>
+</div>
+</sc-if>
+<sc-if value="{{confirm}}" hint-placeholder-val="{{ false }}">
+<div role="alertdialog" aria-labelledby="m-confirm" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid #2C3138; border-radius: 4px; background: #0A0B0D">
+<p id="m-confirm" style="margin: 0; font-size: 14px; line-height: 1.5">Recycle <strong>{{res.full}}</strong> for <span class="mono">{{res.valueFmt}} CR</span>? It is destroyed for good.</p>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button type="button" onClick="{{cancel}}" style="height: 48px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" onClick="{{recycle}}" style="height: 48px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Recycle</button>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section aria-labelledby="m-inside" style="display: flex; flex-direction: column; gap: 20px; padding-top: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 id="m-inside" style="margin: 0; font-size: 17px; font-weight: 600">What's inside</h2><span class="lbl" style="font-size: 10px">17 + ★</span></div>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px">
+<span aria-hidden="true" style="width: 8px; height: 8px; background: {{g.color}}"></span>
+<h3 style="margin: 0; font-size: 13px; font-weight: 600; color: {{g.text}}">{{g.name}}</h3>
+<span class="mono" style="font-size: 11px; color: #A1A7AF">{{g.odds}}</span>
+<span aria-hidden="true" style="flex: 1; height: 1px; background: #1A1D22"></span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{g.items}}" as="it" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; background: #0E1013; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<div style="position: relative; height: 84px; display: grid; place-items: center">
+<span aria-hidden="true" style="position: absolute; inset: 10% 12%; background: radial-gradient(closest-side, {{it.glow}}, rgba(0,0,0,0))"></span>
+<svg role="img" aria-label="{{it.full}} (placeholder art)" viewBox="0 0 240 100" style="position: relative; width: 80%; fill: #CDD1D6"><path d="{{it.art}}"></path></svg>
+</div>
+<div style="padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 11px; color: #A1A7AF">{{it.weapon}}</span>
+<span style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.skin}}</span>
+</div>
+<span aria-hidden="true" style="height: 3px; background: {{it.color}}"></span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</section>
+</div>
+</div>
+
+<nav aria-label="Main" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 6px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #0D0E11; border-top: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<a href="{{t.href}}" aria-current="{{t.current}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; text-decoration: none; font-size: 11px; font-weight: 500; color: {{t.color}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg>
+<span>{{t.label}}</span>
+</a>
+</sc-for>
+</nav>
+
+<sc-if value="{{goldOpen}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-labelledby="m-gold" class="anim" style="position: absolute; inset: 0; z-index: 20; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 96px 20px 40px; background: radial-gradient(circle at 50% 30%, rgba(228,174,57,0.32), rgba(10,11,13,0.98) 58%); animation: mint-fade 500ms ease-out both">
+<span class="lbl" style="color: #ECC163">★ Rare special item</span>
+<div style="position: relative; width: 100%; height: 190px; display: grid; place-items: center">
+<span aria-hidden="true" class="anim" style="position: absolute; inset: -40% -10%; background: repeating-conic-gradient(rgba(228,174,57,0.12) 0deg 4deg, rgba(228,174,57,0) 4deg 15deg); -webkit-mask-image: radial-gradient(closest-side, #000 15%, rgba(0,0,0,0)); mask-image: radial-gradient(closest-side, #000 15%, rgba(0,0,0,0)); animation: mint-spin 80s linear infinite"></span>
+<span aria-hidden="true" style="position: absolute; inset: 4% 10%; background: radial-gradient(closest-side, rgba(228,174,57,0.45), rgba(228,174,57,0))"></span>
+<span aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-left: 1px solid #ECC163; border-top: 1px solid #ECC163"></span>
+<span aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 18px; height: 18px; border-right: 1px solid #ECC163; border-top: 1px solid #ECC163"></span>
+<span aria-hidden="true" style="position: absolute; left: 0; bottom: 0; width: 18px; height: 18px; border-left: 1px solid #ECC163; border-bottom: 1px solid #ECC163"></span>
+<span aria-hidden="true" style="position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; border-right: 1px solid #ECC163; border-bottom: 1px solid #ECC163"></span>
+<svg role="img" aria-label="{{res.full}} (placeholder art)" class="anim" viewBox="0 0 240 100" style="position: relative; width: 92%; fill: #EFE6D2; animation: mint-flare 900ms cubic-bezier(.2,.9,.3,1.1) both"><path d="{{res.art}}"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+<span style="font-size: 15px; color: #ECC163">{{res.weapon}}</span>
+<h2 id="m-gold" style="margin: 0; font-size: 44px; line-height: 1; font-weight: 600; letter-spacing: -0.02em">{{res.skin}}</h2>
+<span class="mono" style="margin-top: 4px; font-size: 12px; color: #A1A7AF">{{res.wearName}} · {{res.floatLong}}</span>
+</div>
+<p style="margin: 0; font-size: 13px; color: #A1A7AF; text-align: center">Announced to every player.</p>
+<div style="width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: auto">
+<button type="button" onClick="{{keep}}" style="width: 100%; height: 52px; border: 0; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)">Keep</button>
+<a href="Mobile-Sell.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border: 1px solid #3A3F46; border-radius: 2px; color: #ECEDEF; text-decoration: none; font-size: 15px; font-weight: 500">List on market</a>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"result":{"editor":"enum","options":["milspec","restricted","classified","covert","gold"],"default":"covert","section":"Roll"},"$preview":{"width":390,"height":844}}'>
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const RAR = {
+  milspec: { name: 'Mil-Spec', color: '#4B69FF', text: '#8197FF', glow: 'rgba(75,105,255,0.30)', recycle: 30, odds: '79.92%' },
+  restricted: { name: 'Restricted', color: '#8847FF', text: '#A983FF', glow: 'rgba(136,71,255,0.32)', recycle: 120, odds: '15.98%' },
+  classified: { name: 'Classified', color: '#D32CE6', text: '#E57AF0', glow: 'rgba(211,44,230,0.30)', recycle: 500, odds: '3.20%' },
+  covert: { name: 'Covert', color: '#EB4B4B', text: '#F27D7D', glow: 'rgba(235,75,75,0.34)', recycle: 2500, odds: '0.64%' },
+  gold: { name: 'Rare special', color: '#E4AE39', text: '#ECC163', glow: 'rgba(228,174,57,0.36)', recycle: 10000, odds: '0.26%' }
+};
+const WEAR = [['FN', 'Factory New', 0.07, 1.5, '#3FB950'], ['MW', 'Minimal Wear', 0.15, 1.2, '#9BC53D'], ['FT', 'Field-Tested', 0.38, 1, '#E3B341'], ['WW', 'Well-Worn', 0.45, 0.9, '#F0883E'], ['BS', 'Battle-Scarred', 1.01, 0.8, '#F05D52']];
+const CONTENTS = {
+  gold: [['★ Kukri Knife', 'Any finish', 'knife']],
+  covert: [['AK-47', 'Inheritance', 'rifle'], ['AWP', 'Chrome Cannon', 'sniper']],
+  classified: [['M4A1-S', 'Black Lotus', 'rifle'], ['Zeus x27', 'Olympus', 'pistol'], ['USP-S', 'Jawbreaker', 'pistol']],
+  restricted: [['Glock-18', 'Block-18', 'pistol'], ['M4A4', 'Etch Lord', 'rifle'], ['Five-SeveN', 'Hybrid', 'pistol'], ['MP7', 'Just Smile', 'smg'], ['Sawed-Off', 'Analog Input', 'rifle']],
+  milspec: [['Dual Berettas', 'Hideout', 'pistol'], ['MAC-10', 'Light Box', 'smg'], ['Nova', 'Dark Sigil', 'rifle'], ['SSG 08', 'Dezastre', 'sniper'], ['Tec-9', 'Slag', 'pistol'], ['UMP-45', 'Motorized', 'smg'], ['XM1014', 'Irezumi', 'rifle']]
+};
+const RESULTS = {
+  milspec: ['MAC-10', 'Light Box', 'smg', 0.312094471, 88, false],
+  restricted: ['Glock-18', 'Block-18', 'pistol', 0.110418827, 503, true],
+  classified: ['M4A1-S', 'Black Lotus', 'rifle', 0.051207733, 271, false],
+  covert: ['AK-47', 'Inheritance', 'rifle', 0.238104546, 412, false],
+  gold: ['★ Kukri Knife', 'Fade', 'knife', 0.021337910, 731, false]
+};
+const GRADES = {
+  milspec: { bg: '#0E1013', haloInset: '24% 22%', haloAnim: 'none', brackets: false },
+  restricted: { bg: '#0E1013', haloInset: '16% 16%', haloAnim: 'none', brackets: false },
+  classified: { bg: 'radial-gradient(ellipse at 50% 22%, rgba(211,44,230,0.14), rgba(14,16,19,0) 60%), #0E1013', haloInset: '8% 8%', haloAnim: 'none', brackets: true },
+  covert: { bg: 'radial-gradient(ellipse at 50% 22%, rgba(235,75,75,0.24), rgba(14,16,19,0) 64%), #0E1013', haloInset: '0% 2%', haloAnim: 'mint-pulse 2.6s ease-in-out infinite', brackets: true },
+  gold: { bg: '#0E1013', haloInset: '0% 2%', haloAnim: 'none', brackets: true }
+};
+const STEP = 120;
+const HALF = 56;
+const START_INDEX = 2;
+const RESULT_INDEX = 40;
+function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+function wearOf(f) { for (let i = 0; i < WEAR.length; i++) { if (f < WEAR[i][2]) return WEAR[i]; } return WEAR[4]; }
+function cardOf(rar, e) { const r = RAR[rar]; return { weapon: e[0], skin: e[1], art: ART[e[2]], color: r.color, glow: r.glow, full: e[0] + ' | ' + e[1] }; }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { phase: 'ready', confirm: false, balance: 4870, reduce: false };
+    this.timer = null;
+  }
+  componentWillUnmount() { clearTimeout(this.timer); }
+  spin() {
+    let reduce = false;
+    try { reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { reduce = false; }
+    this.setState({ phase: 'spinning', confirm: false, reduce: reduce, balance: this.state.balance - 250 });
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.setState({ phase: 'revealed' }), reduce ? 700 : 6500);
+  }
+  open() {
+    if (this.state.phase === 'spinning') return;
+    if (this.state.phase === 'revealed') {
+      this.setState({ phase: 'ready', confirm: false });
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => this.spin(), 60);
+      return;
+    }
+    this.spin();
+  }
+  renderVals() {
+    const key = RESULTS[this.props.result] ? this.props.result : 'covert';
+    const r = RAR[key];
+    const d = RESULTS[key];
+    const w = wearOf(d[3]);
+    const value = r.recycle * (d[5] ? 2 : 1) * w[3];
+    const res = {
+      weapon: d[0], skin: d[1], full: d[0] + ' | ' + d[1], art: ART[d[2]],
+      rarName: r.name, color: r.color, text: r.text, glow: r.glow,
+      wearName: w[1], wearColor: w[4], floatLong: d[3].toFixed(9), floatPct: (d[3] * 100).toFixed(2),
+      pattern: d[4], st: d[5], valueFmt: fmt(value)
+    };
+    const phase = this.state.phase;
+    const revealed = phase === 'revealed';
+    const goldOpen = revealed && key === 'gold';
+    const needsConfirm = key === 'classified' || key === 'covert' || key === 'gold';
+    const strip = [];
+    for (let i = 0; i < 46; i++) {
+      if (i === RESULT_INDEX) { strip.push(cardOf(key, [d[0], d[1], d[2]])); continue; }
+      if (i === RESULT_INDEX + 1 && key !== 'gold') { strip.push(cardOf('gold', ['★', 'Rare special', 'knife'])); continue; }
+      const x = (i * 37 + 11) % 100;
+      const rar = x < 70 ? 'milspec' : x < 87 ? 'restricted' : x < 95 ? 'classified' : 'covert';
+      const list = CONTENTS[rar];
+      strip.push(cardOf(rar, list[i % list.length]));
+    }
+    const dur = this.state.reduce ? 0.6 : 6.2;
+    const groups = ['gold', 'covert', 'classified', 'restricted', 'milspec'].map((k) => ({
+      name: k === 'gold' ? '★ Rare special' : RAR[k].name,
+      color: RAR[k].color, text: RAR[k].text, odds: RAR[k].odds,
+      items: CONTENTS[k].map((e) => cardOf(k, e))
+    }));
+    const tabs = [
+      ['home', 'Home', 'Mobile-Home.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+      ['cases', 'Cases', 'Mobile-Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+      ['inventory', 'Inventory', 'Mobile-Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+      ['albums', 'Albums', 'Mobile-Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+      ['more', 'More', 'Mobile-More.dc.html', 'M4 6h16M4 12h16M4 18h16']
+    ].map((t) => ({ label: t[1], href: t[2], icon: t[3], current: t[0] === 'cases' ? 'page' : undefined, color: t[0] === 'cases' ? '#ECEDEF' : '#858B94' }));
+    return {
+      tabs, res, strip, groups,
+      grade: GRADES[key],
+      stageBg: revealed && !goldOpen ? GRADES[key].bg : '#0E1013',
+      rollVisible: !revealed || goldOpen,
+      revealPanel: revealed && !goldOpen,
+      goldOpen,
+      spinning: phase === 'spinning',
+      openLabel: phase === 'spinning' ? 'Opening…' : 'Open case · 250 CR',
+      stripX: phase === 'ready' ? -(START_INDEX * STEP + HALF) : -(RESULT_INDEX * STEP + HALF + 23),
+      stripTransition: phase === 'spinning' ? 'transform ' + dur + 's cubic-bezier(0.1, 0.62, 0.1, 1)' : 'none',
+      balance: fmt(this.state.balance),
+      confirm: this.state.confirm,
+      noConfirm: !this.state.confirm,
+      open: () => this.open(),
+      again: () => this.open(),
+      keep: () => this.setState({ phase: 'ready', confirm: false }),
+      cancel: () => this.setState({ confirm: false }),
+      recycle: () => {
+        if (needsConfirm && !this.state.confirm) { this.setState({ confirm: true }); return; }
+        this.setState({ phase: 'ready', confirm: false, balance: this.state.balance + value });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Ban (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+.tabbtn{all:unset;box-sizing:border-box;cursor:pointer}
+.tabbtn:focus-visible,.mrow:focus-visible{outline:2px solid #ECEDEF;outline-offset:-2px}
+.mrow:active{background:#15171B}
+
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+<div class="dscroll" style="position: absolute; left: 0; right: 0; top: 0; bottom: 84px; overflow-y: auto; box-sizing: border-box; padding-top: 50px">
+<header style="position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 8px 0 16px; background: #0A0B0D; border-bottom: 1px solid #1C1F24">
+<a href="Admin-M-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 10px; height: 44px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 14px; height: 14px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 14px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<button type="button" aria-label="Search players and items" onClick="{{openSearch}}" style="width: 44px; height: 44px; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg></button>
+</header>
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 16px 16px 32px">
+<a href="Admin-M-Players.dc.html" class="mono" style="align-self: flex-start; display: inline-flex; align-items: center; height: 32px; margin: -8px 0 -12px; font-size: 12px; color: #A1A7AF; text-decoration: none">← Players</a>
+<div style="display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="flex: none; width: 64px; height: 64px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 24px; font-weight: 600">{{p.initial}}</span>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<h1 style="margin: 0; font-size: 30px; line-height: 1; font-weight: 600; letter-spacing: -0.02em">{{p.name}}</h1>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+<span class="mono" style="height: 22px; display: inline-flex; align-items: center; padding: 0 7px; border: 1px solid #2C3138; border-radius: 2px; font-size: 10px">Account</span>
+<sc-if value="{{p.online}}" hint-placeholder-val="{{ true }}"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #ECEDEF"></span>Online</span></sc-if>
+<sc-if value="{{p.banned}}" hint-placeholder-val="{{ false }}"><span class="mono" style="height: 22px; display: inline-flex; align-items: center; padding: 0 7px; border: 1px solid #F27D7D; border-radius: 2px; font-size: 10px; color: #F27D7D">{{p.banChip}}</span></sc-if>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; margin-top: -6px">
+<span style="display: flex; align-items: center; gap: 2px"><span class="mono" style="font-size: 12px">{{p.discord}}</span><button type="button" aria-label="Copy Discord ID" onClick="{{copy}}" style="width: 36px; height: 36px; border: 0; background: none; color: #858B94; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round"><path d="M9 9h11v11H9zM5 15H4V4h11v1"></path></svg></button><span class="mono" role="status" style="font-size: 11px; color: #A1A7AF">{{copied}}</span></span>
+<span style="font-size: 12px; color: #A1A7AF">Joined {{p.joined}} · last seen {{p.seen}}</span>
+</div>
+<sc-if value="{{p.banned}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border: 1px solid #F27D7D; border-radius: 4px; background: rgba(242,125,125,0.06)">
+<span style="font-size: 14px; line-height: 1.45"><strong style="color: #F27D7D">{{p.bandTitle}}</strong> <span style="color: #A1A7AF">· by {{p.bandBy}} · Reason: {{p.bandReason}}</span></span>
+<button type="button" class="btn-s" onClick="{{askUnban}}" disabled="{{cantMod}}" style="align-self: flex-start; height: 40px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Unban</button>
+</div>
+</sc-if>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<sc-for list="{{p.stats}}" as="s" hint-placeholder-count="6"><div style="display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; background: #0E1013"><span class="mono" style="font-size: 16px; font-weight: 500">{{s.v}}</span><span style="font-size: 11px; color: #A1A7AF">{{s.k}}</span></div></sc-for>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<sc-if value="{{showBan}}" hint-placeholder-val="{{ true }}"><button type="button" class="btn-d" onClick="{{openBan}}" disabled="{{cantMod}}" style="height: 48px; border: 1px solid #F27D7D; border-radius: 2px; background: transparent; color: #F27D7D; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Ban</button></sc-if>
+<button type="button" class="btn-s" onClick="{{askSignout}}" disabled="{{cantMod}}" style="height: 48px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Sign out everywhere</button>
+</div>
+<details style="border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013">
+<summary style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 14px; font-size: 14px; cursor: pointer; list-style: none">More actions <span class="mono" style="font-size: 11px; color: #858B94">{{moreHint}}</span></summary>
+<div style="display: flex; flex-direction: column; padding: 0 14px 6px">
+<sc-for list="{{moreActions}}" as="a" hint-placeholder-count="4"><a href="{{a.href}}" style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; border-top: 1px solid #1A1D22; color: {{a.color}}; text-decoration: none; font-size: 14px; pointer-events: {{a.pe}}" aria-disabled="{{a.disabled}}">{{a.label}}<span class="mono" style="font-size: 10px; color: #858B94">{{a.hint}}</span></a></sc-for>
+</div>
+</details>
+<sc-if value="{{hasRoleHint}}" hint-placeholder-val="{{ false }}"><span class="mono" style="margin-top: -10px; font-size: 11px; color: #858B94">{{roleHint}}</span></sc-if>
+
+<sc-if value="{{hasConfirm}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="{{cf.title}}" style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #ECEDEF; border-radius: 4px; background: #111316">
+<span style="font-size: 15px; font-weight: 600">{{cf.title}}</span>
+<span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">{{cf.text}}</span>
+<input type="text" class="field" aria-label="Reason" value="{{reason}}" onChange="{{onReason}}" placeholder="Reason, shown in the admin log" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 16px">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px"><button type="button" class="btn-s" onClick="{{cancelConfirm}}" style="height: 44px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button><button type="button" class="btn-p" onClick="{{doConfirm}}" disabled="{{noReason}}" style="height: 44px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{cf.button}}</button></div>
+</div>
+</sc-if>
+
+<section aria-labelledby="ms-t" style="display: flex; flex-direction: column; padding: 12px 14px 4px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="ms-t" class="lbl" style="margin: 0 0 6px; font-size: 10px">// Signals</h2>
+<sc-for list="{{p.signals}}" as="s" hint-placeholder-count="4"><div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; border-top: 1px solid #1A1D22; font-size: 13px"><span style="display: flex; align-items: center; gap: 8px; color: #A1A7AF"><sc-if value="{{s.alert}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span></sc-if>{{s.k}}</span><span class="mono">{{s.v}}</span></div></sc-for>
+</section>
+
+<div role="tablist" aria-label="Records" style="display: grid; grid-template-columns: repeat(4, 1fr); padding: 3px; border: 1px solid #2C3138; border-radius: 4px; background: #0E1013">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4"><button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="height: 36px; border: 0; border-radius: 2px; font: inherit; font-size: 13px; cursor: pointer; {{t.style}}">{{t.label}}</button></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; margin-top: -8px">
+<sc-for list="{{records}}" as="r" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 0; border-bottom: 1px solid #1A1D22">
+<sc-if value="{{r.hasDot}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; background: {{r.dot}}"></span></sc-if>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span class="{{r.aClass}}" style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.a}}</span><span style="font-size: 12px; color: #A1A7AF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.b}}</span></span>
+<span style="flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><span class="mono" style="font-size: 13px">{{r.c}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{r.d}}</span></span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+<nav aria-label="Admin" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; height: 84px; box-sizing: border-box; padding: 6px 6px 24px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #0D0E11; border-top: 1px solid #1C1F24">
+<sc-for list="{{mtabs}}" as="t" hint-placeholder-count="4">
+<sc-if value="{{t.isLink}}" hint-placeholder-val="{{ true }}"><a href="{{t.href}}" aria-current="{{t.current}}" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; text-decoration: none; font-size: 11px; font-weight: 500; color: {{t.color}}"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg><span>{{t.label}}</span></a></sc-if>
+<sc-if value="{{t.isButton}}" hint-placeholder-val="{{ false }}"><button type="button" class="tabbtn" onClick="{{t.go}}" aria-expanded="{{moreOpen}}" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; font-size: 11px; font-weight: 500; color: {{t.color}}"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg><span>{{t.label}}</span><span aria-hidden="true" style="position: absolute; top: 4px; left: calc(50% + 8px); width: 7px; height: 7px; border-radius: 50%; background: #C8382F"></span></button></sc-if>
+</sc-for>
+</nav>
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<div aria-hidden="true" onClick="{{closeBan}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(5,6,8,0.72)"></div>
+<div role="dialog" aria-modal="true" aria-labelledby="mb-t" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 31; max-height: 92%; display: flex; flex-direction: column; background: #0E1013; border-top: 1px solid #2C3138; border-radius: 12px 12px 0 0">
+<div class="dscroll" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 10px 16px 20px">
+<span aria-hidden="true" style="display: block; width: 36px; height: 4px; margin: 0 auto 2px; border-radius: 2px; background: #2C3138"></span>
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="lbl" style="font-size: 10px">// Ban</span><button type="button" aria-label="Close" onClick="{{closeBan}}" style="width: 44px; height: 44px; margin: -10px -10px -10px 0; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<h2 id="mb-t" style="margin: -8px 0 0; font-size: 22px; line-height: 1.2; font-weight: 600">{{ban.title}}</h2>
+<div role="radiogroup" aria-label="Duration" style="display: grid; grid-template-columns: repeat(4, 1fr); padding: 3px; border: 1px solid #2C3138; border-radius: 4px; background: #0A0B0D">
+<sc-for list="{{ban.durs}}" as="d" hint-placeholder-count="4"><button type="button" role="radio" aria-checked="{{d.on}}" onClick="{{d.pick}}" style="height: 40px; border: 0; border-radius: 2px; font: inherit; font-size: 13px; cursor: pointer; {{d.style}}">{{d.label}}</button></sc-for>
+</div>
+<span class="mono" style="margin-top: -8px; font-size: 11px; color: #A1A7AF">{{ban.until}}</span>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Reason <span style="color: #858B94">· shown to {{p.name}}</span></span><input type="text" class="field" value="{{banReason}}" onChange="{{onBanReason}}" placeholder="e.g. scam attempt in trades" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 16px"></label>
+<div style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px">
+<span class="lbl" style="padding: 10px 12px 6px; font-size: 10px">Happens right away</span>
+<sc-for list="{{ban.effects}}" as="e" hint-placeholder-count="3"><div style="display: flex; gap: 10px; padding: 9px 12px; border-top: 1px solid #1A1D22; font-size: 13px; line-height: 1.45"><span class="mono" style="flex: none; width: 16px">{{e.n}}</span><span style="color: #A1A7AF"><span style="color: #ECEDEF">{{e.head}}</span> {{e.text}}</span></div></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px solid #2C3138; border-radius: 4px; background: #0D0E11">
+<span class="lbl" style="font-size: 10px">What {{p.name}} sees</span>
+<span style="font-size: 15px; font-weight: 600">{{ban.sees}}</span>
+<span style="font-size: 13px; color: #A1A7AF">Reason: <span style="color: #ECEDEF">{{ban.seesReason}}</span></span>
+</div>
+<sc-if value="{{ban.perm}}" hint-placeholder-val="{{ false }}"><label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Type <span class="mono" style="color: #ECEDEF">{{p.name}}</span> to confirm</span><input type="text" class="field mono" value="{{typed}}" onChange="{{onTyped}}" autocomplete="off" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 16px"></label></sc-if>
+</div>
+<div style="flex: none; display: flex; flex-direction: column; gap: 8px; padding: 12px 16px 30px; border-top: 1px solid #1C1F24">
+<button type="button" class="btn-d" onClick="{{doBan}}" disabled="{{cantBan}}" style="height: 48px; border: 1px solid #F27D7D; border-radius: 2px; background: transparent; color: #F27D7D; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{ban.title}}</button>
+<span class="mono" style="font-size: 11px; color: #858B94; text-align: center">Logged as {{staffName}}</span>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{moreOpen}}" hint-placeholder-val="{{ false }}">
+<div aria-hidden="true" onClick="{{closeMore}}" style="position: absolute; inset: 0; z-index: 40; background: rgba(5,6,8,0.7)"></div>
+<div role="dialog" aria-modal="true" aria-label="More sections" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 41; padding: 10px 16px 34px; background: #0E1013; border-top: 1px solid #2C3138; border-radius: 12px 12px 0 0">
+<span aria-hidden="true" style="display: block; width: 36px; height: 4px; margin: 0 auto 12px; border-radius: 2px; background: #2C3138"></span>
+<sc-for list="{{moreLinks}}" as="m" hint-placeholder-count="5">
+<a href="{{m.href}}" class="mrow" style="display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 6px; border-bottom: 1px solid #1A1D22; color: #ECEDEF; text-decoration: none; font-size: 15px"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="fill: none; stroke: #A1A7AF; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{m.icon}}"></path></svg><span style="flex: 1">{{m.label}}</span><sc-if value="{{m.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{m.badge}}</span></sc-if><span class="mono" style="font-size: 10px; color: #858B94">desktop</span></a>
+</sc-for>
+<a href="Main.dc.html" class="mrow" style="display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 6px; color: #A1A7AF; text-decoration: none; font-size: 15px">Back to the game</a>
+</div>
+</sc-if>
+<sc-if value="{{searchOpen}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-label="Search" style="position: absolute; inset: 0; z-index: 50; box-sizing: border-box; padding-top: 50px; background: #0A0B0D; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 8px; padding: 4px 8px 12px 16px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 1">
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 12px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input type="search" class="field" aria-label="Search a player, Discord ID or item ID" value="{{sq}}" onChange="{{onSq}}" placeholder="Player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px 0 36px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 16px">
+</div>
+<button type="button" onClick="{{closeSearch}}" style="height: 44px; padding: 0 10px; border: 0; background: none; color: #ECEDEF; font: inherit; font-size: 15px; cursor: pointer">Cancel</button>
+</div>
+<div style="flex: 1; overflow-y: auto; padding: 8px 16px 24px">
+<span class="lbl" style="display: block; padding: 12px 0 4px; font-size: 10px">Players</span>
+<sc-for list="{{sPlayers}}" as="p" hint-placeholder-count="3"><a href="Admin-M-Player.dc.html" class="mrow" style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid #1A1D22; color: #ECEDEF; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{p.initial}}</span><span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 15px">{{p.name}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{p.sub}}</span></span></a></sc-for>
+<span class="lbl" style="display: block; padding: 16px 0 4px; font-size: 10px">Items</span>
+<sc-for list="{{sItems}}" as="i" hint-placeholder-count="2"><a href="Admin-Items.dc.html" class="mrow" style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid #1A1D22; color: #ECEDEF; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; background: {{i.color}}"></span><span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 15px">{{i.name}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{i.id}}</span></span></a></sc-for>
+<sc-if value="{{sNone}}" hint-placeholder-val="{{ false }}"><p style="margin: 24px 0; font-size: 14px; color: #A1A7AF; text-align: center">Nothing matches “{{sq}}”.</p></sc-if>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 16px; right: 16px; bottom: 100px; z-index: 60; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"sheet":{"editor":"boolean","default":true,"section":"State"},"player":{"editor":"enum","options":["vex","nyx"],"default":"vex","section":"State"},"role":{"editor":"enum","options":["moderator","admin","viewer"],"default":"moderator","section":"State"},"$preview":{"width":390,"height":844}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+
+const MTABS = [['overview', 'Overview', 'Admin-M-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z'], ['players', 'Players', 'Admin-M-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3'], ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'], ['more', 'More', '', 'M4 6h16M4 12h16M4 18h16']];
+const SP = [['vex', 'V', '284716593820471296 · Online'], ['kenji', 'K', '301884920157736961 · 1 h ago'], ['lou', 'L', '412093385716224000 · yesterday'], ['nyx', 'N', '993021547810034688 · Banned']];
+const SI = [['000482113', 'AK-47 | Redline', '#D32CE6'], ['000481907', '★ Karambit | Fade', '#E4AE39'], ['000479555', 'MP7 | Skulls', '#4B69FF']];
+function MSHELL(comp, role, active) {
+  const st = comp.state;
+  const sh = SHELL(role, active);
+  const q = (st.sq || '').trim().toLowerCase();
+  const sp = SP.filter((p) => !q || (p[0] + ' ' + p[2]).toLowerCase().indexOf(q) >= 0);
+  const si = SI.filter((i) => !q || (i[0] + ' ' + i[1]).toLowerCase().indexOf(q) >= 0);
+  return Object.assign(sh, {
+    mtabs: MTABS.map((t) => ({ label: t[1], href: t[2] || '#', icon: t[3], isLink: t[0] !== 'more', isButton: t[0] === 'more', go: () => comp.setState({ moreOpen: true }), current: t[0] === active ? 'page' : undefined, color: t[0] === active ? '#ECEDEF' : '#858B94' })),
+    moreOpen: !!st.moreOpen, closeMore: () => comp.setState({ moreOpen: false }),
+    moreLinks: ANAV.slice(3).map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]) })),
+    searchOpen: !!st.searchOpen, openSearch: () => comp.setState({ searchOpen: true }), closeSearch: () => comp.setState({ searchOpen: false, sq: '' }),
+    sq: st.sq || '', onSq: (e) => comp.setState({ sq: e.target.value }),
+    sPlayers: sp.map((p) => ({ name: p[0], initial: p[1], sub: p[2] })), sItems: si.map((i) => ({ id: i[0], name: i[1], color: i[2] })), sNone: !sp.length && !si.length,
+    hasToast: !!st.toast, toast: st.toast || ''
+  });
+}
+
+const RC = { milspec: '#4B69FF', restricted: '#8847FF', classified: '#D32CE6', covert: '#EB4B4B', gold: '#E4AE39' };
+const PL = {
+  vex: {
+    name: 'vex', initial: 'V', discord: '284716593820471296', joined: 'Oct 3', seen: '2 min ago', online: true, banned: false,
+    stats: [['Balance', '4,870 CR'], ['Held in bids', '1,200 CR'], ['Inventory', '34,269 CR'], ['Cases opened', '312'], ['Trades', '14'], ['Albums', '23%']],
+    signals: [['Account age', '20 days', false], ['Accounts on this IP', '3', true], ['Flagged trades', '1', true], ['Reports against', '0', false]],
+    ledger: [['admin_remove', 'by mathys · duplicate refund', '−5,000 CR', 'Oct 23 14:10'], ['bid_refund', 'auction #8812, refunded twice', '+5,000 CR', 'Oct 23 14:05'], ['case_open', 'Revolution Case', '−250 CR', 'Oct 23 14:02'], ['recycle', 'AWP | Redline (FT)', '+500 CR', 'Oct 23 13:40'], ['auction_sale', 'sold to lou', '+1,450 CR', 'Oct 22 21:15']],
+    inventory: [['★ Kukri Knife | Fade', 'FN 0.0213', '15,000 CR', 'Available', 'gold'], ['AWP | Chrome Cannon', 'ST™ · MW 0.0934', '6,000 CR', 'Available', 'covert'], ['AK-47 | Inheritance', 'FT 0.2381', '2,500 CR', 'Available', 'covert'], ['AK-47 | Redline', 'ST™ · FT 0.2381', '1,380 CR', 'Listed', 'classified'], ['MP7 | Skulls', 'FN 0.0300', '45 CR', 'In trade · stuck', 'milspec']],
+    trades: [['#2245 to kenji', '★ Kukri Knife | Fade for nothing', 'Pending', 'flagged'], ['#2231 to kenji', 'MP7 | Skulls for 900 CR', 'Expired', 'Oct 19'], ['#2214 to kenji', 'AWP | Redline for M4A1-S | Black Lotus', 'Accepted', 'Oct 14']],
+    notes: [['lea · Oct 22, 19:05', '6 trades in 2 days with kenji, all one way (41,000 CR). Asked both in DMs, waiting for an answer.']],
+    sessions: 3
+  },
+  nyx: {
+    name: 'nyx', initial: 'N', discord: '993021547810034688', joined: 'Oct 21', seen: '3 d ago', online: false, banned: true,
+    stats: [['Balance', '0 CR'], ['Held in bids', '0 CR'], ['Inventory', '310 CR'], ['Cases opened', '18'], ['Trades', '2'], ['Albums', '4%']],
+    signals: [['Account age', '2 days', true], ['Accounts on this IP', '7', true], ['Flagged trades', '1', true], ['Reports against', '2', true]],
+    ledger: [['case_open ×17', 'Revolution Case, 20:40 to 23:58', '−4,250 CR', 'Oct 22 23:58'], ['trade_in', 'offer #2240 · from 4 new accounts', '+3,250 CR', 'Oct 22 20:31'], ['case_open', 'Revolution Case, free', '0 CR', 'Oct 21 10:02'], ['start_balance', 'account created', '+1,000 CR', 'Oct 21 09:44']],
+    inventory: [['P250 | Re.built', 'MW 0.0877', '36 CR', 'Available', 'milspec'], ['Tec-9 | Slag', 'BS 0.6188', '24 CR', 'Available', 'milspec']],
+    trades: [['#2244 to kenji', 'AWP | Duality for 4,000 CR', 'Cancelled', 'by ban'], ['#2240 from 4 accounts', 'items worth 18,500 CR + 3,250 CR', 'Accepted', 'flagged']],
+    notes: [['lea · Oct 23, 11:04', 'Took items from 4 accounts created the same day, same IP, then offered them to kenji. Banned 7 days.']],
+    sessions: 0
+  }
+};
+const DURS = [['24 h', 'for 24 hours', 'Until Oct 24, 14:12 UTC', 'Oct 24, 14:12', '24 h'], ['7 d', 'for 7 days', 'Until Oct 30, 14:12 UTC', 'Oct 30, 14:12', '7 d'], ['30 d', 'for 30 days', 'Until Nov 22, 14:12 UTC', 'Nov 22, 14:12', '30 d'], ['Perm', 'permanently', 'No end date. Only an unban lifts it.', '', 'Permanent']];
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = this.initial(props); }
+  initial(p) { return { tab: 'ledger', sheet: p.sheet === true, dur: 1, banReason: p.sheet === true ? 'scam attempt in trades' : '', typed: '', banned: null, unbanned: false, confirm: null, reason: '', copied: '', toast: '' }; }
+  componentDidUpdate(prev) { if (prev.player !== this.props.player || prev.role !== this.props.role || prev.sheet !== this.props.sheet) this.setState(this.initial(this.props)); }
+  renderVals() {
+    const st = this.state;
+    const sh = MSHELL(this, this.props.role, 'players');
+    const d = PL[this.props.player === 'nyx' ? 'nyx' : 'vex'];
+    const canMod = sh.rank >= 1, isAdmin = sh.rank >= 2;
+    const nowBanned = st.banned ? true : (d.banned && !st.unbanned);
+    const dur = DURS[st.dur];
+    const perm = st.dur === 3;
+    const banReason = st.banReason.trim();
+    const effects = d.name === 'vex'
+      ? [['3', 'sessions signed out,', 'Discord activity included.'], ['1', 'listing cancelled:', 'AK-47 | Redline back to vex, 4 bids refunded.'], ['1', 'bid cancelled:', '1,200 CR back to vex.']]
+      : [['0', 'sessions', 'to sign out.'], ['0', 'listings', 'to cancel.'], ['0', 'open offers', 'to cancel.']];
+    const tabs = [['ledger', 'Ledger'], ['inventory', 'Items'], ['trades', 'Trades'], ['notes', 'Notes']].map((t) => ({ label: t[1], on: st.tab === t[0], pick: () => this.setState({ tab: t[0] }), style: st.tab === t[0] ? 'background: #ECEDEF; color: #0A0B0D' : 'background: transparent; color: #A1A7AF' }));
+    let records = [];
+    if (st.tab === 'ledger') records = d.ledger.map((l) => ({ a: l[0], aClass: 'mono', b: l[1], c: l[2], d: l[3], hasDot: false, dot: '' }));
+    if (st.tab === 'inventory') records = d.inventory.map((l) => ({ a: l[0], aClass: '', b: l[1], c: l[2], d: l[3], hasDot: true, dot: RC[l[4]] }));
+    if (st.tab === 'trades') records = d.trades.map((l) => ({ a: l[0], aClass: 'mono', b: l[1], c: l[2], d: l[3], hasDot: false, dot: '' }));
+    if (st.tab === 'notes') records = d.notes.map((l) => ({ a: l[0], aClass: 'mono', b: l[1], c: '', d: '', hasDot: false, dot: '' }));
+    const CONF = {
+      signout: { title: 'Sign ' + d.name + ' out everywhere', text: 'Ends ' + d.sessions + ' sessions, including the Discord activity.', button: 'Sign out', toast: 'Signed ' + d.name + ' out everywhere · logged' },
+      unban: { title: 'Unban ' + d.name, text: 'They can sign in again right away. Cancelled listings and offers stay cancelled.', button: 'Unban ' + d.name, toast: 'Unbanned ' + d.name + ' · logged' }
+    };
+    const cf = st.confirm ? CONF[st.confirm] : { title: '', text: '', button: '' };
+    const band = st.banned ? { title: st.banned.d[0] === 'Perm' ? 'Banned permanently' : 'Banned until ' + st.banned.d[3], by: sh.staffName, reason: st.banned.reason, chip: 'Banned · ' + st.banned.d[4] } : { title: 'Banned until Oct 30, 11:02', by: 'lea', reason: 'scam attempt in trades', chip: 'Banned · 7 d' };
+    return Object.assign(sh, {
+      p: {
+        name: d.name, initial: d.initial, discord: d.discord, joined: d.joined, seen: nowBanned && st.banned ? 'just now' : d.seen, online: d.online && !nowBanned, banned: nowBanned,
+        banChip: band.chip, bandTitle: band.title, bandBy: band.by, bandReason: band.reason,
+        stats: d.stats.map((s) => ({ k: s[0], v: s[1] })), signals: d.signals.map((s) => ({ k: s[0], v: s[1], alert: s[2] }))
+      },
+      copied: st.copied, copy: () => this.setState({ copied: 'Copied' }),
+      canMod, cantMod: !canMod, showBan: !nowBanned,
+      hasRoleHint: !canMod, roleHint: 'Read-only: you’re a Viewer. Ban and sign out are for moderators and admins.',
+      moreHint: isAdmin ? '4' : 'Admins only',
+      moreActions: [['Adjust credits', 'Admin-Dlg-Credits.dc.html'], ['Grant item', 'Admin-Dlg-Grant.dc.html'], ['Reset free case', 'Admin-Player.dc.html'], ['Delete account', 'Admin-Dlg-Delete.dc.html']].map((a) => ({ label: a[0], href: isAdmin ? a[1] : '#', disabled: !isAdmin, pe: isAdmin ? 'auto' : 'none', color: !isAdmin ? '#858B94' : a[0] === 'Delete account' ? '#F27D7D' : '#ECEDEF', hint: isAdmin ? 'desktop' : 'Admins only' })),
+      askSignout: () => this.setState({ confirm: 'signout', reason: '' }), askUnban: () => this.setState({ confirm: 'unban', reason: '' }),
+      hasConfirm: !!st.confirm, cf, reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }), noReason: !st.reason.trim(),
+      cancelConfirm: () => this.setState({ confirm: null }),
+      doConfirm: () => { if (!st.confirm || !st.reason.trim()) return; const c = CONF[st.confirm]; this.setState({ confirm: null, reason: '', toast: c.toast, unbanned: st.unbanned || st.confirm === 'unban', banned: st.confirm === 'unban' ? null : st.banned }); },
+      tabs, records,
+      sheetOpen: st.sheet && !nowBanned, openBan: () => this.setState({ sheet: true }), closeBan: () => this.setState({ sheet: false }),
+      ban: {
+        title: 'Ban ' + d.name + ' ' + dur[1], until: dur[2], perm,
+        durs: DURS.map((x, i) => ({ label: x[0], on: st.dur === i, pick: () => this.setState({ dur: i, typed: '' }), style: st.dur === i ? 'background: #ECEDEF; color: #0A0B0D' : 'background: transparent; color: #ECEDEF' })),
+        effects: effects.map((e) => ({ n: e[0], head: e[1], text: e[2] })),
+        sees: perm ? 'You’re banned from Mint.' : 'You’re banned until ' + dur[3] + '.', seesReason: banReason || '…'
+      },
+      banReason: st.banReason, onBanReason: (e) => this.setState({ banReason: e.target.value }),
+      typed: st.typed, onTyped: (e) => this.setState({ typed: e.target.value }),
+      cantBan: !canMod || !banReason || (perm && st.typed.trim() !== d.name),
+      doBan: () => { if (!canMod || !banReason || (perm && st.typed.trim() !== d.name)) return; this.setState({ sheet: false, banned: { d: dur, reason: banReason }, toast: 'Banned ' + d.name + ' ' + dur[1] + ' · logged' }); }
+    });
+  }
+}
+</script>
+</body>
+</html>

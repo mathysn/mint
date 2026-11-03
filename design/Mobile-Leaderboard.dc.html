@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint — Leaderboard (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<div style="position: absolute; left: 0; right: 0; top: 0; bottom: 148px; overflow-y: auto; box-sizing: border-box; padding-top: 50px">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 8px">
+<a href="Mobile-More.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>More</a>
+</header>
+
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 8px 20px 24px">
+<h1 style="margin: 0; font-size: 30px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Leaderboard</h1>
+
+<div role="tablist" aria-label="Ranking" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border: 1px solid #1C1F24; border-radius: 4px; background: #0E1013">
+<button type="button" role="tab" aria-selected="true" style="height: 40px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600">Inventory value</button>
+<button type="button" role="tab" aria-selected="false" style="height: 40px; border: 0; border-radius: 2px; background: transparent; color: #A1A7AF; font: inherit; font-size: 14px; font-weight: 500">Albums</button>
+</div>
+<div role="radiogroup" aria-label="Who" style="display: flex; gap: 6px">
+<button type="button" role="radio" aria-checked="true" style="height: 36px; padding: 0 14px; border: 1px solid #ECEDEF; border-radius: 2px; background: #1E2227; color: #ECEDEF; font: inherit; font-size: 13px">Everyone</button>
+<button type="button" role="radio" aria-checked="false" style="height: 36px; padding: 0 14px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #A1A7AF; font: inherit; font-size: 13px">Friends</button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; align-items: end">
+<sc-for list="{{podium}}" as="p" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 8px; border-radius: 6px; background: #0E1013; text-align: center; {{p.frame}}">
+<span class="mono" style="font-size: 22px; font-weight: 600; color: {{p.rankColor}}">{{p.rank}}</span>
+<span aria-hidden="true" style="width: {{p.size}}px; height: {{p.size}}px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 14px; font-weight: 600">{{p.initial}}</span>
+<span style="font-size: 14px; font-weight: 600">{{p.name}}</span>
+<span class="mono" style="font-size: 11px; color: #A1A7AF">{{p.metric}}</span>
+<sc-if value="{{p.friend}}" hint-placeholder-val="{{ false }}"><span class="lbl" style="font-size: 8px">Friend</span></sc-if>
+</div>
+</sc-for>
+</div>
+
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="9">
+<li style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #1A1D22">
+<span class="mono" style="width: 26px; font-size: 13px; color: #858B94">{{r.rank}}</span>
+<span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 12px; font-weight: 600; color: #A1A7AF">{{r.initial}}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14px; font-weight: 500">{{r.name}}</span><span style="font-size: 11px; color: {{r.text}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.best}}</span></span>
+<span class="mono" style="font-size: 13px">{{r.metric}}</span>
+</li>
+</sc-for>
+</ol>
+</div>
+</div>
+
+<div style="position: absolute; left: 12px; right: 12px; bottom: 96px; z-index: 5; display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 14px; border: 1px solid #ECEDEF; border-radius: 4px; background: #15171B">
+<span class="mono" style="font-size: 13px">18</span>
+<span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 50%; background: #2C3138; display: grid; place-items: center; font-size: 12px; font-weight: 600">V</span>
+<span style="flex: 1; font-size: 14px; font-weight: 600">vex <span class="lbl" style="margin-left: 4px; font-size: 9px; color: #ECEDEF">You</span></span>
+<span class="mono" style="font-size: 13px">28,790 CR</span>
+</div>
+
+<nav aria-label="Main" style="position: absolute; left: 0; right: 0; bottom: 0; height: 84px; box-sizing: border-box; padding: 6px 6px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #0D0E11; border-top: 1px solid #1C1F24">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<a href="{{t.href}}" aria-current="{{t.current}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 50px; text-decoration: none; font-size: 11px; font-weight: 500; color: {{t.color}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{t.icon}}"></path></svg>
+<span>{{t.label}}</span>
+</a>
+</sc-for>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+const TABS = [
+  ['home', 'Home', 'Mobile-Home.dc.html', 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z'],
+  ['cases', 'Cases', 'Mobile-Cases.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3'],
+  ['inventory', 'Inventory', 'Mobile-Inventory.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'],
+  ['albums', 'Albums', 'Mobile-Album.dc.html', 'M8 3h12v14H8zM4 7v14h12'],
+  ['more', 'More', 'Mobile-More.dc.html', 'M4 6h16M4 12h16M4 18h16']
+];
+const L = [
+  ['nyx', 64800, '★ Butterfly Knife | Doppler', 'gold', true], ['orbit', 58300, '★ Kukri Knife | Case Hardened', 'gold'], ['hexa', 51040, '★ Falchion Knife | Slaughter', 'gold'],
+  ['kenji', 41200, '★ Survival Knife | Crimson Web', 'gold', true], ['zephyr', 37900, 'AK-47 | Head Shot', 'covert'], ['milo', 33450, '★ Kukri Knife | Night Stripe', 'gold'],
+  ['quill', 32980, 'M4A4 | Temukau', 'covert'], ['pax', 32410, 'AWP | Chrome Cannon', 'covert'], ['juno', 31870, 'AK-47 | Inheritance', 'covert'],
+  ['rook', 31200, '★ Kukri Knife | Fade', 'gold'], ['sol', 30650, 'M4A4 | Temukau', 'covert'], ['ivy', 30020, 'AK-47 | Head Shot', 'covert']
+];
+const T = { gold: '#ECC163', covert: '#F27D7D' };
+function pad(n) { return n < 10 ? '0' + n : String(n); }
+class Component extends DCLogic {
+  renderVals() {
+    const order = [1, 0, 2];
+    return {
+      tabs: TABS.map((t) => ({ label: t[1], href: t[2], icon: t[3], current: t[0] === 'more' ? 'page' : undefined, color: t[0] === 'more' ? '#ECEDEF' : '#858B94' })),
+      podium: order.map((i) => ({
+        rank: pad(i + 1), name: L[i][0], initial: L[i][0][0].toUpperCase(), metric: (L[i][1] / 1000).toFixed(1) + 'k CR', friend: !!L[i][4],
+        size: i === 0 ? 48 : 38, rankColor: i === 0 ? '#ECEDEF' : '#5A616B',
+        frame: i === 0 ? 'border: 1px solid #4A5059; padding-top: 22px; padding-bottom: 22px' : 'border: 1px solid #1C1F24'
+      })),
+      rows: L.slice(3).map((r, i) => ({ rank: pad(i + 4), name: r[0] + (r[4] ? ' · friend' : ''), initial: r[0][0].toUpperCase(), best: r[2], text: T[r[3]], metric: r[1].toLocaleString('en-US') }))
+    };
+  }
+}
+</script>
+</body>
+</html>

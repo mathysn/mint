@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mint Admin — Save economy changes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+a{color:#ECEDEF}a:hover{color:#FFFFFF}
+.mono{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#858B94}
+.tag{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border:1px solid #2C3138;color:#ECEDEF;line-height:1.2}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.side-inner{min-height:820px}
+@media (max-width:860px){.side-inner{min-height:0}}
+.navlink:hover{background:#15171B}
+.btn-p:hover:not(:disabled){background:#FFFFFF}
+.btn-p:disabled{background:#3A3F46 !important;color:#A1A7AF !important;cursor:not-allowed}
+.btn-s:hover:not(:disabled){border-color:#4A5059;background:#121417}
+.btn-s:disabled{opacity:.45;cursor:not-allowed}
+.btn-d:hover:not(:disabled){background:rgba(242,125,125,0.08)}
+.btn-d:disabled{opacity:.45;cursor:not-allowed}
+.tab:hover{color:#ECEDEF}
+.row{position:relative}
+.row:hover{background:#15171B}
+.stretch{all:unset;cursor:pointer}
+.stretch::after{content:"";position:absolute;inset:0;z-index:1}
+.stretch:focus-visible::after{outline:2px solid #ECEDEF;outline-offset:-2px}
+.above{position:relative;z-index:2}
+.dscroll>*{flex-shrink:0}
+.field:focus{outline:2px solid #ECEDEF;outline-offset:1px}
+.sw{position:relative;width:44px;height:24px;border-radius:12px;border:1px solid #2C3138;background:#121417;cursor:pointer;padding:0;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#858B94;transition:left .15s ease,background-color .15s ease}
+.sw[aria-checked="true"]{background:#ECEDEF;border-color:#ECEDEF}
+.sw[aria-checked="true"]::after{left:23px;background:#0A0B0D}
+.sw:disabled{opacity:.45;cursor:not-allowed}
+.sw:focus-visible{outline:2px solid #ECEDEF;outline-offset:2px}
+@keyframes mint-shimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.skel{background:#121417;border-radius:2px;animation:mint-shimmer 1.4s ease-in-out infinite}
+@keyframes mint-spin{to{transform:rotate(360deg)}}
+@keyframes mint-blink{50%{opacity:.2}}
+*{scrollbar-width:thin;scrollbar-color:#2C3138 transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#2C3138;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-wrap: wrap; min-height: 100vh; background: #0A0B0D; color: #ECEDEF; font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif">
+
+<nav aria-label="Admin" style="flex: 1 1 248px; box-sizing: border-box; background: #0D0E11; border-right: 1px solid #1C1F24; padding: 20px 14px">
+<div class="side-inner" style="display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<a href="Admin-Overview.dc.html" aria-label="Mint admin, overview" style="display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; text-decoration: none; color: #ECEDEF">
+<span aria-hidden="true" style="width: 16px; height: 16px; background: #ECEDEF; clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%)"></span>
+<span class="mono" style="font-size: 15px; font-weight: 600; letter-spacing: 0.34em">MINT</span>
+<span class="tag">Admin</span>
+</a>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="8">
+<a href="{{n.href}}" class="navlink" aria-current="{{n.current}}" style="display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 10px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500; {{n.style}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="{{n.icon}}"></path></svg>
+<span style="flex: 1">{{n.label}}</span>
+<sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="mono" style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #ECEDEF; color: #0A0B0D; font-size: 11px; font-weight: 600; display: inline-grid; place-items: center">{{n.badge}}</span></sc-if>
+</a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #1C1F24; border-radius: 6px; background: #0F1114">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #1A1D22; display: grid; place-items: center; font-size: 13px; font-weight: 600">{{staffInitial}}</span>
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="font-size: 14px; font-weight: 600">{{staffName}}</span><span class="tag">{{roleLabel}}</span></span>
+</div>
+<a href="Main.dc.html" class="navlink" style="display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 10px; border-radius: 4px; color: #A1A7AF; text-decoration: none; font-size: 14px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Back to the game</a>
+</div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: 1px solid #1C1F24">
+<div style="position: relative; flex: 0 1 560px">
+<label for="gs" class="sr">Search a player, Discord ID or item ID</label>
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 14px; fill: none; stroke: #858B94; stroke-width: 2; stroke-linecap: round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+<input id="gs" type="search" class="field" placeholder="Search a player, Discord ID or item ID" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 56px 0 40px; border: 1px solid #2C3138; border-radius: 2px; background: #0E1013; color: #ECEDEF; font: inherit; font-size: 14px">
+<span class="mono" aria-hidden="true" style="position: absolute; right: 12px; top: 12px; padding: 2px 6px; border: 1px solid #2C3138; border-radius: 2px; font-size: 11px; color: #858B94">⌘K</span>
+</div>
+<span class="mono" style="margin-left: auto; font-size: 12px; color: #858B94">Oct 23 · 14:12 UTC</span>
+</div>
+
+<div style="width: 100%; max-width: 1680px; box-sizing: border-box; margin: 0 auto; padding: 32px 48px 72px; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">// Economy</span>
+<h1 style="margin: 0; font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em">Economy settings</h1>
+<p style="margin: 0; font-size: 14px; color: #A1A7AF">Tune the game's numbers without a deploy. Nothing changes until you save, and every save is kept below. All times UTC.</p>
+</div>
+<sc-if value="{{cantAdmin}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 11px; color: #858B94">Read-only: economy settings are for admins.</span></sc-if>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="6">
+<section aria-labelledby="{{g.hid}}" style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; padding: 16px 20px 12px">
+<h2 id="{{g.hid}}" class="lbl" style="margin: 0">{{g.title}}</h2>
+<sc-if value="{{g.hasNote}}" hint-placeholder-val="{{ false }}"><span class="mono" style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; {{g.noteStyle}}"><sc-if value="{{g.noteBad}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #C8382F"></span></sc-if>{{g.note}}</span></sc-if>
+</div>
+<sc-if value="{{g.isList}}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{g.rows}}" as="r" hint-placeholder-count="3">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 170px 200px; align-items: center; gap: 16px; min-height: 56px; padding: 8px 20px; border-top: 1px solid #1A1D22; box-shadow: {{r.mark}}">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500"><sc-if value="{{r.hasDot}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; background: {{r.dot}}"></span></sc-if><label for="{{r.fid}}">{{r.label}}</label><sc-if value="{{r.edited}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 9px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 5px; background: #ECEDEF; color: #0A0B0D">Edited</span></sc-if></span>
+<span style="font-size: 12px; color: #A1A7AF">{{r.help}}<sc-if value="{{r.hasChanged}}" hint-placeholder-val="{{ false }}"> <span class="mono" style="font-size: 11px; color: #858B94">· {{r.changed}}</span></sc-if></span>
+</div>
+<span class="mono" style="font-size: 13px; color: #A1A7AF; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Now {{r.current}}</span>
+<span style="display: flex; align-items: center; gap: 8px">
+<input id="{{r.fid}}" type="text" class="field mono" value="{{r.value}}" onChange="{{r.onChange}}" disabled="{{cantAdmin}}" aria-invalid="{{r.bad}}" style="box-sizing: border-box; flex: 1; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid {{r.border}}; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 14px; text-align: right">
+<span class="mono" style="flex: none; width: 40px; font-size: 12px; color: #858B94">{{r.unit}}</span>
+</span>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{g.isMatrix}}" hint-placeholder-val="{{ false }}">
+<div role="table" aria-label="Odds and recycle by rarity" style="overflow-x: auto">
+<div role="row" style="display: grid; grid-template-columns: minmax(150px, 1fr) minmax(170px, 1fr) minmax(190px, 1fr); gap: 16px; align-items: center; min-height: 36px; padding: 0 20px; border-top: 1px solid #1A1D22; background: #0D0E11"><span role="columnheader" class="lbl" style="font-size: 10px">Rarity</span><span role="columnheader" class="lbl" style="font-size: 10px">Odds per opening</span><span role="columnheader" class="lbl" style="font-size: 10px">Recycle, before wear</span></div>
+<sc-for list="{{g.mrows}}" as="m" hint-placeholder-count="5">
+<div role="row" style="display: grid; grid-template-columns: minmax(150px, 1fr) minmax(170px, 1fr) minmax(190px, 1fr); gap: 16px; align-items: center; min-height: 64px; padding: 8px 20px; border-top: 1px solid #1A1D22">
+<span role="rowheader" style="display: flex; flex-direction: column; gap: 3px"><span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500"><span aria-hidden="true" style="width: 8px; height: 8px; background: {{m.dot}}"></span><span style="color: {{m.text}}">{{m.label}}</span></span><sc-if value="{{m.hasChanged}}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size: 11px; color: #858B94">{{m.changed}}</span></sc-if></span>
+<span role="cell" style="display: flex; flex-direction: column; gap: 3px"><span style="display: flex; align-items: center; gap: 8px"><input type="text" class="field mono" aria-label="{{m.oddsAria}}" value="{{m.odds.value}}" onChange="{{m.odds.onChange}}" disabled="{{cantAdmin}}" style="box-sizing: border-box; width: 110px; height: 40px; padding: 0 12px; border: 1px solid {{m.odds.border}}; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 14px; text-align: right; box-shadow: {{m.odds.mark}}"><span class="mono" style="font-size: 12px; color: #858B94">%</span></span><span class="mono" style="font-size: 11px; color: #858B94">Now {{m.odds.current}}</span></span>
+<span role="cell" style="display: flex; flex-direction: column; gap: 3px"><span style="display: flex; align-items: center; gap: 8px"><input type="text" class="field mono" aria-label="{{m.recAria}}" value="{{m.rec.value}}" onChange="{{m.rec.onChange}}" disabled="{{cantAdmin}}" style="box-sizing: border-box; width: 130px; height: 40px; padding: 0 12px; border: 1px solid {{m.rec.border}}; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font-size: 14px; text-align: right; box-shadow: {{m.rec.mark}}"><span class="mono" style="font-size: 12px; color: #858B94">CR</span></span><span class="mono" style="font-size: 11px; color: #858B94">Now {{m.rec.current}}</span></span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+</section>
+</sc-for>
+
+<section aria-labelledby="hist-t" style="border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013; overflow-x: auto">
+<h2 id="hist-t" class="lbl" style="margin: 0; padding: 16px 20px 12px">// Change history</h2>
+<div role="table" aria-label="Change history" style="min-width: 640px">
+<div role="row" style="display: grid; grid-template-columns: 110px 76px 170px 150px minmax(0, 1fr); align-items: center; min-height: 40px; padding: 0 20px; border-top: 1px solid #1C1F24; border-bottom: 1px solid #1C1F24; background: #0D0E11"><span role="columnheader" class="lbl" style="font-size: 10px">Time</span><span role="columnheader" class="lbl" style="font-size: 10px">Staff</span><span role="columnheader" class="lbl" style="font-size: 10px">Setting</span><span role="columnheader" class="lbl" style="font-size: 10px">Change</span><span role="columnheader" class="lbl" style="font-size: 10px">Reason</span></div>
+<sc-for list="{{history}}" as="h" hint-placeholder-count="4">
+<div role="row" class="row" style="display: grid; grid-template-columns: 110px 76px 170px 150px minmax(0, 1fr); align-items: center; min-height: 48px; padding: 0 20px; border-bottom: 1px solid #1A1D22; font-size: 14px"><span role="cell" class="mono" style="font-size: 13px; color: #A1A7AF">{{h.time}}</span><span role="cell">{{h.staff}}</span><span role="cell" class="mono" style="font-size: 13px">{{h.key}}</span><span role="cell" class="mono" style="font-size: 13px">{{h.change}}</span><span role="cell" style="color: #A1A7AF">{{h.reason}}</span></div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<aside style="flex: 1 1 340px; position: sticky; top: 24px; display: flex; flex-direction: column; gap: 16px">
+<section aria-labelledby="sim-t" style="display: flex; flex-direction: column; gap: 14px; padding: 18px 20px 20px; border: 1px solid #1C1F24; border-radius: 6px; background: #0E1013">
+<h2 id="sim-t" class="lbl" style="margin: 0">// Simulator</h2>
+<span style="font-size: 13px; line-height: 1.5; color: #A1A7AF">Average return per case if the player recycles everything they open.</span>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1C1F24; border: 1px solid #1C1F24; border-radius: 4px; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px; background: #121417"><span style="font-size: 12px; color: #A1A7AF">Now</span><span class="mono" style="font-size: 24px; font-weight: 500">{{sim.now}}</span><span class="mono" style="font-size: 12px; color: #A1A7AF">{{sim.nowPct}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px; background: #121417"><span style="font-size: 12px; color: #A1A7AF">{{sim.editLabel}}</span><span class="mono" style="font-size: 24px; font-weight: 500; color: {{sim.editColor}}">{{sim.edit}}</span><span class="mono" style="font-size: 12px; color: #A1A7AF">{{sim.editPct}}</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px"><span class="mono" style="width: 52px; font-size: 11px; color: #858B94">Now</span><span aria-hidden="true" style="flex: 1; height: 6px; background: #1E2227"><span style="display: block; height: 6px; width: {{sim.nowW}}; background: #858B94"></span></span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span class="mono" style="width: 52px; font-size: 11px; color: #858B94">Edited</span><span aria-hidden="true" style="flex: 1; height: 6px; background: #1E2227"><span style="display: block; height: 6px; width: {{sim.editW}}; background: #ECEDEF"></span></span></div>
+<span class="mono" style="font-size: 11px; color: #858B94">Bars show the share of the case price that comes back.</span>
+</div>
+<span style="font-size: 13px; color: #A1A7AF">Range by case <span class="mono" style="color: #ECEDEF">{{sim.range}}</span></span>
+</section>
+
+<section aria-labelledby="pend-t" style="display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 20px; border: 1px solid {{pendBorder}}; border-radius: 6px; background: #0E1013">
+<h2 id="pend-t" class="lbl" style="margin: 0">// Pending changes · {{pendCount}}</h2>
+<sc-if value="{{hasPending}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{diff}}" as="d" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #1A1D22; font-size: 13px">
+<span style="flex: 1; min-width: 0">{{d.label}}</span><span class="mono" style="font-size: 12px; white-space: nowrap"><span style="color: #A1A7AF">{{d.from}}</span> → {{d.to}}</span>
+<button type="button" aria-label="{{d.aria}}" onClick="{{d.undo}}" style="flex: none; width: 32px; height: 32px; border: 0; background: none; color: #858B94; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{invalid}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 13px; color: #F27D7D">{{invalidText}}</span></sc-if>
+<div style="display: flex; gap: 8px">
+<button type="button" class="btn-s" onClick="{{discard}}" style="height: 44px; padding: 0 16px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Discard</button>
+<button type="button" class="btn-p" onClick="{{review}}" disabled="{{cantSave}}" style="flex: 1; height: 44px; padding: 0 16px; border: 0; border-radius: 2px; background: #ECEDEF; color: #0A0B0D; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{saveLabel}}…</button>
+</div>
+</sc-if>
+<sc-if value="{{noPending}}" hint-placeholder-val="{{ false }}"><span style="padding: 18px; border: 1px dashed #2C3138; border-radius: 4px; font-size: 13px; color: #A1A7AF; text-align: center">Edit a value to see it here before saving.</span></sc-if>
+</section>
+</aside>
+</div>
+</div>
+</main>
+<sc-if value="{{dlgOpen}}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" onClick="{{closeDlg}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(5,6,8,0.72)"></div>
+<div role="dialog" aria-modal="true" aria-labelledby="dlg-t" style="position: absolute; left: 50%; top: 56px; z-index: 31; transform: translateX(-50%); width: min(560px, calc(100% - 32px)); max-height: calc(100% - 96px); box-sizing: border-box; display: flex; flex-direction: column; background: #0E1013; border: 1px solid #2C3138; border-radius: 6px; box-shadow: 0 32px 80px rgba(0,0,0,0.6)">
+<div class="dscroll" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding: 18px 28px 24px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="lbl">{{dlgLabel}}</span><button type="button" aria-label="Close" onClick="{{closeDlg}}" style="width: 44px; height: 44px; margin-right: -12px; border: 0; background: none; color: #ECEDEF; cursor: pointer; display: grid; place-items: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<h2 id="dlg-t" style="margin: -6px 0 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em">{{dlgTitle}}</h2>
+
+<div style="display: flex; flex-direction: column; border: 1px solid #1C1F24; border-radius: 4px">
+<sc-for list="{{diff}}" as="d" hint-placeholder-count="3">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 48px; padding: 0 14px; border-bottom: 1px solid #1A1D22; font-size: 14px"><span style="display: flex; flex-direction: column; gap: 2px"><span>{{d.label}}</span><span class="mono" style="font-size: 11px; color: #858B94">{{d.key}}</span></span><span class="mono" style="font-size: 14px; white-space: nowrap"><span style="color: #A1A7AF">{{d.from}}</span> → {{d.to}}</span></div>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 14px 16px; border: 1px solid #1C1F24; border-radius: 4px; background: #0A0B0D">
+<span style="flex-basis: 100%; font-size: 12px; color: #A1A7AF">Average return per case</span>
+<span class="mono" style="font-size: 18px; color: #A1A7AF">{{sim.now}} · {{sim.nowPct}}</span><span aria-hidden="true" style="color: #858B94">→</span><span class="mono" style="font-size: 22px; font-weight: 500">{{sim.edit}} · {{sim.editPct}}</span>
+</div>
+<ul style="margin: 0; padding: 0 0 0 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.5; color: #A1A7AF">
+<sc-for list="{{impacts}}" as="i" hint-placeholder-count="3"><li>{{i.text}}</li></sc-for>
+</ul>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #A1A7AF">Reason <span style="color: #858B94">· required, shown in the change history and admin log</span></span><input type="text" class="field" value="{{reason}}" onChange="{{onReason}}" placeholder="e.g. too many credits in circulation" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 1px solid #2C3138; border-radius: 2px; background: #0A0B0D; color: #ECEDEF; font: inherit; font-size: 14px"></label>
+</div>
+<div style="flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 28px; border-top: 1px solid #1C1F24">
+<span class="mono" style="margin-right: auto; font-size: 11px; color: #858B94">Logged as {{staffName}}</span>
+<button type="button" class="btn-s" onClick="{{closeDlg}}" style="height: 44px; padding: 0 18px; border: 1px solid #2C3138; border-radius: 2px; background: transparent; color: #ECEDEF; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+<button type="button" class="{{goClass}}" onClick="{{go}}" disabled="{{cantGo}}" style="height: 44px; padding: 0 20px; border-radius: 2px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; {{goStyle}}">{{goLabel}}</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid #2C3138; border-radius: 4px; background: #111316; font-size: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.5)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill: none; stroke: #ECEDEF; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{toast}}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dialog":{"editor":"boolean","default":true,"section":"State"},"edits":{"editor":"enum","options":["pending","none"],"default":"pending","section":"State"},"$preview":{"width":1440,"height":900}}'>
+const ANAV = [
+  ['overview', 'Overview', 'Admin-Overview.dc.html', 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z', 0],
+  ['players', 'Players', 'Admin-Players.dc.html', 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3', 0],
+  ['items', 'Items', 'Admin-Items.dc.html', 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 0],
+  ['economy', 'Economy', 'Admin-Economy.dc.html', 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4', 0],
+  ['catalog', 'Catalog', 'Admin-Catalog.dc.html', 'M3 8h18v12H3zM3 12h18M10 12v3h4v-3M8 8V5h8v3', 0],
+  ['market', 'Market & trades', 'Admin-Market.dc.html', 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z', 3],
+  ['moderation', 'Moderation', 'Admin-Moderation.dc.html', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z', 2],
+  ['logs', 'Logs & tools', 'Admin-Logs.dc.html', 'M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01', 0]
+];
+const RANK = { viewer: 0, moderator: 1, admin: 2 };
+const STAFF = { admin: ['mathys', 'M', 'Admin'], moderator: ['lea', 'L', 'Moderator'], viewer: ['sam', 'S', 'Viewer'] };
+function SHELL(role, active) {
+  const k = RANK[role] !== undefined ? role : 'admin';
+  const s = STAFF[k];
+  return {
+    nav: ANAV.map((n) => ({ label: n[1], href: n[2], icon: n[3], hasBadge: n[4] > 0, badge: String(n[4]), current: n[0] === active ? 'page' : undefined, style: n[0] === active ? 'background: #16181C; color: #ECEDEF' : 'color: #A1A7AF' })),
+    staffName: s[0], staffInitial: s[1], roleLabel: s[2], rank: RANK[k]
+  };
+}
+function HINT(n) { return n === 2 ? 'Admins only' : 'Moderators and admins'; }
+const BTN = {
+  p: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+  s: 'border: 1px solid #2C3138; background: transparent; color: #ECEDEF',
+  d: 'border: 1px solid #F27D7D; background: transparent; color: #F27D7D'
+};
+
+const ART = {
+  rifle: 'M10 46L58 38L60 52L18 66Q10 67 10 60Z M56 35H150V52H56Z M70 30H140V35H70Z M150 38H196V50H150Z M196 42H232V46H196Z M186 32H191V38H186Z M112 52H128Q131 68 140 82L124 86Q116 70 112 52Z M80 52H94L88 76H76Z',
+  sniper: 'M8 50L60 44L62 58L32 60L16 72Q8 73 8 66Z M58 44H150V56H58Z M150 47H234V51H150Z M80 30H132V40H80Z M70 27H82V43H70Z M130 28H142V42H130Z M96 40H102V44H96Z M112 40H118V44H112Z M76 56H90L84 78H72Z M110 56H124V70H110Z',
+  smg: 'M60 36H160V54H60Z M160 42H200V47H160Z M20 40H60V44H28V56H60V60H20Z M118 54H132L134 90H120Z M76 54H90L84 78H72Z M70 31H80V36H70Z',
+  pistol: 'M70 30H182V46H70Z M74 46H176V54H120V58H74Z M76 54H108L100 88Q99 92 94 92H70Q64 92 66 86Z M108 56Q110 68 122 68V64Q114 64 112 56Z M182 34H188V42H182Z',
+  knife: 'M22 58L84 50Q90 50 90 56V62Q90 66 84 66L26 70Q18 70 18 64Q18 58 22 58Z M88 44H96V72H88Z M96 50Q150 40 200 52Q222 58 226 64Q200 76 150 70Q120 66 96 66Z'
+};
+const CASE_ART = 'M38 34H202A8 8 0 0 1 210 42V96A8 8 0 0 1 202 104H38A8 8 0 0 1 30 96V42A8 8 0 0 1 38 34Z M98 18H142V34H134V25H106V34H98Z M30 58H210V61H30Z M120 66L132 78L120 90L108 78Z M52 44H68V50H52Z M172 44H188V50H172Z';
+const RAR = {
+  milspec: ['#4B69FF', 'rgba(75,105,255,0.30)', '#8197FF', 'Mil-Spec'],
+  restricted: ['#8847FF', 'rgba(136,71,255,0.32)', '#A983FF', 'Restricted'],
+  classified: ['#D32CE6', 'rgba(211,44,230,0.30)', '#E57AF0', 'Classified'],
+  covert: ['#EB4B4B', 'rgba(235,75,75,0.32)', '#F27D7D', 'Covert'],
+  gold: ['#E4AE39', 'rgba(228,174,57,0.36)', '#ECC163', '★ Rare special']
+};
+
+// key, label, help, value, unit, decimals, changed, dot (rarity)
+const GROUPS_DEF = [
+  ['cases', '// Cases', [
+    ['cases.price', 'Case price', 'What one case costs.', 250, 'CR', 0, 'Changed Oct 3 by mathys'],
+    ['start.balance', 'Starting balance', 'Credits a new player gets.', 1000, 'CR', 0, ''],
+    ['free_case.every', 'Free case every', 'Time between two free cases.', 4, 'h', 0, 'Changed Oct 14 by mathys']
+  ]],
+  ['rarity', '// Odds and recycle', [
+    ['odds.milspec', 'Mil-Spec', 'Chance per opening.', 79.92, '%', 2, '', 'milspec'],
+    ['odds.restricted', 'Restricted', 'Chance per opening.', 15.98, '%', 2, '', 'restricted'],
+    ['odds.classified', 'Classified', 'Chance per opening.', 3.20, '%', 2, '', 'classified'],
+    ['odds.covert', 'Covert', 'Chance per opening.', 0.64, '%', 2, '', 'covert'],
+    ['odds.gold', '★ Rare special', 'Chance per opening.', 0.26, '%', 2, '', 'gold'],
+    ['recycle.milspec', 'Mil-Spec', 'Recycle value.', 30, 'CR', 0, '', 'milspec'],
+    ['recycle.restricted', 'Restricted', 'Recycle value.', 120, 'CR', 0, '', 'restricted'],
+    ['recycle.classified', 'Classified', 'Recycle value.', 500, 'CR', 0, '', 'classified'],
+    ['recycle.covert', 'Covert', 'Recycle value.', 2500, 'CR', 0, 'Recycle changed Oct 19 by mathys', 'covert'],
+    ['recycle.gold', '★ Rare special', 'Recycle value.', 10000, 'CR', 0, '', 'gold']
+  ]],
+  ['stattrak', '// StatTrak™ and wear', [
+    ['stattrak.chance', 'StatTrak™ chance', '1 item in N opened is StatTrak™.', 10, 'N', 0, ''],
+    ['stattrak.value', 'StatTrak™ value', 'Multiplier on market and recycle value.', 2, '×', 1, ''],
+    ['recycle.wear', 'Wear multipliers', 'On recycle value, FN · MW · FT · WW · BS.', '1.5·1.25·1·0.9·0.85', '×', -1, '']
+  ]],
+  ['market', '// Market', [
+    ['market.fee', 'Sale fee', 'Taken from the seller when an auction ends.', 5, '%', 0, ''],
+    ['market.min_raise', 'Minimum raise', 'Each bid beats the last one by at least this.', 5, '%', 0, ''],
+    ['market.anti_sniping', 'Anti-sniping', 'A late bid extends the auction by this.', 2, 'min', 0, 'Changed Oct 10 by mathys'],
+    ['market.listings', 'Active listings', 'Per player.', 10, 'max', 0, ''],
+    ['market.durations', 'Durations', 'Choices when listing.', '24·48', 'h', -1, ''],
+    ['market.max_price', 'Max price', 'Highest start or buy-now price.', 10000000, 'CR', 0, '']
+  ]],
+  ['trades', '// Trades and trade-up', [
+    ['trades.expiry', 'Offer expiry', 'Choices when sending an offer.', '1·3·7', 'days', -1, ''],
+    ['trades.items', 'Items per side', 'In one offer.', 20, 'max', 0, ''],
+    ['trades.pending', 'Pending offers', 'Per player at once.', 10, 'max', 0, ''],
+    ['tradeup.items', 'Trade-up contract', 'Items it takes.', 10, 'items', 0, '']
+  ]]
+];
+const LABEL = {};
+const DEF = {};
+GROUPS_DEF.forEach((g) => g[2].forEach((r) => { DEF[r[0]] = r; LABEL[r[0]] = (g[0] === 'rarity' ? (r[0].indexOf('odds.') === 0 ? 'Odds ' : 'Recycle ') : '') + r[1]; }));
+const fmtNum = (v, dec) => {
+  if (dec < 0) return String(v);
+  const s = Number(v).toFixed(dec);
+  const [i, d] = s.split('.');
+  return i.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (d ? '.' + d : '');
+};
+const parse = (s) => parseFloat(String(s).replace(/,/g, ''));
+const START_EDITS = { 'cases.price': '300', 'recycle.covert': '3,000', 'market.fee': '6' };
+const HISTORY = [['Oct 19 16:40', 'mathys', 'recycle.covert', '2,000 → 2,500 CR', 'covert recycle felt too low'], ['Oct 14 10:02', 'mathys', 'free_case.every', '6 → 4 h', 'more reasons to come back during the day'], ['Oct 10 18:30', 'mathys', 'market.anti_sniping', '1 → 2 min', 'last-second snipes'], ['Oct 3 12:00', 'mathys', 'cases.price', '200 → 250 CR', 'launch balance, too many credits']];
+const K = 1.117; // wear + StatTrak factor, calibrated on real openings
+function simulate(get) {
+  const rar = ['milspec', 'restricted', 'classified', 'covert', 'gold'];
+  let base = 0;
+  rar.forEach((r) => { base += parse(get('odds.' + r)) / 100 * parse(get('recycle.' + r)); });
+  return base * K;
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.initial(props);
+  }
+  initial(p) {
+    return { edits: p.edits === 'none' ? {} : Object.assign({}, START_EDITS), applied: {}, history: HISTORY.slice(), open: p.dialog === true, reason: '', toast: '' };
+  }
+  componentDidUpdate(prev) {
+    if (prev.edits !== this.props.edits || prev.dialog !== this.props.dialog || prev.role !== this.props.role) this.setState(this.initial(this.props));
+  }
+  renderVals() {
+    const st = this.state;
+    const sh = SHELL(this.props.role, 'economy');
+    const isAdmin = sh.rank >= 2;
+    const cur = (k) => (st.applied[k] !== undefined ? st.applied[k] : DEF[k][3]);
+    const curText = (k) => fmtNum(cur(k), DEF[k][5]);
+    const edited = (k) => st.edits[k] !== undefined;
+    const val = (k) => (edited(k) ? st.edits[k] : curText(k));
+    const setEdit = (k, v) => {
+      const edits = Object.assign({}, this.state.edits);
+      const same = DEF[k][5] < 0 ? v.trim() === String(cur(k)) : parse(v) === parse(cur(k));
+      if (same) delete edits[k]; else edits[k] = v;
+      this.setState({ edits });
+    };
+    const oddsTotal = ['milspec', 'restricted', 'classified', 'covert', 'gold'].reduce((a, r) => a + (parse(val('odds.' + r)) || 0), 0);
+    const oddsOk = Math.abs(oddsTotal - 100) < 0.005;
+    const badKeys = Object.keys(st.edits).filter((k) => DEF[k][5] >= 0 && !(parse(st.edits[k]) > 0));
+    const field = (k) => {
+      const r = DEF[k];
+      const bad = badKeys.indexOf(k) >= 0 || (k.indexOf('odds.') === 0 && !oddsOk && edited(k));
+      return {
+        fid: 'f-' + k.replace(/\./g, '-'), label: r[1], help: r[2], changed: r[6], hasChanged: !!r[6], current: curText(k) + ' ' + r[4],
+        unit: r[4], value: val(k), edited: edited(k), bad,
+        border: bad ? '#F27D7D' : edited(k) ? '#ECEDEF' : '#2C3138', mark: edited(k) ? 'inset 2px 0 0 #ECEDEF' : 'none',
+        hasDot: !!r[7], dot: r[7] ? RAR[r[7]][0] : 'transparent',
+        onChange: (e) => setEdit(k, e.target.value)
+      };
+    };
+    const groups = GROUPS_DEF.map((g) => {
+      const isMatrix = g[0] === 'rarity';
+      const rars = ['milspec', 'restricted', 'classified', 'covert', 'gold'];
+      return {
+        hid: 'g-' + g[0], title: g[1], isMatrix, isList: !isMatrix,
+        hasNote: isMatrix, note: 'Odds total ' + oddsTotal.toFixed(2) + '%' + (oddsOk ? '' : ' · must be 100.00%'), noteBad: !oddsOk,
+        noteStyle: oddsOk ? 'color: #A1A7AF' : 'color: #F27D7D',
+        rows: isMatrix ? [] : g[2].map((r) => field(r[0])),
+        mrows: isMatrix ? rars.map((x) => {
+          const o = field('odds.' + x), rc = field('recycle.' + x);
+          return { label: RAR[x][3], dot: RAR[x][0], text: RAR[x][2], changed: DEF['recycle.' + x][6], hasChanged: !!DEF['recycle.' + x][6], odds: o, rec: rc, oddsAria: 'Odds, ' + RAR[x][3], recAria: 'Recycle value, ' + RAR[x][3] };
+        }) : []
+      };
+    });
+    const keys = Object.keys(st.edits);
+    const diff = keys.map((k) => {
+      const r = DEF[k];
+      const to = r[5] < 0 ? st.edits[k] : fmtNum(parse(st.edits[k]), r[5]);
+      return { key: k, label: LABEL[k], from: curText(k) + ' ' + r[4], to: to + ' ' + r[4], aria: 'Undo ' + LABEL[k], undo: () => { const edits = Object.assign({}, this.state.edits); delete edits[k]; this.setState({ edits }); } };
+    });
+    const price = parse(cur('cases.price'));
+    const priceE = parse(val('cases.price')) || price;
+    const nowV = simulate((k) => cur(k));
+    const editV = oddsOk && !badKeys.length ? simulate(val) : nowV;
+    const n = keys.length;
+    const saveLabel = 'Save ' + n + (n === 1 ? ' change' : ' changes');
+    const impacts = [];
+    if (st.edits['cases.price'] !== undefined) impacts.push({ text: 'The new case price applies to the next case bought. Free cases stay free.' });
+    if (st.edits['market.fee'] !== undefined) impacts.push({ text: 'Live auctions keep the fee they started with. New listings pay ' + st.edits['market.fee'] + '%.' });
+    if (keys.some((k) => k.indexOf('recycle.') === 0)) impacts.push({ text: 'Recycle values apply right away, to items players already own.' });
+    if (keys.some((k) => k.indexOf('odds.') === 0)) impacts.push({ text: 'New odds apply to the next opening. The Overview compares them with real drops.' });
+    if (!impacts.length) impacts.push({ text: 'Applies right away, no deploy needed.' });
+    const valid = n > 0 && oddsOk && !badKeys.length;
+    return Object.assign(sh, {
+      cantAdmin: !isAdmin, groups,
+      sim: {
+        now: Math.round(nowV) + ' CR', nowPct: Math.round(nowV / price * 100) + '% of ' + fmtNum(price, 0),
+        edit: Math.round(editV) + ' CR', editPct: Math.round(editV / priceE * 100) + '% of ' + fmtNum(priceE, 0),
+        editLabel: n ? 'With your edits' : 'With your edits (none yet)', editColor: n ? '#ECEDEF' : '#A1A7AF',
+        nowW: Math.min(100, nowV / price * 100).toFixed(1) + '%', editW: Math.min(100, editV / priceE * 100).toFixed(1) + '%',
+        range: Math.round(nowV * 0.9) + '–' + Math.round(nowV * 1.15) + ' CR' + (n ? ' → ' + Math.round(editV * 0.9) + '–' + Math.round(editV * 1.15) + ' CR' : '')
+      },
+      pendCount: String(n), hasPending: n > 0, noPending: n === 0, pendBorder: n ? '#2C3138' : '#1C1F24',
+      diff, invalid: !oddsOk || badKeys.length > 0,
+      invalidText: !oddsOk ? 'Odds add up to ' + oddsTotal.toFixed(2) + '%. They must make 100.00% to save.' : 'Some values aren’t numbers above 0.',
+      discard: () => this.setState({ edits: {} }), review: () => this.setState({ open: true, reason: '' }),
+      cantSave: !valid || !isAdmin, saveLabel,
+      history: st.history.map((h) => ({ time: h[0], staff: h[1], key: h[2], change: h[3], reason: h[4] })),
+      dlgOpen: st.open && n > 0, closeDlg: () => this.setState({ open: false }),
+      dlgLabel: '// Save economy changes', dlgTitle: saveLabel.replace('Save', 'Save') + ' to the economy',
+      impacts, reason: st.reason, onReason: (e) => this.setState({ reason: e.target.value }),
+      goLabel: saveLabel, goClass: 'btn-p', goStyle: 'border: 0; background: #ECEDEF; color: #0A0B0D',
+      cantGo: !valid || !st.reason.trim() || !isAdmin,
+      go: () => {
+        if (!valid || !st.reason.trim()) return;
+        const applied = Object.assign({}, st.applied);
+        const rows = keys.map((k) => { const r = DEF[k]; const nv = r[5] < 0 ? st.edits[k] : parse(st.edits[k]); const row = ['Oct 23 14:12', sh.staffName, k, curText(k) + ' → ' + (r[5] < 0 ? nv : fmtNum(nv, r[5])) + ' ' + r[4], st.reason.trim()]; applied[k] = nv; return row; });
+        this.setState({ applied, edits: {}, open: false, history: rows.concat(st.history), toast: 'Saved ' + n + ' economy ' + (n === 1 ? 'change' : 'changes') + ' · logged' });
+      },
+      hasToast: !!st.toast, toast: st.toast
+    });
+  }
+}
+</script>
+</body>
+</html>

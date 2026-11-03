@@ -1,0 +1,161 @@
+@keyframes mint-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes mint-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* Exit of mint-rise (sheets, toasts). */
+@keyframes mint-sink {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes mint-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes mint-flare {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes mint-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mint-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes mint-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Urgent auction timer: the red dot blinks every second (DESIGN.md §2). */
+@keyframes mint-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+/* Bars fill from the left (progress, completion, odds of a contract). */
+@keyframes mint-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+/* Banner arriving from the top. */
+@keyframes mint-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* A value that just changed (balance, current bid): brief highlight. */
+@keyframes mint-flash {
+  0% {
+    background-color: color-mix(in srgb, var(--text) 16%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* Cards and rows rise in order when a list first shows: item i waits i × 30 ms (12 at most). */
+.stagger {
+  animation: mint-rise 360ms var(--ease-out) backwards;
+  animation-delay: calc(min(var(--i, 0), 12) * 30ms);
+}
+
+/* Same for every direct child of a list container (rows, offers, auctions); a row added later rises too. */
+.stagger-list > * {
+  animation: mint-rise 360ms var(--ease-out) backwards;
+}
+.stagger-list > :nth-child(2) { animation-delay: 30ms; }
+.stagger-list > :nth-child(3) { animation-delay: 60ms; }
+.stagger-list > :nth-child(4) { animation-delay: 90ms; }
+.stagger-list > :nth-child(5) { animation-delay: 120ms; }
+.stagger-list > :nth-child(6) { animation-delay: 150ms; }
+.stagger-list > :nth-child(7) { animation-delay: 180ms; }
+.stagger-list > :nth-child(8) { animation-delay: 210ms; }
+.stagger-list > :nth-child(9) { animation-delay: 240ms; }
+.stagger-list > :nth-child(10) { animation-delay: 270ms; }
+.stagger-list > :nth-child(11) { animation-delay: 300ms; }
+.stagger-list > :nth-child(12) { animation-delay: 330ms; }
+.stagger-list > :nth-child(n + 13) { animation-delay: 360ms; }
+
+/* A screen opening (Page). Opacity only: a transform would pin the fixed mobile bars to the page. */
+.page-enter {
+  animation: mint-fade 220ms var(--ease-out) backwards;
+}
+
+/*
+ * Reduced motion (DESIGN.md §2): nothing moves. Animations jump to their end and transitions are
+ * instant; the roulette (driven by script) takes 0.6 s.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .anim {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,107 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(10, 11, 13, 0.7);
+  animation: mint-fade var(--dur-base) var(--ease-out) both;
+}
+.backdrop[data-closing] {
+  animation: mint-fade-out 180ms var(--ease-in-out) both;
+}
+.dialog {
+  position: fixed;
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+}
+.dialog[data-closing] {
+  pointer-events: none;
+}
+.centered {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-panel);
+  animation: centered-in 240ms var(--ease-out) both;
+}
+.centered[data-closing] {
+  animation: centered-out 180ms var(--ease-in-out) both;
+}
+@keyframes centered-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+}
+@keyframes centered-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+}
+.sheet {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-width: 1px 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: sheet-in 280ms var(--ease-out) both;
+}
+.sheet[data-closing] {
+  animation: sheet-out 180ms var(--ease-in-out) both;
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+.head {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 12px 4px 24px;
+}
+.sheet .head {
+  padding: 10px 8px 2px 20px;
+}
+.close {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color var(--dur-fast) ease;
+}
+.close svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.close:hover {
+  color: var(--text);
+}
+.bodyFrame {
+  flex: 1 1 auto;
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 24px 24px;
+}
+.sheet .body {
+  padding: 8px 20px 28px;
+}

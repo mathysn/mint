@@ -1,0 +1,8 @@
+# The game's pages load their data from /api, so search engines may read it to render them.
+User-agent: *
+Disallow: /admin
+Disallow: /api/admin/
+Disallow: /api/cron/
+Disallow: /auth/
+
+Sitemap: https://csmint.app/sitemap.xml

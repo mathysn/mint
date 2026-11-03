@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Public pages worth finding in search. The domain is fixed: csmint.app. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://csmint.app/</loc></url>
+  <url><loc>https://csmint.app/cases</loc></url>
+  <url><loc>https://csmint.app/leaderboard</loc></url>
+  <url><loc>https://csmint.app/connect</loc></url>
+  <url><loc>https://csmint.app/privacy</loc></url>
+  <url><loc>https://csmint.app/terms</loc></url>
+</urlset>

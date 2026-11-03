@@ -11,9 +11,8 @@ WORKDIR /app
 
 # Dependencies first, so a code change doesn't reinstall them.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN corepack install && pnpm install --frozen-lockfile \
-    # The embedded Postgres binaries only serve `pnpm db:local` on a dev machine.
-    && rm -rf node_modules/.pnpm/@embedded-postgres* node_modules/embedded-postgres
+# node_modules stays exactly as pnpm left it: removing a package made pnpm want to reinstall later.
+RUN corepack install && pnpm install --frozen-lockfile
 
 COPY . .
 
@@ -24,9 +23,13 @@ ENV VITE_DISCORD_CLIENT_ID=$VITE_DISCORD_CLIENT_ID \
     VITE_CONTACT_EMAIL=$VITE_CONTACT_EMAIL
 RUN pnpm build
 
+# `pnpm <script>` must never try to reinstall at run time: the `node` user can't write to /app,
+# and NODE_ENV=production differs from the install, which made pnpm want to rebuild node_modules.
 ENV NODE_ENV=production \
     PORT=3000 \
-    NODE_OPTIONS=--max-old-space-size=384
+    NODE_OPTIONS=--max-old-space-size=384 \
+    npm_config_verify_deps_before_run=false \
+    pnpm_config_verify_deps_before_run=false
 EXPOSE 3000
 USER node
 

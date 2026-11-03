@@ -29,7 +29,7 @@ Sans variables Discord, le jeu marche en invité ; l'écran de connexion indique
 
 ## Panneau admin
 
-`/admin` (hors activité Discord) est réservé au staff. Le premier admin se crée en ligne de commande : se connecter une fois au jeu avec son compte Discord, puis `pnpm staff:set <son Discord ID> admin` (sur le serveur : `docker compose exec app pnpm staff:set …` dans `/opt/mint`). Chaque changement de rôle est écrit dans l'admin log.
+`/admin` (hors activité Discord) est réservé au staff. Le premier admin se crée en ligne de commande : se connecter une fois au jeu avec son compte Discord, puis `pnpm staff:set <son Discord ID> admin` (sur le serveur, dans `/opt/mint` : `docker compose exec app node --import tsx scripts/staff.ts set <Discord ID> admin`). Chaque changement de rôle est écrit dans l'admin log.
 
 Les nouvelles caisses d'un import arrivent éteintes : on les allume dans Catalog. Le tout premier import (base vide) les allume toutes.
 
@@ -80,8 +80,10 @@ Mémoire plafonnée (`PG_MEM_LIMIT`, `APP_MEM_LIMIT`) pour ne jamais prendre cel
 4. `sudo bash deploy/setup.sh` : montre l'état du serveur, installe Docker s'il manque, crée `.env` avec des secrets neufs, ouvre 80/443 si ufw est actif, ajoute la sauvegarde nocturne (`/etc/cron.d/mint`). Il demande avant chaque changement.
 5. `nano .env` : `MINT_DOMAIN`, `APP_BASE_URL`, Discord, `CONTACT_EMAIL`, R2 (voir `.env.production.example`).
 6. `bash deploy/deploy.sh` : build, migrations, démarrage, attend que `/api/health` réponde.
-7. Catalogue, une fois : `docker compose exec app pnpm catalog:import`.
-8. Premier admin : se connecter au jeu avec Discord, puis `docker compose exec app pnpm staff:set <Discord ID> admin`.
+7. Catalogue, une fois : `docker compose exec app node --import tsx scripts/import-catalog.ts`.
+8. Premier admin : se connecter au jeu avec Discord, puis `docker compose exec app node --import tsx scripts/staff.ts set <Discord ID> admin`.
+
+Dans le conteneur, lancer les scripts avec `node --import tsx scripts/….ts` plutôt que `pnpm <script>` : pnpm vérifie les dépendances avant de lancer un script et, l’utilisateur `node` ne pouvant pas écrire dans `/app`, échouait avec `ERR_PNPM_PACKAGE_MANAGER_REMOVE_MODULES_DIR` (le `Dockerfile` désactive maintenant cette vérification).
 
 Si 80/443 sont déjà pris (nginx…), `setup.sh` laisse Caddy éteint : brancher le serveur web existant sur `127.0.0.1:3080` avec `deploy/nginx-mint.conf`.
 
@@ -95,7 +97,7 @@ Pousser sur GitHub, puis sur le serveur : `cd /opt/mint && bash deploy/deploy.sh
 |---|---|
 | `docker compose ps` | État des conteneurs |
 | `docker compose logs -f app` | Journaux du jeu |
-| `docker compose exec app pnpm check:ledger` | Contrôle du journal |
+| `docker compose exec app node --import tsx scripts/check-ledger.ts` | Contrôle du journal |
 | `bash deploy/backup.sh` | Sauvegarde tout de suite (sinon chaque nuit à 02:30) |
 | `docker stats --no-stream` | Mémoire utilisée par Mint |
 

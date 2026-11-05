@@ -306,7 +306,7 @@ export function Connect() {
               Start your collection.
             </h1>
             <p style={{ maxWidth: 480, fontSize: 16, lineHeight: 1.55, color: 'var(--text-2)' }}>
-              Your Discord account gets its own collection: {start} to start and a free case every {economy.freeLong}, on every device and inside the Discord activity. Guest pulls stay with the guest, so free cases stay fair.
+              Your Discord account gets its own collection: {start} to start and a free case every {economy.freeLong} (up to {economy.freeMax} saved), on every device and inside the Discord activity. Guest pulls stay with the guest, so free cases stay fair.
             </p>
           </div>
           {progressCard}

@@ -32,7 +32,7 @@ import {
   trades,
   users,
 } from '../db/schema.js';
-import { freeCaseState } from '../game/dailyCrate.js';
+import { freeCaseStack } from '../game/dailyCrate.js';
 import { wearOf } from '../game/wear.js';
 import { ago, cr, fmt, inTime, plural, serial, utcDay } from '../format.js';
 import { banInfo, fail, type UserRow } from '../http.js';
@@ -231,6 +231,7 @@ export async function playerDetail(id: string): Promise<AdminPlayer> {
     freePlayerName(),
   ]);
   const s = stats.get(user.id)!;
+  const stack = freeCaseStack(user.freeCaseAnchor, new Date());
   return {
     id: user.id,
     label: playerLabel(user),
@@ -252,8 +253,9 @@ export async function playerDetail(id: string): Promise<AdminPlayer> {
     },
     signals: sig,
     sessions: live,
-    freeCaseAvailable: freeCaseState(user.lastFreeCaseAt, new Date()).available,
-    freeCaseNextAt: freeCaseState(user.lastFreeCaseAt, new Date()).nextAt?.toISOString() ?? null,
+    freeCases: stack.count,
+    freeCaseMax: stack.max,
+    freeCaseNextAt: stack.nextAt?.toISOString() ?? null,
     renameTo,
   };
 }

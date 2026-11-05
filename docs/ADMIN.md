@@ -72,7 +72,7 @@ Chaque dialogue se confirme pour de vrai dans la maquette : la page derrière se
 
 **Players** : filtres Type, Status, Joined, tri ; filtres actifs répétés en puces retirables + « Clear filters ». Cases à cocher **uniquement sur les invités** ; la barre de sélection propose « Delete N guests » avec raison obligatoire.
 
-**Joueur** : en-tête (avatar 80, puces Account / Online / Banned, Discord ID copiable), actions Adjust credits, Grant item, Reset free case, Sign out everywhere, Ban, menu ⋯ (Rename, Delete account). Bandeau pleine largeur si banni : « Banned until Oct 30, 11:02 · by lea · Reason: … » + Unban. Bande de stats, carte Signals (âge du compte, autres comptes sur la même IP, trades signalés, reports), onglets Inventory (filtre par statut), Openings, Trades, Market, Friends, Ledger, Sessions, Notes (staff seulement).
+**Joueur** : en-tête (avatar 80, puces Account / Online / Banned, Discord ID copiable), actions Adjust credits, Grant item, Refill free cases (remet la réserve de caisses gratuites au maximum), Sign out everywhere, Ban, menu ⋯ (Rename, Delete account). Bandeau pleine largeur si banni : « Banned until Oct 30, 11:02 · by lea · Reason: … » + Unban. Bande de stats, carte Signals (âge du compte, autres comptes sur la même IP, trades signalés, reports), onglets Inventory (filtre par statut), Openings, Trades, Market, Friends, Ledger, Sessions, Notes (staff seulement).
 
 **Items** : recherche par ID (9 chiffres) ou nom, puces de rareté, statut (dont « Stuck »), StatTrak. Un objet est **bloqué** quand son statut dit Listed ou In trade alors qu'aucune vente ou offre vivante ne le tient : le serveur doit savoir le détecter (requête ou job), l'interface affiche le point urgent, l'explication et « Unlock ». Tiroir : scène de l'objet, faits (ID, caisse d'origine, propriétaires, statut, valeurs), chronologie liée, actions Move to player, Restore (si détruit, avec option de reprendre les crédits de recyclage), Unlock, Remove from showcase.
 
@@ -101,7 +101,7 @@ Les écrans racontent une même journée, utile pour vérifier qu'on n'a rien ou
 
 ## 9. Points ouverts
 
-1. ~~Caisse gratuite~~ : tranché, **une toutes les 4 h** partout (jeu et admin). La caisse du jour est choisie par un admin (Catalog) ou, à défaut, par la rotation quotidienne ; un choix s'applique tout de suite.
+1. ~~Caisse gratuite~~ : tranché, **une toutes les 10 min, jusqu'à 5 en réserve**, partout (jeu et admin ; revu le 05/11/2026, avant une toutes les 4 h). Les deux chiffres se règlent dans Economy (« Free case every », « Free case stack »). Les caisses gratuites d'un événement s'ajoutent à la réserve, sans plafond. La caisse du jour est choisie par un admin (Catalog) ou, à défaut, par la rotation quotidienne ; un choix s'applique tout de suite.
 2. Pas d'écran Items mobile : l'onglet Items et la feuille More renvoient vers les pages desktop.
 3. ~~Seuils des moniteurs~~ : tranchés (24/10/2026), vérifiés au moment de l'événement (acceptation d'un trade, ouverture d'une session, vente) :
    - *Repeated trades* : au moins 4 trades acceptés entre les deux mêmes joueurs en 48 h, au moins 80 % de la valeur dans un sens, au moins 10 000 CR déplacés ; urgent dès 25 000 CR ;

@@ -20,7 +20,7 @@ import {
   trades,
   users,
 } from '../db/schema.js';
-import { freeCaseState } from '../game/dailyCrate.js';
+import { freeCaseStack } from '../game/dailyCrate.js';
 import { PATTERN_COUNT, type Tier } from '../game/economy.js';
 import { recycleValue } from '../game/value.js';
 import { WEARS, wearOf } from '../game/wear.js';
@@ -211,17 +211,19 @@ export const reasonOnly = z.object({ reason: reasonSchema });
 export async function resetFreeCase(staff: StaffMember, id: string, reason: string): Promise<AdminActionResult> {
   return db().transaction(async (tx) => {
     const { user } = await lockPlayer(tx, id);
-    const state = freeCaseState(user.lastFreeCaseAt, new Date());
-    await tx.update(users).set({ lastFreeCaseAt: null }).where(eq(users.id, user.id));
+    // Refills the stack (bonus cases from events are left as they are).
+    const stack = freeCaseStack(user.freeCaseAnchor, new Date());
+    const full = `${stack.max}/${stack.max} (full)`;
+    await tx.update(users).set({ freeCaseAnchor: null }).where(eq(users.id, user.id));
     await writeAdminLog(tx, staff, {
       action: 'player.free_case',
       target: target(user),
-      change: 'free case reset',
-      before: { 'next free case': state.available ? 'available' : `${utcDateTime(state.nextAt!)} UTC` },
-      after: { 'next free case': 'available' },
+      change: 'free cases refilled',
+      before: { 'free cases': stack.nextAt ? `${stack.count}/${stack.max} · next ${utcDateTime(stack.nextAt)} UTC` : full },
+      after: { 'free cases': full },
       reason,
     });
-    return { toast: `Reset ${playerLabel(user)}’s free case · logged` };
+    return { toast: `Refilled ${playerLabel(user)}’s free cases · logged` };
   });
 }
 

@@ -32,10 +32,13 @@ function confirmCopy(kind: Confirm, p: AdminPlayer, mobile: boolean): { title: s
   switch (kind) {
     case 'reset':
       return {
-        title: `Reset ${name}’s free case timer`,
-        text: 'The next free case becomes available right away.',
-        button: 'Reset free case',
-        diff: [{ label: 'Next free case', before: p.freeCaseNextAt ? `${utcDateTime(p.freeCaseNextAt)} UTC` : 'available', after: 'now' }],
+        title: `Refill ${name}’s free cases`,
+        text: `Their stack goes back to ${p.freeCaseMax} free cases right away.`,
+        button: 'Refill free cases',
+        diff: [
+          { label: 'Free cases', before: `${p.freeCases}/${p.freeCaseMax}`, after: `${p.freeCaseMax}/${p.freeCaseMax}` },
+          { label: 'Next free case', before: p.freeCaseNextAt ? `${utcDateTime(p.freeCaseNextAt)} UTC` : 'stack full', after: 'stack full' },
+        ],
       };
     case 'signout':
       return {
@@ -382,9 +385,9 @@ function Desktop({ p }: { p: AdminPlayer }) {
   };
   const roleHint =
     staff.role === 'viewer'
-      ? 'Read-only: you’re a Viewer. Adjust credits, Grant item and Reset free case are for admins; Ban and Sign out everywhere for moderators and admins.'
+      ? 'Read-only: you’re a Viewer. Adjust credits, Grant item and Refill free cases are for admins; Ban and Sign out everywhere for moderators and admins.'
       : staff.role === 'moderator'
-        ? 'Adjust credits, Grant item, Reset free case and Delete account: Admins only.'
+        ? 'Adjust credits, Grant item, Refill free cases and Delete account: Admins only.'
         : '';
   const copy = confirm ? confirmCopy(confirm, p, false) : null;
   const stats: [string, string][] = [
@@ -440,7 +443,7 @@ function Desktop({ p }: { p: AdminPlayer }) {
               Grant item
             </Btn>
             <Btn min="admin" blocked={gone} onClick={ask('reset')}>
-              Reset free case
+              Refill free cases
             </Btn>
             <Btn min="moderator" blocked={gone} onClick={ask('signout')}>
               Sign out everywhere
@@ -657,7 +660,7 @@ function Mobile({ p }: { p: AdminPlayer }) {
   const more: { label: string; go: () => void; danger?: boolean }[] = [
     { label: 'Adjust credits', go: () => setDialog('credits') },
     { label: 'Grant item', go: () => setDialog('grant') },
-    { label: 'Reset free case', go: () => ask('reset') },
+    { label: 'Refill free cases', go: () => ask('reset') },
     { label: 'Delete account', go: () => setDialog('delete'), danger: true },
   ];
   return (

@@ -38,18 +38,29 @@ export const useConfig = () => useQuery({ queryKey: keys.config, queryFn: () => 
 const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
 const pct = (n: number) => `${n.toLocaleString('en-US')}%`;
 
+/** "10 min" / "10 minutes", or "4 h" / "4 hours" for whole hours ("every hour" for 60). */
+function every(minutes: number) {
+  if (minutes % 60 === 0) {
+    const hours = minutes / 60;
+    return { short: `${hours} h`, long: hours === 1 ? 'hour' : `${hours} hours` };
+  }
+  return { short: `${minutes} min`, long: minutes === 1 ? 'minute' : `${minutes} minutes` };
+}
+
 /** Economy numbers quoted in the game's copy, from /config (staff can change them). */
 export function useEconomyText() {
   const c = useConfig().data;
-  const hours = c?.freeCaseHours ?? 4;
+  const free = every(c?.freeCaseMinutes ?? 10);
   const snipe = c?.antiSnipeMinutes ?? 2;
   const size = c?.tradeupSize ?? 10;
   return {
     price: c?.cratePrice ?? 250,
-    /** "4 h" */
-    freeShort: `${hours} h`,
-    /** "4 hours" */
-    freeLong: hours === 1 ? 'hour' : `${hours} hours`,
+    /** "10 min" */
+    freeShort: free.short,
+    /** "10 minutes" */
+    freeLong: free.long,
+    /** Free cases the stack saves up: 5 */
+    freeMax: c?.freeCaseMax ?? 5,
     /** "5%" */
     fee: pct(c?.marketFeePct ?? 5),
     /** "5%" */

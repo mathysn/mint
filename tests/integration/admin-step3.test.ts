@@ -339,19 +339,30 @@ describe('moderation', () => {
     expect(await ledgerOk()).toBe(true);
   });
 
-  it('gives everyone one extra free case, used before the timer', async () => {
+  it('gives everyone one extra free case, on top of an empty stack', async () => {
     const admin = await newStaff('mathys', 'admin');
     const vex = await newAccount('vex');
-    const me = (await vex.client.json('/me')).body;
-    const daily = me.freeCase.crateId;
-    expect((await vex.client.open(daily, { free: true })).status).toBe(200);
+    const daily = (await vex.client.json('/me')).body.freeCase.crateId;
+    // Empty stack: the timer just started.
+    await db().update(users).set({ freeCaseAnchor: new Date() }).where(eq(users.id, vex.user.id));
     expect((await vex.client.json('/me')).body.freeCase.available).toBe(false);
     expect((await post(admin.client, '/admin/events/free-case', { reason: 'sorry for the outage' })).body).toEqual({ toast: 'Gave 2 players a free case · logged' });
-    expect((await vex.client.json('/me')).body.freeCase.available).toBe(true);
+    expect((await vex.client.json('/me')).body.freeCase).toMatchObject({ available: true, count: 1 });
     expect((await vex.client.open(daily, { free: true })).status).toBe(200);
     expect((await vex.client.open(daily, { free: true })).status).not.toBe(200);
     expect((await db().select().from(users).where(eq(users.id, vex.user.id)))[0]!.bonusFreeCases).toBe(0);
     expect(await ledgerOk()).toBe(true);
+  });
+
+  it('uses a bonus case before the stack, and lets it go above the stack size', async () => {
+    const admin = await newStaff('mathys', 'admin');
+    const vex = await newAccount('vex');
+    const daily = (await vex.client.json('/me')).body.freeCase.crateId;
+    await post(admin.client, '/admin/events/free-case', { reason: 'launch party' });
+    expect((await vex.client.json('/me')).body.freeCase).toMatchObject({ count: 6, max: 5, nextAt: null });
+    expect((await vex.client.open(daily, { free: true })).body.freeCase).toMatchObject({ count: 5, nextAt: null });
+    const [row] = await db().select().from(users).where(eq(users.id, vex.user.id));
+    expect(row).toMatchObject({ bonusFreeCases: 0, freeCaseAnchor: null });
   });
 });
 

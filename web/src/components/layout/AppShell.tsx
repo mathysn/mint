@@ -69,11 +69,19 @@ function Sidebar() {
             {me ? <AnimatedCredits value={me.balance} size={24} weight={600} unitSize={12} /> : <span className="mono" style={{ fontSize: 24 }}>—</span>}
           </div>
           <div className={s.balanceRow}>
-            <span>Free case</span>
+            <span>Free cases</span>
             <span className="mono" style={{ color: 'var(--text)' }}>
-              {free.label}
+              {free.stock}
             </span>
           </div>
+          {free.next && (
+            <div className={s.balanceRow}>
+              <span>Next free case</span>
+              <span className="mono" style={{ color: 'var(--text)' }}>
+                {free.next}
+              </span>
+            </div>
+          )}
           {me && me.heldInBids > 0 && (
             <div className={s.balanceRow}>
               <span>Held in bids</span>

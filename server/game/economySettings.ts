@@ -28,7 +28,9 @@ const list = (v: SettingValue) => v as number[];
 export const SETTINGS: SettingDef[] = [
   { key: 'cases.price', group: 'cases', label: 'Case price', help: 'What one case costs.', unit: 'CR', decimals: 0, min: 1, max: 1_000_000, read: (e) => e.casePrice, write: (e, v) => ({ ...e, casePrice: n(v) }) },
   { key: 'start.balance', group: 'cases', label: 'Starting balance', help: 'Credits a new player gets.', unit: 'CR', decimals: 0, min: 0, max: 1_000_000, read: (e) => e.startingBalance, write: (e, v) => ({ ...e, startingBalance: n(v) }) },
-  { key: 'free_case.every', group: 'cases', label: 'Free case every', help: 'Time between two free cases.', unit: 'h', decimals: 0, min: 1, max: 168, read: (e) => e.freeCaseHours, write: (e, v) => ({ ...e, freeCaseHours: n(v) }) },
+  // New keys (the old `free_case.every` was in hours): a value saved in hours is never read as minutes.
+  { key: 'free_case.every_min', group: 'cases', label: 'Free case every', help: 'Time for the stack to gain one free case.', unit: 'min', decimals: 0, min: 1, max: 10_080, read: (e) => e.freeCaseMinutes, write: (e, v) => ({ ...e, freeCaseMinutes: n(v) }) },
+  { key: 'free_case.max', group: 'cases', label: 'Free case stack', help: 'Free cases a player can save up.', unit: 'max', decimals: 0, min: 1, max: 50, read: (e) => e.freeCaseMax, write: (e, v) => ({ ...e, freeCaseMax: n(v) }) },
   ...TIERS.map(
     (tier): SettingDef => ({
       key: `odds.${tier}`,

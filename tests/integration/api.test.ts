@@ -104,18 +104,51 @@ describe('opening a case', () => {
   });
 });
 
-describe('free case', () => {
-  it('opens today’s case for free once every 4 h', async () => {
+describe('free case stack', () => {
+  const MIN = 60_000;
+
+  it('starts full: today’s case opens for free five times in a row, then it refuses', async () => {
     const client = await newGuest();
-    const free = await client.open(todaysCrate(), { free: true });
-    expect(free.status).toBe(200);
-    expect(free.body.balance).toBe(1000);
-    expect(free.body.freeCase.available).toBe(false);
-    expect(free.body.freeCase.nextAt).toBeTruthy();
+    expect((await client.json('/me')).body.freeCase).toMatchObject({ available: true, count: 5, max: 5, nextAt: null });
+    for (let left = 4; left >= 0; left--) {
+      const free = await client.open(todaysCrate(), { free: true });
+      expect(free.status).toBe(200);
+      expect(free.body.balance).toBe(1000);
+      expect(free.body.freeCase).toMatchObject({ available: left > 0, count: left, max: 5 });
+      expect(free.body.freeCase.nextAt).toBeTruthy();
+    }
     const again = await client.open(todaysCrate(), { free: true });
     expect(again.status).toBe(409);
-    const [entry] = await db().select().from(ledger).where(eq(ledger.itemId, free.body.item.id));
-    expect(entry).toMatchObject({ type: 'free_case_open', amount: 0, balanceAfter: 1000 });
+    expect(again.body.error.code).toBe('free_case_unavailable');
+    const entries = await db().select().from(ledger).where(eq(ledger.type, 'free_case_open'));
+    expect(entries).toHaveLength(5);
+    expect(entries.every((e) => e.amount === 0 && e.balanceAfter === 1000)).toBe(true);
+    expect(await ledgerMatchesBalances()).toBe(true);
+  });
+
+  it('starts the timer with the first case taken: the next one comes 10 minutes later', async () => {
+    const client = await newGuest();
+    const before = Date.now();
+    const free = await client.open(todaysCrate(), { free: true });
+    const nextAt = new Date(free.body.freeCase.nextAt).getTime();
+    expect(nextAt).toBeGreaterThanOrEqual(before + 10 * MIN);
+    expect(nextAt).toBeLessThanOrEqual(Date.now() + 10 * MIN);
+  });
+
+  it('gains one case every 10 minutes, up to 5', async () => {
+    const client = await newGuest();
+    const { id } = (await client.json('/me')).body;
+    const anchor = (minutesAgo: number) => db().update(users).set({ freeCaseAnchor: new Date(Date.now() - minutesAgo * MIN) }).where(eq(users.id, id));
+    await anchor(0);
+    expect((await client.json('/me')).body.freeCase).toMatchObject({ available: false, count: 0 });
+    await anchor(25);
+    const stack = (await client.json('/me')).body.freeCase;
+    expect(stack).toMatchObject({ available: true, count: 2 });
+    const left = new Date(stack.nextAt).getTime() - Date.now();
+    expect(left).toBeGreaterThan(4 * MIN);
+    expect(left).toBeLessThanOrEqual(5 * MIN);
+    await anchor(500);
+    expect((await client.json('/me')).body.freeCase).toMatchObject({ count: 5, nextAt: null });
   });
 
   it('is only valid on today’s case', async () => {
@@ -125,15 +158,14 @@ describe('free case', () => {
     expect(res.body.error.code).toBe('free_case_unavailable');
   });
 
-  it('comes back after 4 h', async () => {
+  it('takes one case per request, even when the request is replayed', async () => {
     const client = await newGuest();
-    await client.open(todaysCrate(), { free: true });
-    const me = (await client.json('/me')).body;
-    expect(new Date(me.freeCase.nextAt).getTime()).toBeLessThanOrEqual(Date.now() + 4 * 3600 * 1000);
-    await db().update(users).set({ lastFreeCaseAt: new Date(Date.now() - 3 * 3600 * 1000) }).where(eq(users.id, me.id));
-    expect((await client.json('/me')).body.freeCase.available).toBe(false);
-    await db().update(users).set({ lastFreeCaseAt: new Date(Date.now() - 4 * 3600 * 1000 - 1000) }).where(eq(users.id, me.id));
-    expect((await client.json('/me')).body.freeCase.available).toBe(true);
+    const key = crypto.randomUUID();
+    const first = await client.open(todaysCrate(), { free: true, key });
+    const replay = await client.open(todaysCrate(), { free: true, key });
+    expect(replay.status).toBe(200);
+    expect(replay.body.openingId).toBe(first.body.openingId);
+    expect((await client.json('/me')).body.freeCase.count).toBe(4);
   });
 });
 

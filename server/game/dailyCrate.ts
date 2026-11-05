@@ -27,17 +27,39 @@ export function dailyCrateId({ allIds, activeIds, pick }: CaseOfDayInput, now: D
   return null;
 }
 
-export interface CooldownState {
-  available: boolean;
+export interface FreeStack {
+  /** Free cases ready now, from 0 to `max`. */
+  count: number;
+  max: number;
+  /** When the next one comes; null when the stack is full. */
   nextAt: Date | null;
 }
 
-/** Available again `cooldownMs` after the last use (rolling, not calendar days). */
-export function cooldownState(last: Date | null, now: Date, cooldownMs: number): CooldownState {
-  if (!last) return { available: true, nextAt: null };
-  const nextAt = new Date(last.getTime() + cooldownMs);
-  return nextAt <= now ? { available: true, nextAt: null } : { available: false, nextAt };
+/**
+ * A stack that fills itself: one case every `everyMs` since `anchor`, up to `max`. Null anchor = full.
+ * Changing the interval or the max later just recomputes it (a full stack stays full).
+ */
+export function freeStack(anchor: Date | null, now: Date, everyMs: number, max: number): FreeStack {
+  if (!anchor) return { count: max, max, nextAt: null };
+  const count = Math.min(max, Math.max(0, Math.floor((now.getTime() - anchor.getTime()) / everyMs)));
+  return { count, max, nextAt: count >= max ? null : new Date(anchor.getTime() + (count + 1) * everyMs) };
 }
 
-/** One free case every N hours (4 by default), counted from the last free opening. */
-export const freeCaseState = (lastFreeCaseAt: Date | null, now: Date) => cooldownState(lastFreeCaseAt, now, econ().freeCaseHours * 60 * 60 * 1000);
+/**
+ * Anchor after taking one case. From a full stack the timer starts now for the missing one;
+ * from a partial stack the time already counted towards the next case is kept.
+ */
+export function anchorAfterUse(anchor: Date | null, now: Date, everyMs: number, max: number): Date {
+  const { count } = freeStack(anchor, now, everyMs, max);
+  if (count === 0) throw new Error('No free case in the stack');
+  if (count >= max) return new Date(now.getTime() - (max - 1) * everyMs);
+  return new Date(anchor!.getTime() + everyMs);
+}
+
+const everyMs = () => econ().freeCaseMinutes * 60 * 1000;
+
+/** The player's free case stack under the economy in force (10 min, up to 5 by default). */
+export const freeCaseStack = (anchor: Date | null, now: Date) => freeStack(anchor, now, everyMs(), econ().freeCaseMax);
+
+/** The anchor to save after a player opens one free case from their stack. */
+export const freeCaseAnchorAfterUse = (anchor: Date | null, now: Date) => anchorAfterUse(anchor, now, everyMs(), econ().freeCaseMax);

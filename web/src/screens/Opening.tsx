@@ -158,7 +158,9 @@ export function Opening() {
   const gold = revealed && result.item.skin.tier === 'gold';
   const busy = open.isPending || phase === 'spinning';
   const openLabel = busy ? 'Opening…' : freeHere ? 'Open free case' : `Open case · ${formatCredits(price)} CR`;
-  const againLabel = `Open another · ${formatCredits(price)} CR`;
+  // `me.freeCase` is updated by each opening, so this stays free while the stack lasts.
+  const againLabel = freeHere ? 'Open another · Free' : `Open another · ${formatCredits(price)} CR`;
+  const priceLabel = freeHere ? `Free · ${me!.freeCase.count} left` : `${formatCredits(price)} CR`;
   const item = revealed ? result.item : null;
   const value = item ? `${formatCredits(item.recycleValue)} CR` : '';
   const askRecycle = () => {
@@ -179,7 +181,7 @@ export function Opening() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, ...behindGold }}>
           <h1 style={{ fontSize: 28, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>{detail?.crate.name ?? ' '}</h1>
           <span className="mono" style={{ fontSize: 14, color: 'var(--text-2)' }}>
-            {freeHere ? 'Free' : `${formatCredits(price)} CR`}
+            {priceLabel}
           </span>
         </div>
       ) : (
@@ -193,7 +195,7 @@ export function Opening() {
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <HudLabel>Price</HudLabel>
             <span className="mono" style={{ fontSize: 20, fontWeight: 500 }}>
-              {freeHere ? 'Free' : `${formatCredits(price)} CR`}
+              {priceLabel}
             </span>
           </div>
         </header>

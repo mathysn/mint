@@ -79,8 +79,12 @@ export const users = pgTable(
     avatarHash: text('avatar_hash'),
     isGuest: boolean('is_guest').notNull(),
     balance: bigint('balance', { mode: 'number' }).notNull(),
-    lastFreeCaseAt: timestamp('last_free_case_at', { withTimezone: true }),
-    /** Extra free cases given by staff events, used before the timer. */
+    /**
+     * Free case stack (game/dailyCrate.ts): one case every N minutes since this time, up to the max.
+     * Null = full stack (new players, and everyone when the stack was introduced).
+     */
+    freeCaseAnchor: timestamp('free_case_anchor', { withTimezone: true }),
+    /** Extra free cases given by staff events, used before the stack. */
     bonusFreeCases: integer('bonus_free_cases').notNull().default(0),
     createdIpHash: text('created_ip_hash'),
     createdAt: createdAt(),

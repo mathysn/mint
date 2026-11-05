@@ -13,8 +13,21 @@ import s from './screens.module.css';
 const FEED_ICON = 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3';
 
 function FreeNote() {
-  return <>1 free case every {useEconomyText().freeShort}</>;
+  const economy = useEconomyText();
+  return (
+    <>
+      1 free case every {economy.freeShort} · up to {economy.freeMax}
+    </>
+  );
 }
+
+type FreeStack = ReturnType<typeof useFreeCase>;
+
+/** "Your free case is ready." / "You have 3 free cases ready." */
+const readyTitle = (count: number) => (count === 1 ? 'Your free case is ready.' : `You have ${count} free cases ready.`);
+
+/** Today rows: the stack ("3/5") and, while it isn't full, the time to the next case. */
+const freeRows = (free: FreeStack): [string, string][] => (free.next ? [['Free cases', free.stock], ['Next free case', free.next]] : [['Free cases', free.stock]]);
 
 function useDailyCrate() {
   const { data: me } = useMe();
@@ -24,28 +37,28 @@ function useDailyCrate() {
   return { me, crates, free, daily };
 }
 
-function HeroText({ me, ready, countdownLabel, daily }: { me: Me | undefined; ready: boolean; countdownLabel: string; daily: CrateSummary | null }) {
+function HeroText({ me, free, daily }: { me: Me | undefined; free: FreeStack; daily: CrateSummary | null }) {
   const guest = me?.isGuest ?? true;
   const economy = useEconomyText();
   return (
     <>
       <HudLabel>// Free drop</HudLabel>
-      {ready ? (
+      {free.ready ? (
         <h1 id="hero-title" className={s.heroTitle}>
-          Your free case is ready.
+          {readyTitle(free.count)}
         </h1>
       ) : (
         <h1 id="hero-title" className={s.heroTitle}>
-          Next free case in <span className="mono">{countdownLabel}</span>
+          Next free case in <span className="mono">{free.next}</span>
         </h1>
       )}
       <p className={s.heroSub}>
         {guest
-          ? `A free case every ${economy.freeLong}, on the house. Sign in with Discord to trade, sell and add friends.`
-          : `A free case every ${economy.freeLong}, on the house. Open it, keep it, recycle it or put it up for auction.`}
+          ? `A free case every ${economy.freeLong}, up to ${economy.freeMax} saved, on the house. Sign in with Discord to trade, sell and add friends.`
+          : `A free case every ${economy.freeLong}, up to ${economy.freeMax} saved, on the house. Open them, keep them, recycle them or put them up for auction.`}
       </p>
       <div className={s.heroActions}>
-        {ready && daily ? (
+        {free.ready && daily ? (
           <>
             <Button size={48} to={`/cases/${daily.id}`} style={{ paddingInline: 28 }}>
               Open free case
@@ -74,7 +87,7 @@ function DesktopHome() {
     <Page gap={40}>
       <section aria-labelledby="hero-title" className={s.hero}>
         <div className={s.heroText}>
-          <HeroText me={me} ready={free.ready} countdownLabel={free.label} daily={daily} />
+          <HeroText me={me} free={free} daily={daily} />
         </div>
         <div className={s.heroArt}>
           <HudCorners size={20} inset={28} />
@@ -130,12 +143,14 @@ function DesktopHome() {
             </div>
           </div>
           <dl style={{ margin: 0, display: 'flex', flexDirection: 'column' }}>
-            <div className={s.row}>
-              <dt style={{ color: 'var(--text-2)' }}>Free case</dt>
-              <dd className="mono" style={{ margin: 0 }}>
-                {free.label}
-              </dd>
-            </div>
+            {freeRows(free).map(([label, value]) => (
+              <div key={label} className={s.row}>
+                <dt style={{ color: 'var(--text-2)' }}>{label}</dt>
+                <dd className="mono" style={{ margin: 0 }}>
+                  {value}
+                </dd>
+              </div>
+            ))}
             <div className={s.row}>
               <dt style={{ color: 'var(--text-2)' }}>Case of the day</dt>
               <dd style={{ margin: 0, textAlign: 'right' }}>{daily?.name ?? '—'}</dd>
@@ -183,10 +198,10 @@ function MobileHome() {
           <HudLabel>// Free drop</HudLabel>
           <h1 id="hero-title" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>
             {free.ready ? (
-              'Your free case is ready.'
+              readyTitle(free.count)
             ) : (
               <>
-                Next free case in <span className="mono">{free.label}</span>
+                Next free case in <span className="mono">{free.next}</span>
               </>
             )}
           </h1>
@@ -234,10 +249,12 @@ function MobileHome() {
         <h2 id="m-today" className="lbl" style={{ margin: '0 0 10px' }}>
           Today
         </h2>
-        <div className={s.row}>
-          <span style={{ color: 'var(--text-2)' }}>Free case</span>
-          <span className="mono">{free.label}</span>
-        </div>
+        {freeRows(free).map(([label, value]) => (
+          <div key={label} className={s.row}>
+            <span style={{ color: 'var(--text-2)' }}>{label}</span>
+            <span className="mono">{value}</span>
+          </div>
+        ))}
         <div className={s.row}>
           <span style={{ color: 'var(--text-2)' }}>Case of the day</span>
           <span style={{ textAlign: 'right' }}>{daily?.name ?? '—'}</span>

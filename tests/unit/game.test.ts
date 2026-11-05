@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dailyCrateId, freeCaseState } from '../../server/game/dailyCrate.js';
+import { anchorAfterUse, dailyCrateId, freeCaseStack, freeStack } from '../../server/game/dailyCrate.js';
 import {
   EXTRA_TEASERS_MAX,
   NEAR_MISS_PERCENT,
@@ -250,13 +250,55 @@ describe('daily crate', () => {
     expect(dailyCrateId(all(['crate-a', 'crate-b'], 'crate-c'), day(1))).toBe('crate-b');
   });
 
-  it('gives one free case every 4 h', () => {
-    const now = new Date('2026-10-20T12:00:00Z');
-    expect(freeCaseState(null, now)).toEqual({ available: true, nextAt: null });
-    expect(freeCaseState(new Date('2026-10-20T08:00:00Z'), now).available).toBe(true);
-    const recent = freeCaseState(new Date('2026-10-20T10:30:00Z'), now);
-    expect(recent.available).toBe(false);
-    expect(recent.nextAt?.toISOString()).toBe('2026-10-20T14:30:00.000Z');
+});
+
+describe('free case stack', () => {
+  const MIN = 60_000;
+  const EVERY = 10 * MIN;
+  const now = new Date('2026-10-20T12:00:00Z');
+  const ago = (minutes: number) => new Date(now.getTime() - minutes * MIN);
+  const iso = (d: Date | null) => d?.toISOString() ?? null;
+
+  it('is full with no anchor, empty right after the anchor, and fills one case every 10 minutes', () => {
+    expect(freeStack(null, now, EVERY, 5)).toEqual({ count: 5, max: 5, nextAt: null });
+    expect(freeStack(now, now, EVERY, 5)).toMatchObject({ count: 0, nextAt: new Date('2026-10-20T12:10:00Z') });
+    expect(freeStack(ago(25), now, EVERY, 5)).toMatchObject({ count: 2, nextAt: new Date('2026-10-20T12:05:00Z') });
+    expect(freeStack(ago(50), now, EVERY, 5)).toEqual({ count: 5, max: 5, nextAt: null });
+    expect(freeStack(ago(600), now, EVERY, 5).count).toBe(5);
+  });
+
+  it('starts the timer when a case is taken from a full stack', () => {
+    for (const anchor of [null, ago(50), ago(10_000)]) {
+      const next = anchorAfterUse(anchor, now, EVERY, 5);
+      expect(freeStack(next, now, EVERY, 5)).toMatchObject({ count: 4, nextAt: new Date('2026-10-20T12:10:00Z') });
+    }
+  });
+
+  it('keeps the time already counted when a case is taken from a partial stack', () => {
+    const next = anchorAfterUse(ago(25), now, EVERY, 5);
+    const stack = freeStack(next, now, EVERY, 5);
+    expect(stack.count).toBe(1);
+    expect(iso(stack.nextAt)).toBe('2026-10-20T12:05:00.000Z');
+  });
+
+  it('empties after five cases in a row, then refuses', () => {
+    let anchor: Date | null = null;
+    for (let i = 4; i >= 0; i--) {
+      anchor = anchorAfterUse(anchor, now, EVERY, 5);
+      expect(freeStack(anchor, now, EVERY, 5).count).toBe(i);
+    }
+    expect(() => anchorAfterUse(anchor, now, EVERY, 5)).toThrow();
+  });
+
+  it('with a stack of one, behaves like the old single timer', () => {
+    const next = anchorAfterUse(null, now, 4 * 60 * MIN, 1);
+    expect(freeStack(next, now, 4 * 60 * MIN, 1)).toMatchObject({ count: 0, nextAt: new Date('2026-10-20T16:00:00Z') });
+  });
+
+  it('follows the economy in force (10 min, up to 5 by default)', () => {
+    expect(DEFAULT_ECONOMY.freeCaseMinutes).toBe(10);
+    expect(DEFAULT_ECONOMY.freeCaseMax).toBe(5);
+    expect(freeCaseStack(ago(30), now)).toMatchObject({ count: 3, max: 5 });
   });
 });
 

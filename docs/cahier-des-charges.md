@@ -73,7 +73,7 @@ Une seule monnaie virtuelle (nom à choisir), qui ne s'achète jamais avec de l'
 
 Boucle de l'économie (7 étapes) : la monnaie sort par les caisses et la taxe de 5 %.
 
-- Caisse gratuite toutes les 4 h → objet tiré → Inventaire (le recyclage ou la vente le transforme en monnaie)
+- Caisses gratuites (une toutes les 10 min, jusqu'à 5 en réserve) → objet tiré → Inventaire (le recyclage ou la vente le transforme en monnaie)
 - Monnaie → Ouvrir une caisse (prix de la caisse, tirage côté serveur) → objet tiré → Inventaire (exemplaires uniques)
 - Inventaire → mise en vente → Maison des ventes (taxe de 5 % au vendeur) → vente moins 5 % → Monnaie
 - Inventaire ↔ Trades et contrats (échangés ou fusionnés)
@@ -90,7 +90,7 @@ Les objets entrent par les caisses et sortent par le recyclage ou le contrat d'�
 | Élément | Valeur proposée |
 |---|---|
 | Solde de départ | 1 000 |
-| Caisse gratuite | 1 toutes les 4 h (plus de récompense quotidienne en crédits) |
+| Caisse gratuite | 1 toutes les 10 min, jusqu'à 5 en réserve (plus de récompense quotidienne en crédits) |
 | Prix d'une caisse | 250 |
 | Recyclage Mil-Spec | 30 |
 | Recyclage Restricted | 120 |
@@ -112,7 +112,7 @@ Dix fonctionnalités : six de base (ouverture, inventaire, recyclage, trade, mai
 - Liste des caisses avec leur prix ; aperçu du contenu groupé par rareté, avec les taux.
 - Animation de roulette horizontale qui défile puis s'arrête sur l'objet obtenu. Le résultat est tiré par le serveur avant le début de l'animation.
 - Écran de révélation : image, nom, état, float, pattern, badge StatTrak. Actions : garder, recycler, mettre en vente.
-- Une caisse gratuite toutes les 4 h, sur la « caisse du jour » (qui change à 00:00 UTC).
+- Une caisse gratuite toutes les 10 minutes, qui s'accumulent jusqu'à 5 (un nouveau joueur commence avec les 5), sur la « caisse du jour » (qui change à 00:00 UTC). On les ouvre une par une.
 
 ### Inventaire et album de collection
 
@@ -225,7 +225,7 @@ Le serveur décide de tout : le client affiche des résultats, il ne les calcule
 
 | Table | Champs principaux |
 |---|---|
-| `users` | id, pseudo, solde, dernière caisse gratuite, créé le |
+| `users` | id, pseudo, solde, réserve de caisses gratuites, créé le |
 | `skins` | id, nom, arme, rareté, min_float, max_float, image, collection (catalogue importé) |
 | `crates` | id, nom, prix, image |
 | `crate_items` | crate_id, skin_id, spécial (couteau ou gants) |
@@ -242,7 +242,7 @@ Le serveur décide de tout : le client affiche des résultats, il ne les calcule
 ### Ordre de développement
 
 1. Import du catalogue, comptes, ouverture de caisse, inventaire.
-2. Monnaie, recyclage, récompense quotidienne (supprimée depuis, remplacée par la caisse gratuite toutes les 4 h).
+2. Monnaie, recyclage, récompense quotidienne (supprimée depuis, remplacée par la caisse gratuite : une toutes les 10 min, jusqu'à 5 en réserve).
 3. Fiche objet et album de collection.
 4. Amis, profil, vitrine, fil d'activité.
 5. Trades.
@@ -265,8 +265,8 @@ Chaque phase doit être jouable avant de passer à la suivante.
 - [x] Connexion : pseudo et mot de passe, ou connexion Discord ? → **Discord**, après une première partie en invité
 - [x] Trades réservés aux amis ou ouverts à tous ? → **entre amis seulement** (phase 5)
 - [x] Float tiré uniformément ou pondéré pour rendre Factory New plus rare ? → **uniforme** dans la plage du skin (pas de pondération)
-- [ ] Valeurs de l'économie à rééquilibrer après les premiers tests
-- [x] Caisse gratuite : par jour ou par heure ? → **toutes les 4 h**, et la récompense quotidienne de 250 CR est supprimée
+- [ ] Valeurs de l'économie à rééquilibrer après les premiers tests (à surveiller en priorité depuis le passage à une caisse gratuite toutes les 10 min : jusqu'à 144 caisses gratuites par jour pour un joueur très actif, contre 6 avant)
+- [x] Caisse gratuite : par jour ou par heure ? → **toutes les 4 h**, et la récompense quotidienne de 250 CR est supprimée ; revu le 05/11/2026 : **une toutes les 10 min, jusqu'à 5 en réserve**, toujours sur la caisse du jour, ouvertes une par une, réserve pleine au départ (nouveaux joueurs et joueurs existants)
 - [x] Progression invité → **jamais transférée**, ni dans un compte existant ni dans un nouveau (anti-farm) : le compte Discord démarre avec sa propre collection et l'invité est supprimé
 
 ## Sources

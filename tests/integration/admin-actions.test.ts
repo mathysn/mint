@@ -105,12 +105,18 @@ describe('players', () => {
     expect((await checkLedger()).ok).toBe(true);
   });
 
-  it('resets the free case and signs a player out everywhere', async () => {
+  it('refills the free cases and signs a player out everywhere', async () => {
     const admin = await newStaff('mathys', 'admin');
     const vex = await newAccount('vex');
-    await db().update(users).set({ lastFreeCaseAt: new Date() }).where(eq(users.id, vex.user.id));
-    expect((await post(admin.client, `/admin/players/${vex.user.id}/free-case/reset`, { reason: 'outage' })).body.toast).toBe('Reset vex’s free case · logged');
-    expect((await db().select().from(users).where(eq(users.id, vex.user.id)))[0]!.lastFreeCaseAt).toBeNull();
+    // 2 cases in the stack (anchor 25 minutes ago).
+    await db().update(users).set({ freeCaseAnchor: new Date(Date.now() - 25 * 60_000) }).where(eq(users.id, vex.user.id));
+    expect((await admin.client.json(`/admin/players/${vex.user.id}`)).body).toMatchObject({ freeCases: 2, freeCaseMax: 5 });
+    expect((await post(admin.client, `/admin/players/${vex.user.id}/free-case/reset`, { reason: 'outage' })).body.toast).toBe('Refilled vex’s free cases · logged');
+    expect((await db().select().from(users).where(eq(users.id, vex.user.id)))[0]!.freeCaseAnchor).toBeNull();
+    expect((await vex.client.json('/me')).body.freeCase).toMatchObject({ count: 5, nextAt: null });
+    const [entry] = await db().select().from(adminLog).where(eq(adminLog.action, 'player.free_case'));
+    expect(entry).toMatchObject({ change: 'free cases refilled', after: { 'free cases': '5/5 (full)' } });
+    expect((entry!.before as Record<string, string>)['free cases']).toMatch(/^2\/5 · next /);
     expect((await post(admin.client, `/admin/players/${vex.user.id}/sign-out`, { reason: 'account shared' })).body.toast).toBe('Signed vex out of 1 session · logged');
     expect((await vex.client.json('/me')).status).toBe(401);
     expect((await db().select().from(sessions).where(eq(sessions.userId, vex.user.id)))[0]!.revokedReason).toBe('admin');

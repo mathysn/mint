@@ -146,7 +146,7 @@ export async function moderationPage(): Promise<AdminModeration> {
     announcements: anns,
     maxText: ANNOUNCEMENT_MAX,
     freeCase: {
-      text: `Every player gets one extra free case of the day${today ? ` (${today.row.name})` : ''}, on top of their timer.`,
+      text: `Every player gets one extra free case of the day${today ? ` (${today.row.name})` : ''}, on top of their stack.`,
       costs: [
         { k: 'Players', v: fmt(players) },
         { k: 'Expected credits added', v: `≈ ${cr(Math.round(players * expected))}` },

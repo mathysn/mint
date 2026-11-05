@@ -178,7 +178,7 @@ Tout ce qui est affiché est fictif : joueurs (vex, kenji, lou…), prix, histor
 
 ## 7. Points encore ouverts
 
-1. ~~Caisse gratuite~~ : tranché, **une toutes les 4 h** (écrans joueur et admin).
+1. ~~Caisse gratuite~~ : tranché, **une toutes les 10 min, jusqu'à 5 en réserve** (revu le 05/11/2026 ; avant : une toutes les 4 h). Le jeu affiche la réserve (« 3/5 », en mono) et, tant qu'elle n'est pas pleine, le temps avant la suivante (`mm:ss`). Les maquettes montrent encore l'ancien « every 4 h ».
 2. Invité : ouvrir des caisses est libre ; amis, trades et marché demandent un compte (proposé par le design).
 3. Durée d'expiration des offres de trade : 1, 3 ou 7 jours au choix (proposé).
 4. Trades réservés aux amis ou ouverts à tous : les maquettes passent par la liste d'amis.

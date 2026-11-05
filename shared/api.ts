@@ -41,9 +41,15 @@ export interface BanInfo {
   message: string;
 }
 
+/** The free case stack: one case every few minutes, saved up to `max` (plus staff bonus cases). */
 export interface FreeCase {
+  /** At least one free case is ready. */
   available: boolean;
-  /** ISO date of the next free case when not available. */
+  /** Free cases ready now; bonus cases from staff events can take it above `max`. */
+  count: number;
+  /** Most free cases the stack saves up. */
+  max: number;
+  /** ISO date of the next free case from the timer; null when the stack is full. */
   nextAt: string | null;
   /** Today's free case. */
   crateId: string | null;
@@ -208,7 +214,8 @@ export interface Config {
   /** Most items one recycle (or one "Select all") can take. */
   recycleMaxItems: number;
   /** Economy numbers the game quotes in its copy (staff can change them). */
-  freeCaseHours: number;
+  freeCaseMinutes: number;
+  freeCaseMax: number;
   marketFeePct: number;
   bidStepPct: number;
   antiSnipeMinutes: number;
@@ -780,8 +787,10 @@ export interface AdminPlayer {
   signals: AdminSignal[];
   /** Live sessions (Sign out everywhere). */
   sessions: number;
-  freeCaseAvailable: boolean;
-  /** When the next free case comes (null = available now). */
+  /** Free cases ready in the stack (what Refill tops up), out of `freeCaseMax`. Bonus cases not included. */
+  freeCases: number;
+  freeCaseMax: number;
+  /** When the stack gains its next free case (null = full). */
   freeCaseNextAt: string | null;
   /** Name the server would give on Rename ("player_8841"). */
   renameTo: string;

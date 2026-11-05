@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "free_case_anchor" timestamp with time zone;

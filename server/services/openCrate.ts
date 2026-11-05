@@ -2,12 +2,12 @@ import { and, eq } from 'drizzle-orm';
 import type { OpenResult, StripCard } from '../../shared/api.js';
 import { db } from '../db/client.js';
 import { activity, caseOpenings, items, ledger, users } from '../db/schema.js';
-import { freeCaseState } from '../game/dailyCrate.js';
+import { freeCaseAnchorAfterUse, freeCaseStack } from '../game/dailyCrate.js';
 import { RARE_SPECIAL_CARD, STRIP_RESULT_INDEX, buildStrip, drawFromCrate } from '../game/draw.js';
 import { econ, FEED_TIERS } from '../game/economy.js';
 import { cryptoRng, type Rng } from '../game/rng.js';
 import { fail } from '../http.js';
-import { freeCaseFor } from './accounts.js';
+import { freeCaseFor, type FreeCaseFields } from './accounts.js';
 import { caseOfDay, catalog, skinCard, type Catalog } from './catalog.js';
 import { findItems } from './items.js';
 
@@ -54,12 +54,18 @@ export async function openCrate(req: OpenRequest, rng: Rng = cryptoRng): Promise
 
     const now = new Date();
     let price = econ().casePrice;
+    // Free case fields after this opening (unchanged for a paid one).
+    let after: FreeCaseFields = { freeCaseAnchor: user.freeCaseAnchor, bonusFreeCases: user.bonusFreeCases };
     if (req.free) {
-      // A bonus case (staff event) is used before the timer.
-      const state = user.bonusFreeCases > 0 ? { available: true } : freeCaseState(user.lastFreeCaseAt, now);
-      if (!state.available || caseOfDay(cat, now) !== crate.row.id) {
-        return fail(409, 'free_case_unavailable', 'Your free case is not available for this case right now.');
+      const stack = freeCaseStack(user.freeCaseAnchor, now);
+      if (user.bonusFreeCases + stack.count === 0 || caseOfDay(cat, now) !== crate.row.id) {
+        return fail(409, 'free_case_unavailable', 'You have no free case for this case right now.');
       }
+      // A bonus case (staff event) is used before the stack.
+      after =
+        user.bonusFreeCases > 0
+          ? { ...after, bonusFreeCases: user.bonusFreeCases - 1 }
+          : { ...after, freeCaseAnchor: freeCaseAnchorAfterUse(user.freeCaseAnchor, now) };
       price = 0;
     } else if (user.balance < price) {
       return fail(402, 'insufficient_balance', `You need ${price} CR to open this case.`);
@@ -71,7 +77,7 @@ export async function openCrate(req: OpenRequest, rng: Rng = cryptoRng): Promise
 
     await tx
       .update(users)
-      .set(req.free ? (user.bonusFreeCases > 0 ? { balance, bonusFreeCases: user.bonusFreeCases - 1 } : { balance, lastFreeCaseAt: now }) : { balance })
+      .set({ balance, ...after })
       .where(eq(users.id, user.id));
 
     const [item] = await tx
@@ -115,12 +121,7 @@ export async function openCrate(req: OpenRequest, rng: Rng = cryptoRng): Promise
       strip: stripCards(cat, strip),
       resultIndex: STRIP_RESULT_INDEX,
       balance,
-      freeCase: await freeCaseFor(
-        req.free && user.bonusFreeCases > 0
-          ? { lastFreeCaseAt: user.lastFreeCaseAt, bonusFreeCases: user.bonusFreeCases - 1 }
-          : { lastFreeCaseAt: req.free ? now : user.lastFreeCaseAt, bonusFreeCases: user.bonusFreeCases },
-        now,
-      ),
+      freeCase: await freeCaseFor(after, now),
     };
   });
 }

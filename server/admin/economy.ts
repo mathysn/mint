@@ -125,6 +125,7 @@ function impacts(changes: Checked['changes'], next: Economy): string[] {
   if (keys.includes('market.fee')) out.push(`Live auctions keep the fee they started with. New listings pay ${formatSetting(SETTING_BY_KEY.get('market.fee')!, next.marketFeeBp / 100)}%.`);
   if (keys.some((k) => k.startsWith('recycle.'))) out.push('Recycle values apply right away, to items players already own.');
   if (keys.some((k) => k.startsWith('odds.'))) out.push('New odds apply to the next opening. The Overview compares them with real drops.');
+  if (keys.some((k) => k.startsWith('free_case.'))) out.push('Free case stacks are recomputed right away: a full stack stays full, a partial one fills at the new pace.');
   if (!out.length) out.push('Applies right away, no deploy needed.');
   return out;
 }

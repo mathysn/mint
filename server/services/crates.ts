@@ -88,7 +88,7 @@ export async function crateDetail(crateId: string, user: UserRow | null): Promis
       pct: odds.get('gold') ?? 0,
       types: [...types.values()].map(({ vanilla: _vanilla, ...type }) => type),
     },
-    freeCase: user ? await freeCaseFor(user) : await freeCaseFor({ lastFreeCaseAt: null }),
+    freeCase: await freeCaseFor(user ?? { freeCaseAnchor: null, bonusFreeCases: 0 }),
   };
 }
 

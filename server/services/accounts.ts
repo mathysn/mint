@@ -2,7 +2,7 @@ import { and, count, eq, gt, ne, or, sql } from 'drizzle-orm';
 import type { FreeCase, Me } from '../../shared/api.js';
 import { db, type DbOrTx } from '../db/client.js';
 import { friendships, ledger, users } from '../db/schema.js';
-import { freeCaseState } from '../game/dailyCrate.js';
+import { freeCaseStack } from '../game/dailyCrate.js';
 import { econ } from '../game/economy.js';
 import { banInfo, fail, type UserRow } from '../http.js';
 import { staffRoleOf } from '../admin/staff.js';
@@ -78,12 +78,14 @@ async function freeUsername(tx: DbOrTx, wanted: string): Promise<string> {
   return `${wanted}-${Date.now().toString(36)}`;
 }
 
-/** Free case of the day: a bonus case from a staff event first, else the timer. */
-export async function freeCaseFor(user: Pick<UserRow, 'lastFreeCaseAt'> & { bonusFreeCases?: number }, now = new Date()): Promise<FreeCase> {
+export type FreeCaseFields = Pick<UserRow, 'freeCaseAnchor' | 'bonusFreeCases'>;
+
+/** Free cases of the day: the stack (one every few minutes, up to the max) plus bonus cases from staff events. */
+export async function freeCaseFor(user: FreeCaseFields, now = new Date()): Promise<FreeCase> {
   const cat = await catalog();
-  const state = freeCaseState(user.lastFreeCaseAt, now);
-  const bonus = (user.bonusFreeCases ?? 0) > 0;
-  return { available: bonus || state.available, nextAt: bonus ? null : (state.nextAt?.toISOString() ?? null), crateId: caseOfDay(cat, now) };
+  const stack = freeCaseStack(user.freeCaseAnchor, now);
+  const count = stack.count + user.bonusFreeCases;
+  return { available: count > 0, count, max: stack.max, nextAt: stack.nextAt?.toISOString() ?? null, crateId: caseOfDay(cat, now) };
 }
 
 export const avatarUrl = (user: Pick<UserRow, 'discordId' | 'avatarHash'>) =>

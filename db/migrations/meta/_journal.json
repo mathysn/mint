@@ -85,6 +85,20 @@
       "when": 1793837888849,
       "tag": "0011_guest_purge",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793869060173,
+      "tag": "0012_free_case_stack",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793869072925,
+      "tag": "0013_drop_last_free_case",
+      "breakpoints": true
     }
   ]
 }

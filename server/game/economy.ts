@@ -10,8 +10,10 @@ export interface Economy {
   /** One price for every case. */
   casePrice: number;
   startingBalance: number;
-  /** One free case every N hours (rolling, counted from the last free opening). */
-  freeCaseHours: number;
+  /** The free case stack refills one case every N minutes (game/dailyCrate.ts)… */
+  freeCaseMinutes: number;
+  /** …up to this many cases saved. */
+  freeCaseMax: number;
   /** Chance per opening, in basis points of 1/10 000. Sums to 10 000. */
   oddsBp: Record<Tier, number>;
   /** Recycle value of each rarity before wear and StatTrak. */
@@ -40,7 +42,8 @@ export interface Economy {
 export const DEFAULT_ECONOMY: Economy = {
   casePrice: 250,
   startingBalance: 1000,
-  freeCaseHours: 4,
+  freeCaseMinutes: 10,
+  freeCaseMax: 5,
   oddsBp: { milspec: 7992, restricted: 1598, classified: 320, covert: 64, gold: 26 },
   recycle: { milspec: 30, restricted: 120, classified: 500, covert: 2500, gold: 10000 },
   stattrakOneIn: 10,

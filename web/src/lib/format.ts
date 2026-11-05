@@ -7,11 +7,12 @@ export const formatFloat = (float: number, digits: 4 | 9) => float.toFixed(digit
 
 export const formatPct = (pct: number) => `${pct.toFixed(2)}%`;
 
-/** hh:mm:ss until a date (Next reward / free case countdown). */
+/** Time left until a date (free case countdown): mm:ss under an hour, hh:mm:ss beyond. */
 export function countdown(to: Date, now: Date): string {
   const total = Math.max(0, Math.floor((to.getTime() - now.getTime()) / 1000));
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${pad(Math.floor(total / 3600))}:${pad(Math.floor((total % 3600) / 60))}:${pad(total % 60)}`;
+  const mmss = `${pad(Math.floor((total % 3600) / 60))}:${pad(total % 60)}`;
+  return total < 3600 ? mmss : `${pad(Math.floor(total / 3600))}:${mmss}`;
 }
 
 /** "Sep 16" */

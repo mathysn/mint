@@ -8,17 +8,34 @@ import { expireDue } from '../services/trades.js';
 
 export type JobName = (typeof jobRuns.$inferSelect)['job'];
 
+/** A guest that never opened a case is deleted after this long unseen; any other guest after GUEST_KEEP_DAYS. */
+export const IDLE_GUEST_KEEP_HOURS = 1;
+export const GUEST_KEEP_DAYS = 7;
+
 interface JobDef {
   name: string;
   schedule: string;
   run: () => Promise<{ ok: boolean; count: number; result: string }>;
 }
 
-/** Deletes guests nobody has used for 30 days. Their items never left them. */
+/**
+ * Deletes guests that are gone: after an hour unseen if they never opened a case (they had nothing
+ * to lose), after 7 days unseen otherwise. Their items never left them (guests can't trade or sell).
+ */
 async function purgeInactiveGuests(): Promise<number> {
   const deleted = await db()
     .delete(users)
-    .where(sql`${users.id} IN (SELECT id FROM users WHERE is_guest AND last_seen_at < now() - interval '30 days' LIMIT 5000)`)
+    .where(
+      sql`${users.id} IN (
+        SELECT u.id FROM users u
+        WHERE u.is_guest AND (
+          u.last_seen_at < now() - interval '${sql.raw(String(GUEST_KEEP_DAYS))} days'
+          OR (u.last_seen_at < now() - interval '${sql.raw(String(IDLE_GUEST_KEEP_HOURS))} hours'
+              AND NOT EXISTS (SELECT 1 FROM case_openings o WHERE o.user_id = u.id))
+        )
+        LIMIT 5000
+      )`,
+    )
     .returning({ id: users.id });
   // Sign-in attempts only live 10 minutes; nothing reads them after a day.
   await db().delete(authFlows).where(lt(authFlows.expiresAt, sql`now() - interval '1 day'`));
@@ -71,6 +88,10 @@ export const JOB_NAMES = Object.keys(JOBS) as JobName[];
  */
 export const MINUTE_JOBS: readonly JobName[] = ['expire_trades', 'settle_auctions'];
 
+/** Jobs the server's scheduler runs every hour at this minute (daily crons on Vercel). */
+export const HOURLY_JOBS: readonly JobName[] = ['purge_guests'];
+export const HOURLY_MINUTE = 5;
+
 let minuteSchedule = false;
 
 /** Called once by the scheduler: the Jobs tab then shows the real schedule. */
@@ -78,9 +99,11 @@ export function enableMinuteSchedule() {
   minuteSchedule = true;
 }
 
-/** "daily 04:00 UTC", or "every minute" for MINUTE_JOBS when the scheduler runs. */
+/** "daily 04:00 UTC", or "every minute" / "hourly at :05" for MINUTE_JOBS / HOURLY_JOBS when the scheduler runs. */
 export function scheduleOf(job: JobName): string {
-  return minuteSchedule && MINUTE_JOBS.includes(job) ? 'every minute' : JOBS[job].schedule;
+  if (minuteSchedule && MINUTE_JOBS.includes(job)) return 'every minute';
+  if (minuteSchedule && HOURLY_JOBS.includes(job)) return `hourly at :${String(HOURLY_MINUTE).padStart(2, '0')}`;
+  return JOBS[job].schedule;
 }
 
 /** UTC hour and minute of a "daily HH:MM UTC" schedule. */

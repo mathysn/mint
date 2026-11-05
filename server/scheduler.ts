@@ -1,13 +1,14 @@
 // The server's own clock (self-hosted only, started by server/main.ts): offers and auctions settle
-// every minute, the daily jobs run at their time. On Vercel, vercel.json crons do this instead.
-import { JOB_NAMES, MINUTE_JOBS, dailyTime, enableMinuteSchedule, lastRuns, runJob, type JobName } from './admin/jobs.js';
+// every minute, the guest purge runs every hour, the daily jobs run at their time. On Vercel, vercel.json crons do this instead.
+import { HOURLY_JOBS, HOURLY_MINUTE, JOB_NAMES, MINUTE_JOBS, dailyTime, enableMinuteSchedule, lastRuns, runJob, type JobName } from './admin/jobs.js';
 
-const DAILY_JOBS = JOB_NAMES.filter((job) => !MINUTE_JOBS.includes(job));
+const DAILY_JOBS = JOB_NAMES.filter((job) => !MINUTE_JOBS.includes(job) && !HOURLY_JOBS.includes(job));
 const DAY_MS = 24 * 3_600_000;
 
-/** Jobs due at this minute: the every-minute ones (quiet), plus any daily job set for this minute. */
+/** Jobs due at this minute: the every-minute ones and, at :05, the hourly ones (quiet), plus any daily job set for this minute. */
 export function dueJobs(now: Date): { job: JobName; quiet: boolean }[] {
   const due = MINUTE_JOBS.map((job) => ({ job, quiet: true }));
+  if (now.getUTCMinutes() === HOURLY_MINUTE) for (const job of HOURLY_JOBS) due.push({ job, quiet: true });
   for (const job of DAILY_JOBS) {
     const { hour, minute } = dailyTime(job);
     if (now.getUTCHours() === hour && now.getUTCMinutes() === minute) due.push({ job, quiet: false });
@@ -54,7 +55,7 @@ export function startScheduler(): () => Promise<void> {
       for (const job of missedDaily(last, new Date())) start(job, false);
     })
     .catch((err: unknown) => console.error('[scheduler] catch-up failed', err));
-  console.log(`[scheduler] ${MINUTE_JOBS.join(', ')} every minute; ${DAILY_JOBS.join(', ')} daily`);
+  console.log(`[scheduler] ${MINUTE_JOBS.join(', ')} every minute; ${HOURLY_JOBS.join(', ')} hourly; ${DAILY_JOBS.join(', ')} daily`);
   return async () => {
     stopped = true;
     clearTimeout(timer);

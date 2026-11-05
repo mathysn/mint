@@ -101,7 +101,7 @@ export const GLOBAL_DROP_TIERS: readonly Tier[] = ['gold'];
 /** Flag monitors (docs/ADMIN.md §9.3, thresholds validated on 2026-10-24). */
 export const MONITORS = {
   repeatedTrades: { trades: 4, windowHours: 48, oneWayShare: 0.8, minMoved: 10_000, urgentFrom: 25_000 },
-  sameIp: { accounts: 4, windowHours: 24 },
+  sameIp: { accounts: 3, windowDays: 7, minSent: 10_000, urgentFrom: 25_000 },
   unusualPrice: { factor: 5, windowDays: 30 },
   newAccount: { maxAgeDays: 3, minReceived: 10_000 },
 } as const;

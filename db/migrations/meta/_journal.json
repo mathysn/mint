@@ -78,6 +78,13 @@
       "when": 1792804816896,
       "tag": "0010_admin_step3",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793837888849,
+      "tag": "0011_guest_purge",
+      "breakpoints": true
     }
   ]
 }

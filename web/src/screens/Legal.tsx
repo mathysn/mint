@@ -108,7 +108,7 @@ export function Privacy() {
       <Section title="How long">
         <List
           items={[
-            'Guest accounts are deleted after 30 days without playing.',
+            'Guest accounts are deleted after an hour away if they never opened a case, and after 7 days away otherwise.',
             'A Discord account is kept until you delete it.',
             'Signed-out sessions stop working at once; their record stays with your account.',
           ]}

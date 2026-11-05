@@ -63,6 +63,28 @@ function StatusCell({ row }: { row: AdminPlayerRow }) {
   return null;
 }
 
+/** Server cap of one bulk delete (guestsDeleteSchema). */
+const MAX_SELECTED = 200;
+
+/** The selection box: empty, dash (some) or check (all). */
+function CheckBox({ state }: { state: 'none' | 'some' | 'all' }) {
+  const on = state !== 'none';
+  return (
+    <span
+      aria-hidden="true"
+      style={{ width: 18, height: 18, borderRadius: 2, display: 'grid', placeItems: 'center', border: `1px solid ${on ? 'var(--text)' : 'var(--border-hover)'}`, background: on ? 'var(--text)' : 'transparent' }}
+    >
+      {on && (
+        <svg width="12" height="12" viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'var(--page)', strokeWidth: 3.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
+          <path d={state === 'all' ? 'M5 12.5l4.5 4.5L19 7.5' : 'M6 12h12'} />
+        </svg>
+      )}
+    </span>
+  );
+}
+
+const boxButton = { width: 44, height: 44, padding: 0, border: 0, background: 'none', cursor: 'pointer', display: 'grid', placeItems: 'center' } as const;
+
 function SkeletonTable() {
   return (
     <div className={s.tableWrap}>
@@ -121,6 +143,13 @@ function Desktop() {
   };
 
   const sel = [...selected.values()];
+  // "Select all" = the guest rows already loaded, up to the bulk delete cap.
+  const selectable = rows.filter((r) => r.isGuest).slice(0, MAX_SELECTED);
+  const allOn = selectable.length > 0 && selectable.every((r) => selected.has(r.id));
+  const headState = allOn ? 'all' : sel.length > 0 ? 'some' : 'none';
+  const toggleAll = () => setSelected(allOn ? new Map() : new Map(selectable.map((r) => [r.id, r])));
+  const guestsLoaded = rows.filter((r) => r.isGuest).length;
+  const capHint = allOn && guestsLoaded > MAX_SELECTED ? `First ${MAX_SELECTED} only` : allOn && list.hasNextPage ? 'Only loaded rows · Show more to add the rest' : null;
   const deleteLabel = sel.length > 1 ? `Delete ${sel.length} guests` : 'Delete guest';
   const heads: [Sort | 'cases', string, 'flex-end' | 'flex-start'][] = [
     ['balance', 'Balance', 'flex-end'],
@@ -133,7 +162,7 @@ function Desktop() {
     setSelected((m) => {
       const next = new Map(m);
       if (next.has(row.id)) next.delete(row.id);
-      else next.set(row.id, row);
+      else if (next.size < MAX_SELECTED) next.set(row.id, row);
       return next;
     });
   const deleteGuests = async () => {
@@ -196,6 +225,11 @@ function Desktop() {
           <span className="mono" style={{ fontSize: 12, color: 'var(--text-2)' }}>
             holding {cr(sel.reduce((n, g) => n + g.balance, 0))} and {num(sel.reduce((n, g) => n + g.casesOpened, 0))} opened cases
           </span>
+          {capHint && (
+            <span className="mono" style={{ fontSize: 12, color: 'var(--text-3)' }}>
+              {capHint}
+            </span>
+          )}
           <span style={{ flex: '1 1 0' }} />
           {!confirming ? (
             <>
@@ -239,8 +273,14 @@ function Desktop() {
           <div className={s.tableWrap}>
             <div role="table" aria-label="Players" style={{ minWidth: 1100, display: 'flex', flexDirection: 'column' }}>
               <div role="row" className={s.thead} style={{ gridTemplateColumns: GRID }}>
-                <span role="columnheader">
-                  <span className="sr-only">Select</span>
+                <span role="columnheader" style={{ display: 'grid', placeItems: 'center' }}>
+                  {selectable.length > 0 ? (
+                    <button type="button" aria-pressed={headState === 'all' ? true : headState === 'some' ? 'mixed' : false} aria-label="Select all guests" title="Select all guests" onClick={toggleAll} style={boxButton}>
+                      <CheckBox state={headState} />
+                    </button>
+                  ) : (
+                    <span className="sr-only">Select</span>
+                  )}
                 </span>
                 <span role="columnheader" className={cx('lbl', s.th)}>
                   Player
@@ -275,17 +315,8 @@ function Desktop() {
                   <div key={r.id} role="row" className={s.tr} data-selected={on || undefined} style={{ gridTemplateColumns: GRID }}>
                     <span role="cell" className={s.above} style={{ display: 'grid', placeItems: 'center' }}>
                       {r.isGuest && (
-                        <button type="button" aria-pressed={on} aria-label={`Select ${r.label}`} onClick={() => toggle(r)} style={{ width: 44, height: 44, padding: 0, border: 0, background: 'none', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
-                          <span
-                            aria-hidden="true"
-                            style={{ width: 18, height: 18, borderRadius: 2, display: 'grid', placeItems: 'center', border: `1px solid ${on ? 'var(--text)' : 'var(--border-hover)'}`, background: on ? 'var(--text)' : 'transparent' }}
-                          >
-                            {on && (
-                              <svg width="12" height="12" viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'var(--page)', strokeWidth: 3.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
-                                <path d="M5 12.5l4.5 4.5L19 7.5" />
-                              </svg>
-                            )}
-                          </span>
+                        <button type="button" aria-pressed={on} aria-label={`Select ${r.label}`} onClick={() => toggle(r)} style={boxButton}>
+                          <CheckBox state={on ? 'all' : 'none'} />
                         </button>
                       )}
                     </span>

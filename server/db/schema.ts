@@ -99,6 +99,8 @@ export const users = pgTable(
     check('users_balance_non_negative', sql`${t.balance} >= 0`),
     check('users_guest_or_discord', sql`${t.isGuest} OR ${t.discordId} IS NOT NULL OR ${t.deletedAt} IS NOT NULL`),
     index('users_guest_ip_idx').on(t.createdIpHash, t.createdAt),
+    // Hourly guest purge (server/admin/jobs.ts).
+    index('users_guest_seen_idx').on(t.lastSeenAt).where(sql`${t.isGuest}`),
   ],
 );
 

@@ -4,7 +4,7 @@ import { closeDb, db } from '../../server/db/client.js';
 import { items, ledger, users } from '../../server/db/schema.js';
 import { dailyCrateId } from '../../server/game/dailyCrate.js';
 import { recycleValue } from '../../server/game/value.js';
-import { Client, newGuest, resetDb } from './helpers.js';
+import { Client, newAccount, newGuest, resetDb } from './helpers.js';
 
 beforeEach(resetDb);
 afterAll(closeDb);
@@ -273,16 +273,32 @@ describe('Discord sign-in', () => {
 });
 
 describe('guest purge (cron)', () => {
-  it('needs the cron secret and deletes guests idle for 30 days', async () => {
-    const idle = await newGuest('192.0.2.10');
-    const active = await newGuest('192.0.2.11');
-    const idleId = (await idle.json('/me')).body.id;
-    await idle.open('crate-a');
-    await db().update(users).set({ lastSeenAt: new Date(Date.now() - 31 * 24 * 3600 * 1000) }).where(eq(users.id, idleId));
+  const hoursAgo = (h: number) => new Date(Date.now() - h * 3600 * 1000);
+  const idOf = async (c: Client) => (await c.json('/me')).body.id as string;
+  const exists = async (id: string) => (await db().select().from(users).where(eq(users.id, id))).length === 1;
+  const seen = (id: string, h: number) => db().update(users).set({ lastSeenAt: hoursAgo(h) }).where(eq(users.id, id));
+
+  it('needs the cron secret; deletes guests gone 1 h without a case, or 7 days after playing', async () => {
+    const visitor = await newGuest('192.0.2.10'); // never opened a case, gone 2 h
+    const player = await newGuest('192.0.2.11'); // opened a case, gone 2 days
+    const oldPlayer = await newGuest('192.0.2.12'); // opened a case, gone 8 days
+    const active = await newGuest('192.0.2.13'); // never opened a case, seen 30 min ago
+    const account = await newAccount('kept'); // Discord accounts are never purged
+    const [visitorId, playerId, oldId, activeId] = [await idOf(visitor), await idOf(player), await idOf(oldPlayer), await idOf(active)];
+    await player.open('crate-a');
+    await oldPlayer.open('crate-a');
+    await seen(visitorId, 2);
+    await seen(playerId, 48);
+    await seen(oldId, 8 * 24);
+    await seen(activeId, 0.5);
+    await seen(account.user.id, 365 * 24);
     expect((await new Client().json('/cron/purge-guests')).status).toBe(401);
     const res = await new Client().json('/cron/purge-guests', { headers: { authorization: 'Bearer test-cron' } });
-    expect(res.body.deleted).toBe(1);
-    expect(await db().select().from(users).where(eq(users.id, idleId))).toHaveLength(0);
-    expect((await active.json('/me')).status).toBe(200);
+    expect(res.body.deleted).toBe(2);
+    expect(await exists(visitorId)).toBe(false);
+    expect(await exists(oldId)).toBe(false);
+    expect(await exists(playerId)).toBe(true);
+    expect(await exists(activeId)).toBe(true);
+    expect(await exists(account.user.id)).toBe(true);
   });
 });

@@ -1,0 +1,1 @@
+CREATE INDEX "users_guest_seen_idx" ON "users" USING btree ("last_seen_at") WHERE "users"."is_guest";

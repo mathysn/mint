@@ -105,7 +105,7 @@ Les écrans racontent une même journée, utile pour vérifier qu'on n'a rien ou
 2. Pas d'écran Items mobile : l'onglet Items et la feuille More renvoient vers les pages desktop.
 3. ~~Seuils des moniteurs~~ : tranchés (24/10/2026), vérifiés au moment de l'événement (acceptation d'un trade, ouverture d'une session, vente) :
    - *Repeated trades* : au moins 4 trades acceptés entre les deux mêmes joueurs en 48 h, au moins 80 % de la valeur dans un sens, au moins 10 000 CR déplacés ; urgent dès 25 000 CR ;
-   - *Many accounts, 1 IP* : au moins 4 comptes (invités compris) créés depuis une même adresse en 24 h ; urgent s'ils ont envoyé des objets à un joueur ;
+   - *Many accounts, 1 IP* (revu le 05/11/2026 : les invités et le wifi partagé levaient de fausses alertes) : au moins 3 comptes Discord (jamais les invités, qui ne peuvent ni échanger ni vendre) créés depuis une même adresse en 7 jours, **qui ont envoyé ensemble au moins 10 000 CR** (objets + crédits, trades acceptés) à un même joueur ; urgent dès 25 000 CR. Plusieurs comptes sur une adresse sans transfert ne lèvent rien (le signal « autres comptes sur cette IP » de la fiche joueur reste). Vérifié à l'ouverture d'une session et après chaque trade accepté ;
    - *Unusual price* : une vente à au moins 5 × la moyenne sur 30 jours du même skin, StatTrak et usure (valeur de recyclage sans vente) ;
    - *New account* : un compte de moins de 3 jours qui a reçu au moins 10 000 CR d'objets en trades.
    Un ban ferme les flags ouverts du joueur ; un ban ou un rename ferme les reports sur lui.

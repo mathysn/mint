@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { closeDb, db } from '../../server/db/client.js';
 import { activity, adminLog, auctions, flagPlayers, flags, items, ledger, reports, trades, users } from '../../server/db/schema.js';
@@ -211,17 +211,33 @@ describe('monitors', () => {
     expect(after.rows.find((f: any) => f.kind === 'Repeated trades')).toMatchObject({ state: 'Dismissed by lea' });
   });
 
-  it('flags many accounts from one address', async () => {
-    for (let i = 0; i < 3; i++) await newGuest('192.0.2.50');
+  it('never flags guests, nor Discord accounts that only share an address', async () => {
+    for (let i = 0; i < 6; i++) await newGuest('192.0.2.50');
+    const family = [await newAccount('ana'), await newAccount('ben'), await newAccount('cleo')];
+    await db().update(users).set({ createdIpHash: 'home' }).where(inArray(users.id, family.map((a) => a.user.id)));
+    await newGuest('192.0.2.50');
     expect(await db().select().from(flags)).toHaveLength(0);
-    await newGuest('192.0.2.50');
-    const [flag] = await db().select().from(flags);
-    expect(flag).toMatchObject({ kind: 'Many accounts, 1 IP', monitor: 'sign-up monitor', urgent: false });
-    expect(flag!.evidence[0]!.v).toBe('4');
-    await newGuest('192.0.2.50');
-    const all = await db().select().from(flags);
-    expect(all).toHaveLength(1);
-    expect(await db().select().from(flagPlayers)).toHaveLength(5);
+  });
+
+  it('flags accounts from one address that send their items to one player', async () => {
+    const main = await newAccount('nyx');
+    const alts = [await newAccount('alt1'), await newAccount('alt2'), await newAccount('alt3')];
+    await db().update(users).set({ createdIpHash: 'farm' }).where(inArray(users.id, alts.map((a) => a.user.id)));
+    for (const alt of alts) await befriend(alt, main);
+    const sameIp = () => db().select().from(flags).where(eq(flags.kind, 'Many accounts, 1 IP'));
+    expect(await sameIp()).toHaveLength(0);
+    // One ★ item (10,000 CR) is enough to raise it.
+    await tradeGold(alts[0]!, main);
+    const [flag] = await sameIp();
+    expect(flag).toMatchObject({ monitor: 'trade monitor', urgent: false, text: expect.stringContaining('all sent their items to nyx') });
+    expect(flag!.evidence[0]!.v).toBe('3');
+    expect(flag!.evidence[2]!.k).toBe('of items sent to nyx');
+    expect(await db().select().from(flagPlayers).where(eq(flagPlayers.flagId, flag!.id))).toHaveLength(4);
+    await tradeGold(alts[1]!, main);
+    await tradeGold(alts[2]!, main);
+    const again = await sameIp();
+    expect(again).toHaveLength(1);
+    expect(again[0]!.urgent).toBe(true);
   });
 
   it('flags a sale far above the usual price', async () => {

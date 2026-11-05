@@ -61,9 +61,15 @@ export async function ledgerCheckNow(): Promise<LedgerCheckResult> {
 
 // ── Jobs ────────────────────────────────────────────────────────────────────
 
-/** Next run of an "every minute" or "daily HH:MM UTC" schedule. */
+/** Next run of an "every minute", "hourly at :MM" or "daily HH:MM UTC" schedule. */
 export function nextRun(schedule: string, now = new Date()): Date {
   if (schedule === 'every minute') return new Date(Math.floor(now.getTime() / 60_000) * 60_000 + 60_000);
+  const hourly = schedule.match(/^hourly at :(\d{2})$/);
+  if (hourly) {
+    const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), Number(hourly[1])));
+    if (next <= now) next.setUTCHours(next.getUTCHours() + 1);
+    return next;
+  }
   const m = schedule.match(/(\d{2}):(\d{2})/);
   const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), Number(m?.[1] ?? 0), Number(m?.[2] ?? 0)));
   if (next <= now) next.setUTCDate(next.getUTCDate() + 1);

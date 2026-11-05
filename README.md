@@ -59,7 +59,7 @@ Mint tourne sur un seul serveur Linux, à côté d'autres programmes (les bots D
 | Conteneur | Rôle |
 |---|---|
 | `postgres` | Postgres 18, jamais exposé à Internet, données dans le volume `mint_pgdata` |
-| `app` | `server/main.ts` : l'API, le jeu buildé (`dist/`) et le planificateur (offres et enchères réglées chaque minute, purge des invités 04:00, contrôle du journal 05:00). Migrations à chaque démarrage. Écoute sur `127.0.0.1:3080` seulement |
+| `app` | `server/main.ts` : l'API, le jeu buildé (`dist/`) et le planificateur (offres et enchères réglées chaque minute, purge des invités chaque heure à :05, contrôle du journal 05:00). Migrations à chaque démarrage. Écoute sur `127.0.0.1:3080` seulement |
 | `caddy` | HTTPS (certificat Let's Encrypt automatique) sur 80/443, seulement si ces ports sont libres (`COMPOSE_PROFILES=caddy`) |
 
 Mémoire plafonnée (`PG_MEM_LIMIT`, `APP_MEM_LIMIT`) pour ne jamais prendre celle des bots. Les scripts de `deploy/` n'ajoutent que des choses : jamais de redémarrage du serveur, jamais d'arrêt d'un autre programme.

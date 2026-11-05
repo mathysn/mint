@@ -70,7 +70,7 @@ async function tradeValues(tx: DbOrTx, tradeIds: string[]) {
   return out;
 }
 
-/** After an accepted trade: repeated one-way trades between the pair, and new accounts receiving a lot. */
+/** After an accepted trade: repeated one-way trades, accounts from one address feeding a player, new accounts receiving a lot. */
 export async function afterTradeAccepted(tx: Tx, trade: { id: string; senderId: string; recipientId: string }) {
   await guarded(tx, 'repeated trades', async (sp) => {
     const m = MONITORS.repeatedTrades;
@@ -117,6 +117,16 @@ export async function afterTradeAccepted(tx: Tx, trade: { id: string; senderId: 
     });
   });
 
+  // Both sides: an alt can give its items as the sender, or as the recipient of a "gift request".
+  await guarded(tx, 'same ip', async (sp) => {
+    const hashes = await sp
+      .select({ h: users.createdIpHash })
+      .from(users)
+      .where(inArray(users.id, [trade.senderId, trade.recipientId]))
+      .union(sp.select({ h: sessions.ipHash }).from(sessions).where(inArray(sessions.userId, [trade.senderId, trade.recipientId])));
+    for (const h of new Set(hashes.map((r) => r.h).filter((h): h is string => !!h))) await checkSameIp(sp, h, 'trade monitor');
+  });
+
   await guarded(tx, 'new account', async (sp) => {
     const m = MONITORS.newAccount;
     for (const userId of [trade.senderId, trade.recipientId]) {
@@ -153,49 +163,64 @@ export async function afterTradeAccepted(tx: Tx, trade: { id: string; senderId: 
   });
 }
 
-/** After a session opens: many accounts created from one address in a day. */
+/**
+ * Many Discord accounts made from one address that funnel their items and credits to one player.
+ * Guests don't count (they can't trade, sell or bid), and several accounts on one wifi are not a
+ * flag by themselves: only value sent to one player is. Checked when a session opens and after
+ * every accepted trade (funnelling happens after sign-up).
+ */
+async function checkSameIp(sp: Tx, ipHash: string, monitor: string) {
+  const m = MONITORS.sameIp;
+  const window = sql`now() - ${`${m.windowDays} days`}::interval`;
+  const rows = await sp
+    .selectDistinct({ id: users.id, createdAt: users.createdAt })
+    .from(users)
+    .leftJoin(sessions, eq(sessions.userId, users.id))
+    .where(and(eq(users.isGuest, false), isNull(users.deletedAt), gt(users.createdAt, window), or(eq(sessions.ipHash, ipHash), eq(users.createdIpHash, ipHash))));
+  if (rows.length < m.accounts) return;
+  const ids = rows.map((r) => r.id);
+  // Value those accounts gave to each other player in accepted trades, both sides of the offer.
+  const done = await sp
+    .select()
+    .from(trades)
+    .where(and(eq(trades.status, 'accepted'), or(inArray(trades.senderId, ids), inArray(trades.recipientId, ids))));
+  const values = await tradeValues(sp, done.map((t) => t.id));
+  const byReceiver = new Map<string, number>();
+  const add = (to: string, v: number) => byReceiver.set(to, (byReceiver.get(to) ?? 0) + v);
+  for (const t of done) {
+    const v = values.get(t.id)!;
+    if (ids.includes(t.senderId)) add(t.recipientId, v.sender + t.senderCredits);
+    if (ids.includes(t.recipientId)) add(t.senderId, v.recipient + t.recipientCredits);
+  }
+  const top = [...byReceiver.entries()].sort((a, b) => b[1] - a[1])[0];
+  if (!top || top[1] < m.minSent) return;
+  const [receiver, sent] = top;
+  const n = await names(sp, [receiver]);
+  const times = rows.map((r) => r.createdAt.getTime());
+  const first = new Date(Math.min(...times));
+  const last = new Date(Math.max(...times));
+  const spanMin = Math.max(1, Math.ceil((last.getTime() - first.getTime()) / 60_000));
+  const within = spanMin < 60 ? plural(spanMin, 'minute') : spanMin < 48 * 60 ? plural(Math.ceil(spanMin / 60), 'hour') : plural(Math.ceil(spanMin / 1440), 'day');
+  const day = utcDay(first) === utcDay(last) ? utcDay(first) : `since ${utcDay(first)}`;
+  await raise(sp, {
+    kind: FLAG_KIND.sameIp,
+    fingerprint: `ip:${ipHash}`,
+    monitor,
+    urgent: sent >= m.urgentFrom,
+    evidence: [
+      { v: fmt(rows.length), k: `accounts created ${day}` },
+      { v: '1', k: 'address' },
+      { v: cr(sent), k: `of items sent to ${n.get(receiver)}` },
+    ],
+    text: `Same address, created within ${within}, all sent their items to ${n.get(receiver)}.`,
+    players: [...ids, receiver],
+  });
+}
+
+/** After a session opens: Discord accounts from that address that feed one player. */
 export async function afterSessionCreated(tx: DbOrTx, ipHash: string | null) {
   if (!ipHash) return;
-  await guarded(tx, 'same ip', async (sp) => {
-    const m = MONITORS.sameIp;
-    const window = sql`now() - ${`${m.windowHours} hours`}::interval`;
-    const rows = await sp
-      .selectDistinct({ id: users.id, createdAt: users.createdAt })
-      .from(users)
-      .leftJoin(sessions, eq(sessions.userId, users.id))
-      .where(and(gt(users.createdAt, window), or(eq(sessions.ipHash, ipHash), eq(users.createdIpHash, ipHash))));
-    if (rows.length < m.accounts) return;
-    const ids = rows.map((r) => r.id);
-    // Items those accounts sent to one player outside the group, in accepted trades.
-    const sent = await sp
-      .select({ to: trades.recipientId, from: trades.senderId, id: trades.id, credits: trades.senderCredits })
-      .from(trades)
-      .where(and(eq(trades.status, 'accepted'), inArray(trades.senderId, ids)));
-    const values = await tradeValues(sp, sent.map((t) => t.id));
-    const byReceiver = new Map<string, number>();
-    for (const t of sent) byReceiver.set(t.to, (byReceiver.get(t.to) ?? 0) + values.get(t.id)!.sender + t.credits);
-    const top = [...byReceiver.entries()].sort((a, b) => b[1] - a[1])[0];
-    const n = await names(sp, top ? [top[0]] : []);
-    const times = rows.map((r) => r.createdAt.getTime());
-    const first = new Date(Math.min(...times));
-    const last = new Date(Math.max(...times));
-    const spanMin = Math.max(1, Math.ceil((last.getTime() - first.getTime()) / 60_000));
-    const within = spanMin < 60 ? plural(spanMin, 'minute') : plural(Math.ceil(spanMin / 60), 'hour');
-    const day = utcDay(first) === utcDay(last) ? utcDay(first) : `since ${utcDay(first)}`;
-    await raise(sp, {
-      kind: FLAG_KIND.sameIp,
-      fingerprint: `ip:${ipHash}`,
-      monitor: 'sign-up monitor',
-      urgent: Boolean(top && top[1] > 0),
-      evidence: [
-        { v: fmt(rows.length), k: `accounts created ${day}` },
-        { v: '1', k: 'address' },
-        ...(top && top[1] > 0 ? [{ v: cr(top[1]), k: `of items sent to ${n.get(top[0])}` }] : []),
-      ],
-      text: top && top[1] > 0 ? `Same address, created within ${within}, all sent their items to ${n.get(top[0])}.` : `Same address, created within ${within}.`,
-      players: top && top[1] > 0 ? [...ids, top[0]] : ids,
-    });
-  });
+  await guarded(tx, 'same ip', (sp) => checkSameIp(sp, ipHash, 'sign-up monitor'));
 }
 
 /** After a sale: a price far above the recent average of that skin, StatTrak™ and wear. */

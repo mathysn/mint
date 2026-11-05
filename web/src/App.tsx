@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router';
 import { AppShell } from './components/layout/AppShell';
@@ -31,7 +31,22 @@ import { TradeNew } from './screens/TradeNew';
 import { TradeUp } from './screens/TradeUp';
 import { Trades } from './screens/Trades';
 
+/**
+ * A 401 mid-game means the session is gone (an idle guest purged by the server, a session revoked
+ * elsewhere): start over, so loadMe makes a fresh guest and the screens reload. At most once every
+ * 30 s, so a browser that refuses cookies can't spin into making guests in a loop.
+ */
+let lastSessionReset = 0;
+function onApiError(error: unknown) {
+  if (isActivity || !(error instanceof ApiRequestError) || error.status !== 401) return;
+  if (Date.now() - lastSessionReset < 30_000) return;
+  lastSessionReset = Date.now();
+  void queryClient.resetQueries();
+}
+
 const queryClient = new QueryClient({
+  queryCache: new QueryCache({ onError: onApiError }),
+  mutationCache: new MutationCache({ onError: onApiError }),
   defaultOptions: {
     queries: {
       retry: (count, error) => !(error instanceof ApiRequestError && error.status < 500) && count < 2,

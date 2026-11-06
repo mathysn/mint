@@ -27,7 +27,7 @@ type FreeStack = ReturnType<typeof useFreeCase>;
 /** "Your free case is ready." / "You have 3 free cases ready." */
 const readyTitle = (count: number) => (count === 1 ? 'Your free case is ready.' : `You have ${count} free cases ready.`);
 
-/** Today rows: the stack ("3/5") and, while it isn't full, the time to the next case. */
+/** Free case rows: the stack ("3 / 5") and, while it isn't full, the time to the next case. */
 const freeRows = (free: FreeStack): [string, string][] => (free.next ? [['Free cases', free.stock], ['Next free case', free.next]] : [['Free cases', free.stock]]);
 
 function useDailyCrate() {
@@ -43,7 +43,7 @@ function HeroText({ me, free, daily }: { me: Me | undefined; free: FreeStack; da
   const economy = useEconomyText();
   return (
     <>
-      <HudLabel>// Free drop</HudLabel>
+      <HudLabel>// Free case</HudLabel>
       {free.ready ? (
         <h1 id="hero-title" className={s.heroTitle}>
           {readyTitle(free.count)}
@@ -96,31 +96,31 @@ function DesktopHome() {
             {daily?.name ?? ' '}
           </span>
           <span className="lbl" style={{ position: 'absolute', right: 44, top: 42 }}>
-            Free · 0 CR
+            {free.ready ? `Free · ${free.stock}` : 'Free'}
           </span>
           {daily && <img src={daily.imageUrl} alt={daily.name} className={s.heroCase} />}
           <span className="lbl" style={{ position: 'absolute', left: 44, bottom: 42 }}>
-            {daily ? `${daily.skinCount} skins + ★ rare special` : ' '}
+            {daily ? `${daily.skinCount} skins + ★ Rare special` : ' '}
           </span>
         </div>
       </section>
 
-      {/* The Today panel sets the row height; the feed fills it and scrolls (homeRow, feedPanel). */}
+      {/* The free case panel sets the row height; the feed fills it and scrolls (homeRow, feedPanel). */}
       <div className={s.homeRow}>
         <section aria-labelledby="feed-title" className={`${s.panel} ${s.feedPanel}`} style={{ gap: 16 }}>
           <div className={s.panelHead}>
             <h2 id="feed-title" className={s.panelTitle}>
-              Friends' activity
+              Friends’ activity
             </h2>
             <HudLabel>// Feed</HudLabel>
           </div>
-          <ScrollArea className={s.feedScroll} viewportClassName={s.feedViewport} aria-label="Friends' activity" tabIndex={0}>
+          <ScrollArea className={s.feedScroll} viewportClassName={s.feedViewport} aria-label="Friends’ activity" tabIndex={0}>
           {guest ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, padding: '24px 0 4px' }}>
               <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'var(--text-3)', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
                 <path d={FEED_ICON} />
               </svg>
-              <p style={{ fontSize: 16, fontWeight: 600 }}>Your friends' pulls show up here</p>
+              <p style={{ fontSize: 16, fontWeight: 600 }}>Your friends’ pulls show up here</p>
               <p style={{ maxWidth: 440, fontSize: 14, lineHeight: 1.55, color: 'var(--text-2)' }}>
                 Sign in with Discord to add friends, trade with them and follow what they unbox.
               </p>
@@ -136,7 +136,7 @@ function DesktopHome() {
         <section aria-labelledby="today-title" className={s.panel} style={{ gap: 24 }}>
           <div className={s.panelHead}>
             <h2 id="today-title" className={s.panelTitle}>
-              Today
+              Right now
             </h2>
             <HudLabel>// Free case</HudLabel>
           </div>
@@ -161,7 +161,7 @@ function DesktopHome() {
             </div>
             {free.crateNext && (
               <div className={s.row}>
-                <dt style={{ color: 'var(--text-2)' }}>Next case in</dt>
+                <dt style={{ color: 'var(--text-2)' }}>New case of the day in</dt>
                 <dd className="mono" style={{ margin: 0 }}>
                   {free.crateNext}
                 </dd>
@@ -182,7 +182,7 @@ function DesktopHome() {
         </div>
         <div className="stagger-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(220px, 100%), 1fr))', gap: 16 }}>
           {(crates ?? []).slice(0, 4).map((c) => (
-            <CaseTile key={c.id} crate={c} variant="home" free={false} />
+            <CaseTile key={c.id} crate={c} variant="home" free={c.id === free.crateId && free.ready} />
           ))}
         </div>
       </section>
@@ -207,7 +207,7 @@ function MobileHome() {
           {daily && <img src={daily.imageUrl} alt={daily.name} className={s.heroCase} style={{ width: '62%' }} />}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '22px 20px 20px' }}>
-          <HudLabel>// Free drop</HudLabel>
+          <HudLabel>// Free case</HudLabel>
           <h1 id="hero-title" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>
             {free.ready ? (
               readyTitle(free.count)
@@ -234,7 +234,7 @@ function MobileHome() {
             </span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <h2 id="m-guest" style={{ fontSize: 15, fontWeight: 600 }}>
-                Playing as guest
+                Playing as a guest
               </h2>
               <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Sign in with Discord to trade, sell and add friends.</span>
             </div>
@@ -249,7 +249,7 @@ function MobileHome() {
         <section aria-labelledby="m-feed" className={s.panel} style={{ gap: 4, padding: '18px 20px 8px' }}>
           <div className={s.panelHead} style={{ paddingBottom: 8 }}>
             <h2 id="m-feed" style={{ fontSize: 16, fontWeight: 600 }}>
-              Friends' activity
+              Friends’ activity
             </h2>
             <HudLabel>// Feed</HudLabel>
           </div>
@@ -259,7 +259,7 @@ function MobileHome() {
 
       <section aria-labelledby="m-today" className={s.panel} style={{ padding: '18px 20px 6px', gap: 0 }}>
         <h2 id="m-today" className="lbl" style={{ margin: '0 0 10px' }}>
-          Today
+          // Right now
         </h2>
         {freeRows(free).map(([label, value]) => (
           <div key={label} className={s.row}>
@@ -273,7 +273,7 @@ function MobileHome() {
         </div>
         {free.crateNext && (
           <div className={s.row}>
-            <span style={{ color: 'var(--text-2)' }}>Next case in</span>
+            <span style={{ color: 'var(--text-2)' }}>New case of the day in</span>
             <span className="mono">{free.crateNext}</span>
           </div>
         )}
@@ -290,7 +290,7 @@ function MobileHome() {
         </div>
         <div className="hscroll stagger-list" style={{ display: 'flex', gap: 12, overflowX: 'auto', margin: '0 -20px', padding: '0 20px' }}>
           {(crates ?? []).slice(0, 4).map((c) => (
-            <CaseTile key={c.id} crate={c} variant="scroll" free={false} />
+            <CaseTile key={c.id} crate={c} variant="scroll" free={c.id === free.crateId && free.ready} />
           ))}
         </div>
       </section>

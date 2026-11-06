@@ -6,7 +6,8 @@ import { SEARCH_MIN_CHARS, SkinSearchField } from '../components/items/SkinSearc
 import { OddsStrip } from '../components/opening/opening';
 import { Chip } from '../components/ui/fields';
 import { EmptyState } from '../components/ui/primitives';
-import { useCaseFinder, useConfig, useCrates, useMe } from '../lib/queries';
+import { formatCredits } from '../lib/format';
+import { useCaseFinder, useConfig, useCrates, useEconomyText, useMe } from '../lib/queries';
 import { useDebounced } from '../lib/useDebounced';
 import { useIsMobile } from '../lib/useMediaQuery';
 import type { CrateSummary } from '../../../shared/api';
@@ -32,7 +33,7 @@ export function Cases() {
   const [filter, setFilter] = useState<Filter>('all');
   const { data: crates } = useCrates();
   const { data: config } = useConfig();
-  const price = (config?.cratePrice ?? 250).toLocaleString('en-US');
+  const price = formatCredits(useEconomyText().price);
   const { data: me } = useMe();
   const freeAvailable = Boolean(me?.freeCase.available);
 
@@ -88,7 +89,7 @@ export function Cases() {
       <PageHeader
         label="// Cases"
         title="Cases"
-        sub={mobile ? `${price} CR each, same odds everywhere.` : `Every case costs ${price} CR and shares the same odds. Inside a rarity, every skin is equally likely.`}
+        sub={`Every case costs ${price} CR and shares the same odds. Inside a rarity, every skin is equally likely.`}
         right={mobile ? undefined : chips}
       />
       {config && <OddsStrip odds={config.odds} mobile={mobile} />}

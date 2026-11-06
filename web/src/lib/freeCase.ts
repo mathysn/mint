@@ -5,9 +5,9 @@ import { countdown } from './format';
 import { keys, useNow } from './queries';
 
 /**
- * The free case stack as sent by the server: how many are ready ("3/5") and the time left until the
+ * The free case stack as sent by the server: how many are ready ("3 / 5") and the time left until the
  * next one while it isn't full. Asks the server again when the next one is due, and when the case
- * of the day moves on (so an open tab never keeps the old case as "Free today").
+ * of the day moves on (so an open tab never keeps the old case as "Free now").
  */
 export function useFreeCase(freeCase: FreeCase | undefined) {
   const nextAt = freeCase?.nextAt ? new Date(freeCase.nextAt) : null;
@@ -33,8 +33,8 @@ export function useFreeCase(freeCase: FreeCase | undefined) {
     ready: Boolean(freeCase?.available),
     count,
     max,
-    /** "3/5"; just "6" when staff bonus cases take it above the stack. */
-    stock: freeCase ? (count > max ? String(count) : `${count}/${max}`) : '—',
+    /** "3 / 5"; just "6" when staff bonus cases take it above the stack. */
+    stock: freeCase ? (count > max ? String(count) : `${count} / ${max}`) : '—',
     /** Countdown to the next free case; null when the stack is full. */
     next: nextAt ? countdown(nextAt, now) : null,
     crateId: freeCase?.crateId ?? null,

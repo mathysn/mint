@@ -90,7 +90,7 @@ describe('players', () => {
     const vex = await newAccount('vex');
     const base = { skinId: 'm2', wear: 'FT', stattrak: false };
     expect((await post(admin.client, `/admin/players/${vex.user.id}/grant/quote`, { ...base, float: 0.5 })).body.error).toBe('FT floats go from 0.15 to 0.38. Pick another wear or change the float.');
-    expect((await post(admin.client, `/admin/players/${vex.user.id}/grant/quote`, { ...base, wear: 'BS', float: 0.9 })).body.error).toBe("This skin's floats go from 0.00 to 0.80.");
+    expect((await post(admin.client, `/admin/players/${vex.user.id}/grant/quote`, { ...base, wear: 'BS', float: 0.9 })).body.error).toBe("This skin’s floats go from 0.00 to 0.80.");
     expect((await post(admin.client, `/admin/players/${vex.user.id}/grant/quote`, { ...base, float: 2 })).body.error).toBe('Type a float between 0 and 1.');
     const quote = (await post(admin.client, `/admin/players/${vex.user.id}/grant/quote`, { ...base, float: 0.2381 })).body;
     expect(quote).toMatchObject({ error: null, value: 30, inventoryBefore: 0, inventoryAfter: 30 });
@@ -114,7 +114,7 @@ describe('players', () => {
     expect((await post(admin.client, `/admin/players/${vex.user.id}/free-case/reset`, { reason: 'outage' })).body.toast).toBe('Refilled vex’s free cases · logged');
     expect((await db().select().from(users).where(eq(users.id, vex.user.id)))[0]!.freeCaseAnchor).toBeNull();
     expect((await vex.client.json('/me')).body.freeCase).toMatchObject({ count: 5, nextAt: null });
-    const [entry] = await db().select().from(adminLog).where(eq(adminLog.action, 'player.free_case'));
+    const [entry] = await db().select().from(adminLog).where(eq(adminLog.action, 'player.refill_free_cases'));
     expect(entry).toMatchObject({ change: 'free cases refilled', after: { 'free cases': '5/5 (full)' } });
     expect((entry!.before as Record<string, string>)['free cases']).toMatch(/^2\/5 · next /);
     expect((await post(admin.client, `/admin/players/${vex.user.id}/sign-out`, { reason: 'account shared' })).body.toast).toBe('Signed vex out of 1 session · logged');
@@ -191,7 +191,7 @@ describe('players', () => {
     expect((await post(admin.client, '/admin/guests/delete', { ids: [...ids, vex.user.id], reason: 'spam' })).status).toBe(409);
     const res = await post(admin.client, '/admin/guests/delete', { ids, reason: 'spam' });
     expect(res.body.toast).toBe('Deleted 2 guests · logged');
-    expect(await lastLog()).toMatchObject({ action: 'guests.delete', change: '2 deleted', before: { balance: '2,000 CR' } });
+    expect(await lastLog()).toMatchObject({ action: 'player.delete_guests', change: '2 deleted', before: { balance: '2,000 CR' } });
     expect((await a.json('/me')).status).toBe(401);
   });
 
@@ -216,14 +216,14 @@ describe('catalog', () => {
     const today = catalog.caseOfDay.id as string;
     const other = today === 'crate-a' ? 'crate-b' : 'crate-a';
     const blocked = await post(admin.client, `/admin/catalog/cases/${today}/active`, { value: false, reason: 'broken images' });
-    expect(blocked.body.error.message).toBe('It’s today’s case of the day. Pick another case of the day first, then turn it off.');
+    expect(blocked.body.error.message).toBe('It’s the case of the day right now. Pick another case of the day first, then turn it off.');
     const off = await post(admin.client, `/admin/catalog/cases/${other}/active`, { value: false, reason: 'broken images' });
     expect(off.body.toast).toMatch(/^Turned off (Alpha|Beta) Case · logged$/);
     expect((await admin.client.json('/admin/catalog')).body.caseOfDay.id).toBe(today);
     expect((await post(admin.client, '/admin/catalog/case-of-day', { crateId: other, reason: 'rotation' })).body.error.message).toBe('Cases that are off can’t be picked.');
     await post(admin.client, `/admin/catalog/cases/${other}/active`, { value: true, reason: 'fixed' });
     const picked = await post(admin.client, '/admin/catalog/case-of-day', { crateId: other, reason: 'weekly rotation' });
-    expect(picked.body.toast).toMatch(/is the case of the day · logged$/);
+    expect(picked.body.toast).toMatch(/^Made (Alpha|Beta) Case the case of the day · logged$/);
     const player = await newAccount('vex');
     expect((await player.client.json('/me')).body.freeCase.crateId).toBe(other);
     const newBadge = await post(admin.client, `/admin/catalog/cases/crate-a/new`, { value: true, reason: 'launch' });
@@ -271,7 +271,7 @@ describe('reads', () => {
     const crate = await ok('/admin/catalog/cases/crate-a');
     expect(crate.groups.map((g: { tier: string }) => g.tier)).toEqual(['covert', 'classified', 'restricted', 'milspec', 'gold']);
     const log = await ok('/admin/log?range=all&action=credits.,player.');
-    expect(log.rows.map((r: { action: string }) => r.action)).toEqual(['player.note', 'credits.add']);
+    expect(log.rows.map((r: { action: string }) => r.action)).toEqual(['player.add_note', 'player.add_credits']);
     const csv = await ok('/admin/log.csv?range=all');
     expect(csv.split('\r\n')[0]).toBe('id,time_utc,staff,action,target_type,target_id,target,change,reason,before,after,details');
     await ok('/admin/me');

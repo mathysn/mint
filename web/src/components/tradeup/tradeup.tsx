@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Item, Tier, TradeUpOutcome } from '../../../../shared/api';
-import { formatFloat } from '../../lib/format';
+import { formatFloat, formatPct } from '../../lib/format';
 import { RARITY, finishLabel, fullName } from '../../lib/rarity';
 import { SkinArt } from '../items/items';
 import { Halo } from '../ui/primitives';
@@ -78,7 +78,7 @@ export function ContractPick({ item, on, disabled, mobile, onToggle }: { item: I
     ? item.status === 'listed'
       ? 'Listed'
       : 'In a trade'
-    : `${item.stattrak ? 'ST ' : ''}${item.wear && item.float !== null ? `${item.wear.code} ${formatFloat(item.float, 4)}` : 'Vanilla'}`;
+    : `${item.stattrak ? 'ST™ ' : ''}${item.wear && item.float !== null ? `${item.wear.code} ${formatFloat(item.float, 4)}` : 'Vanilla'}`;
   return (
     <button
       type="button"
@@ -124,7 +124,7 @@ export function ContractPick({ item, on, disabled, mobile, onToggle }: { item: I
 export function OutcomeRow({ outcome, mobile }: { outcome: TradeUpOutcome; mobile?: boolean }) {
   const rarity = RARITY[outcome.skin.tier];
   const meta = `would land ${outcome.wear.code} ${formatFloat(outcome.float, 4)}`;
-  const pct = `${outcome.pct.toFixed(1)}%`;
+  const pct = formatPct(outcome.pct);
   const album = outcome.albumGain && (
     <span className="lbl" style={{ fontSize: 8, color: 'var(--text)' }}>
       Album +1

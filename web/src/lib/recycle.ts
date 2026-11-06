@@ -21,7 +21,7 @@ export function useRecycle(onDone?: (result: RecycleResult) => void) {
     },
     onError: (error) => {
       refresh();
-      toast(error instanceof ApiRequestError ? error.message : 'Could not recycle.', { error: true });
+      toast(error instanceof ApiRequestError ? error.message : 'Couldn’t recycle. Try again.', { error: true });
     },
   });
 }

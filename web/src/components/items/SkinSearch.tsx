@@ -157,7 +157,7 @@ export function SkinSearchField<S extends { skin: SkinCard }>({
         {panel.mounted && (
           // mousedown would blur the field and close the panel before the click lands.
           <div id={listId} role="listbox" aria-label="Suggestions" className={f.panel} data-closing={panel.closing || undefined} onMouseDown={(e) => e.preventDefault()}>
-            {list.length === 0 && <div className={f.empty}>No skin matches “{value.trim()}”</div>}
+            {list.length === 0 && <div className={f.empty}>No skin matches “{value.trim()}”.</div>}
             {list.map((s, i) => {
               const rarity = RARITY[s.skin.tier];
               return (

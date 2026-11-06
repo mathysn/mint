@@ -93,7 +93,10 @@ export function Avatar({ label, url, size = 32, guest, fontSize }: { label: stri
   );
 }
 
-export const Dot = ({ label }: { label?: string }) => <span className={s.dot} aria-label={label} aria-hidden={label ? undefined : true} role={label ? 'img' : undefined} />;
+/** Urgent dot (DESIGN.md: a value to watch gets the dot, never a red number). One accessible name everywhere. */
+export const Dot = ({ label = 'Needs review', size }: { label?: string; size?: number }) => (
+  <span className={s.dot} aria-label={label} role="img" style={size ? { width: size, height: size } : undefined} />
+);
 
 export function Chip({ children, style: variant, icon }: { children: ReactNode; style: 'outline' | 'dashed' | 'solid' | 'ban' | 'bare' | 'flag'; icon?: ReactNode }) {
   const cls = { outline: s.chipOutline, flag: s.chipOutline, dashed: s.chipDashed, solid: s.chipSolid, ban: s.chipBan, bare: s.chipBare }[variant];
@@ -311,7 +314,7 @@ export function InlineConfirm({
         <>
           <label className={s.reasonInline}>
             <span>Reason</span>
-            <input ref={input} className={s.field} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Shown in the admin log" onKeyDown={(e) => e.key === 'Enter' && reason.trim() && !busy && void go()} />
+            <input ref={input} className={s.field} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason, shown in the admin log" onKeyDown={(e) => e.key === 'Enter' && reason.trim() && !busy && void go()} />
           </label>
           <Btn variant="quiet" onClick={onCancel}>
             Cancel
@@ -319,6 +322,7 @@ export function InlineConfirm({
           <Btn variant={danger ? 'danger' : 'primary'} onClick={() => void go()} disabled={!reason.trim() || busy}>
             {button}
           </Btn>
+          <Logged />
         </>
       )}
     </div>

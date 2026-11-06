@@ -30,6 +30,8 @@ export type ErrorCode =
   | 'balance_too_low'
   | 'not_stuck'
   | 'confirm_name_mismatch'
+  /** 502: an outside service (GitHub for the catalog, Discord) failed or answered something unusable. */
+  | 'upstream_failed'
   | 'internal';
 
 /** A banned player: the game is read-only for them. Sent with 403 `banned` and in `Me`. */
@@ -37,7 +39,7 @@ export interface BanInfo {
   /** ISO end of the ban; null = permanent. */
   until: string | null;
   reason: string;
-  /** "You’re banned until Oct 30, 14:12." or "You’re banned from Mint." */
+  /** "You’re banned until Oct 30, 14:12 UTC." or "You’re banned from Mint." */
   message: string;
 }
 
@@ -51,7 +53,7 @@ export interface FreeCase {
   max: number;
   /** ISO date of the next free case from the timer; null when the stack is full. */
   nextAt: string | null;
-  /** Today's free case. */
+  /** The case free cases open right now (case of the day). */
   crateId: string | null;
   /** ISO date when the case of the day moves to the next case; null while staff hold it in place. */
   crateChangesAt: string | null;
@@ -218,11 +220,17 @@ export interface Config {
   /** Economy numbers the game quotes in its copy (staff can change them). */
   freeCaseMinutes: number;
   freeCaseMax: number;
+  /** The case of the day moves to the next case every N hours. */
+  caseRotationHours: number;
   marketFeePct: number;
   bidStepPct: number;
   antiSnipeMinutes: number;
   tradeExpiryDays: number[];
   tradeupSize: number;
+  /** "Recent sales": average and curve over this many days. */
+  salesWindowDays: number;
+  /** Ended listings and bids stay in My listings / My bids this long. */
+  marketEndedVisibleDays: number;
 }
 
 /** Search suggestion: a skin the viewer owns (inventory) or that is listed (market). */
@@ -1125,6 +1133,8 @@ export interface EconomyHistoryRow {
   at: string;
   staff: string;
   key: string;
+  /** "Case price", "Odds Mil-Spec" (the key for a setting that no longer exists). */
+  label: string;
   change: string;
   reason: string;
 }

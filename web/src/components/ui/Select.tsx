@@ -277,7 +277,7 @@ export function Select<T extends string>({
           tabIndex={searchable ? undefined : -1}
           onKeyDown={searchable ? undefined : onListKey}
         >
-          {shown.length === 0 && <div className={s.empty}>No match</div>}
+          {shown.length === 0 && <div className={s.empty}>No matches.</div>}
           {shown.map((o, i) => (
             <div
               key={o.value}

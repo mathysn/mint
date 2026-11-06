@@ -37,6 +37,7 @@ import { wearOf } from '../game/wear.js';
 import { ago, cr, fmt, inTime, plural, serial, utcDay } from '../format.js';
 import { banInfo, fail, type UserRow } from '../http.js';
 import { avatarUrl } from '../services/accounts.js';
+import { MONITORS } from '../game/economy.js';
 import { itemValueExpr } from '../services/items.js';
 import { heldInBids } from '../services/market.js';
 import { playerStats } from '../services/social.js';
@@ -45,9 +46,10 @@ import { stuckSql } from './stuck.js';
 
 const PAGE = 50;
 const ONLINE_MS = 5 * 60 * 1000;
-/** Signals: an account younger than this, or this many accounts on one address, gets the urgent dot. */
-const NEW_ACCOUNT_DAYS = 7;
-const SAME_IP_ALERT = 2;
+/** Signals get the urgent dot from the same thresholds as the flag monitors (docs/ADMIN.md §9.3). */
+const NEW_ACCOUNT_DAYS = MONITORS.newAccount.maxAgeDays;
+/** Other accounts on the address: the monitor counts this one too. */
+const SAME_IP_ALERT = MONITORS.sameIp.accounts - 1;
 
 export const bannedSql = sql<boolean>`("users"."banned_at" IS NOT NULL AND ("users"."ban_until" IS NULL OR "users"."ban_until" > now()))`;
 // Correlated subqueries name the outer table in full (Drizzle drops it in single-table queries).
@@ -277,7 +279,8 @@ async function namesOf(ids: string[]): Promise<Map<string, string>> {
   return new Map(rows.map((r) => [r.id, labelOf(r.id, r.username, r.deletedAt)]));
 }
 
-const TYPE_LABEL: Record<string, string> = { starting_balance: 'start_balance' };
+/** Ledger types shown under a shorter name (mockups); the ledger search accepts both names. */
+export const TYPE_LABEL: Record<string, string> = { starting_balance: 'start_balance' };
 
 async function ledgerTab(user: UserRow): Promise<AdminLedgerRow[]> {
   const rows = await db().select().from(ledger).where(eq(ledger.userId, user.id)).orderBy(desc(ledger.id)).limit(200);

@@ -1,10 +1,11 @@
 import { Link, Navigate } from 'react-router';
 import type { GuestSummary } from '../../../shared/api';
 import { Logo } from '../components/layout/AppShell';
+import { SHOWCASE_SIZE } from '../components/social/showcase';
 import { LegalFooter } from '../components/layout/LegalFooter';
 import { Button } from '../components/ui/Button';
 import { Halo, HudCorners, HudLabel, Spinner } from '../components/ui/primitives';
-import { formatCredits } from '../lib/format';
+import { formatCredits, formatFloat } from '../lib/format';
 import { useConfig, useEconomyText, useGuestSummary, useMe } from '../lib/queries';
 import { RARITY, finishLabel, fullName } from '../lib/rarity';
 import { useIsMobile } from '../lib/useMediaQuery';
@@ -14,7 +15,7 @@ import s from './screens.module.css';
 const UNLOCKS = [
   { title: 'Friends and trades', text: 'Add friends by name and swap skins with them.', icon: 'M4 8h15l-4-4M20 16H5l4 4' },
   { title: 'The market', text: 'Bid on other players’ skins and sell yours.', icon: 'M3 12V3h9l9 9-9 9zM7 7h1v1H7z' },
-  { title: 'Showcase and leaderboard', text: 'Pick 5 items for your profile and climb the rankings.', icon: 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7' },
+  { title: 'Showcase and leaderboard', text: `Pick ${SHOWCASE_SIZE} items for your profile and climb the rankings.`, icon: 'M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7' },
 ];
 
 const PRIVACY = [
@@ -29,13 +30,13 @@ const CHECK = 'M5 12.5l4.5 4.5L19 7.5';
 function summaryLine(g: GuestSummary, opts: { cases?: boolean } = {}) {
   const parts = [`${formatCredits(g.balance)} CR`];
   if (opts.cases) parts.push(`${g.casesOpened} ${g.casesOpened === 1 ? 'case' : 'cases'} opened`);
-  if (g.bestAlbum) parts.push(`${g.bestAlbum.crateName.replace(/ Case$/, '')} ${g.bestAlbum.owned}/${g.bestAlbum.total}`);
+  if (g.bestAlbum) parts.push(`${g.bestAlbum.crateName.replace(/ Case$/, '')} ${g.bestAlbum.owned} / ${g.bestAlbum.total}`);
   return parts.join(' · ');
 }
 
 function MiniItem({ item, mobile }: { item: GuestSummary['recentItems'][number]; mobile?: boolean }) {
   const rarity = RARITY[item.skin.tier];
-  const meta = [item.stattrak ? 'ST™' : null, item.wear?.code ?? 'Vanilla', item.float !== null ? item.float.toFixed(4) : null].filter(Boolean).join(' · ');
+  const meta = [item.stattrak ? 'ST™' : null, item.wear?.code ?? 'Vanilla', item.float !== null ? formatFloat(item.float, 4) : null].filter(Boolean).join(' · ');
   return (
     <div className={s.mini}>
       <span className={s.miniArt} style={mobile ? { height: 52 } : undefined}>
@@ -77,7 +78,7 @@ export function Connect() {
   const progressCard = g && g.casesOpened > 0 && (
     <div className={s.panel} style={{ padding: mobile ? 14 : 22, gap: mobile ? 12 : 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <HudLabel style={mobile ? { fontSize: 10 } : undefined}>{mobile ? 'Guest progress' : 'Your guest progress'}</HudLabel>
+        <HudLabel style={mobile ? { fontSize: 10 } : undefined}>Your guest progress</HudLabel>
         <span className="mono" style={{ fontSize: mobile ? 11 : 12, color: 'var(--text-3)' }}>
           Not carried over
         </span>
@@ -116,14 +117,14 @@ export function Connect() {
         </dl>
       )}
       <p style={{ fontSize: mobile ? 12 : 13, lineHeight: 1.5, color: 'var(--text-2)' }}>
-        Signing in starts a fresh collection. This guest and everything on it are deleted.
+        Signing in starts a fresh collection. Guest progress isn’t carried over: this guest is deleted.
       </p>
     </div>
   );
 
   const unlocks = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <HudLabel style={{ paddingBottom: mobile ? 6 : 10, fontSize: mobile ? 10 : undefined }}>{mobile ? 'Also unlocks' : '// Also unlocks'}</HudLabel>
+      <HudLabel style={{ paddingBottom: mobile ? 6 : 10, fontSize: mobile ? 10 : undefined }}>// Also unlocks</HudLabel>
       {UNLOCKS.map((u) => (
         <div key={u.title} style={{ display: 'flex', alignItems: 'center', gap: mobile ? 12 : 14, padding: mobile ? '11px 0' : '14px 0', borderTop: '1px solid var(--separator)' }}>
           <svg aria-hidden="true" width={mobile ? 18 : 20} height={mobile ? 18 : 20} viewBox="0 0 24 24" style={{ flex: 'none', fill: 'none', stroke: 'var(--text-2)', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
@@ -155,6 +156,7 @@ export function Connect() {
         <Button size={56} bevel={14} block onClick={() => void signIn.start()} disabled={disabled}>
           Continue with Discord
         </Button>
+        {disabled && <p style={{ fontSize: 13, color: 'var(--error)' }}>Discord sign-in isn’t set up on this deployment.</p>}
         {keepPlaying}
       </div>
     ) : (
@@ -166,7 +168,7 @@ export function Connect() {
         <Button size={56} bevel={14} block onClick={() => void signIn.start()} disabled={disabled}>
           Continue with Discord
         </Button>
-        {disabled && <p style={{ fontSize: 13, color: 'var(--error)' }}>Discord sign-in is not set up on this deployment.</p>}
+        {disabled && <p style={{ fontSize: 13, color: 'var(--error)' }}>Discord sign-in isn’t set up on this deployment.</p>}
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
           {PRIVACY.map((p) => (
             <li key={p} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.45, color: 'var(--text-2)' }}>
@@ -179,7 +181,7 @@ export function Connect() {
         </ul>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 18, borderTop: '1px solid var(--separator)' }}>
           <HudLabel style={{ fontSize: 10 }}>Inside the Discord activity</HudLabel>
-          <span style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text-2)' }}>Discord asks you once when you launch Mint, then you're in. No separate step.</span>
+          <span style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text-2)' }}>Discord asks you once when you launch Mint, then you’re in. No separate step.</span>
         </div>
         {keepPlaying}
       </div>
@@ -243,10 +245,10 @@ export function Connect() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {!mobile && <HudLabel>Not signed in</HudLabel>}
           <h2 className={mobile ? undefined : s.cardTitle} style={mobile ? { fontSize: 18, fontWeight: 600 } : undefined}>
-            Discord didn't confirm.
+            Discord didn’t confirm.
           </h2>
           <p style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--text-2)' }}>
-            {mobile ? 'Nothing is lost. Your guest progress is still here.' : 'The window was closed or the request was declined. Nothing is lost: your guest progress is still here.'}
+            The window was closed or the request was declined. Nothing is lost: your guest progress is still here.
           </p>
         </div>
         <Button size={52} bevel={mobile ? 'none' : 12} block onClick={() => void signIn.start()}>
@@ -273,7 +275,7 @@ export function Connect() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <HudLabel>// Sign in with Discord</HudLabel>
               <h1 style={{ fontSize: 36, lineHeight: 1.02, fontWeight: 600, letterSpacing: '-0.03em' }}>Start your collection.</h1>
-              <p style={{ fontSize: 15, lineHeight: 1.5, color: 'var(--text-2)' }}>Your own collection, {start} to start, on every device. Guest pulls stay with the guest.</p>
+              <p style={{ fontSize: 15, lineHeight: 1.5, color: 'var(--text-2)' }}>Your own collection: {start} to start and a free case every {economy.freeLong} (up to {economy.freeMax} saved), on every device. Guest progress isn’t carried over.</p>
             </div>
             {progressCard}
             {unlocks}
@@ -306,13 +308,13 @@ export function Connect() {
               Start your collection.
             </h1>
             <p style={{ maxWidth: 480, fontSize: 16, lineHeight: 1.55, color: 'var(--text-2)' }}>
-              Your Discord account gets its own collection: {start} to start and a free case every {economy.freeLong} (up to {economy.freeMax} saved), on every device and inside the Discord activity. Guest pulls stay with the guest, so free cases stay fair.
+              Your Discord account gets its own collection: {start} to start and a free case every {economy.freeLong} (up to {economy.freeMax} saved), on every device and inside the Discord activity. Guest progress isn’t carried over, so free cases stay fair.
             </p>
           </div>
           {progressCard}
           {unlocks}
         </section>
-        <aside aria-live="polite" className={s.connectCard} style={saved ? { background: 'radial-gradient(ellipse at 30% 0%, rgba(236,237,239,0.06), rgba(14,16,19,0) 60%), var(--surface)' } : undefined}>
+        <aside aria-live="polite" className={s.connectCard} style={saved ? { background: 'radial-gradient(ellipse at 30% 0%, color-mix(in srgb, var(--text) 6%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 60%), var(--surface)' } : undefined}>
           <HudCorners size={18} inset={12} />
           {states[signIn.state]}
         </aside>

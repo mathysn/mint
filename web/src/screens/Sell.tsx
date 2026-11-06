@@ -18,7 +18,6 @@ import { useDebounced } from '../lib/useDebounced';
 import { useIsMobile } from '../lib/useMediaQuery';
 
 const CR = (n: number) => `${formatCredits(n)} CR`;
-const HINT: Record<number, string> = { 24: 'Ends tomorrow', 48: 'More time for bids' };
 const wearText = (item: Item, sep = ' · ') => (item.wear && item.float !== null ? `${item.wear.code}${sep}${formatFloat(item.float, 4)}` : 'Vanilla');
 
 /** "List on market": one item, or a queue of selected items ("1 of 3"), each with its own prices. */
@@ -34,7 +33,7 @@ export function Sell() {
     return (
       <Page gap={28} back={{ to: '/market', label: 'Market' }} mobilePadding="8px 20px 32px">
         <h1 style={{ fontSize: mobile ? 28 : 40, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>List on market</h1>
-        <AccountRequired icon={MARKET_ICON} title="Sell on the market" text="Sign in with Discord to put your items up for auction and bid on other players’ skins." />
+        <AccountRequired icon={MARKET_ICON} title="List on market" text="Sign in with Discord to put your items up for auction and bid on other players’ skins." />
       </Page>
     );
   }
@@ -57,12 +56,12 @@ function PickItem() {
       )}
       <header style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <h1 style={{ fontSize: mobile ? 28 : 40, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>List on market</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-2)' }}>Pick the item to put up for auction. Listed and traded items are locked.</p>
+        <p style={{ fontSize: 14, color: 'var(--text-2)' }}>Pick the item to put up for auction. Listed items and items in a trade are locked.</p>
       </header>
       {data && data.items.length === 0 && (
         <EmptyState title="Your inventory is empty">
           <Button variant="secondary" size={44} to="/cases">
-            Open a case
+            Browse cases
           </Button>
         </EmptyState>
       )}
@@ -83,7 +82,7 @@ function SellForm({ itemId, position, onNext }: { itemId: string; position: { at
   if (error) {
     return (
       <Page gap={24} top={32} back={{ to: '/inventory', label: 'Inventory' }}>
-        <EmptyState title="This item can't be listed">
+        <EmptyState title="This item can’t be listed">
           <Button variant="secondary" size={44} to="/inventory">
             Back to inventory
           </Button>
@@ -120,7 +119,7 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
     setProblem('');
     create.mutate(
       { itemId: item.id, startPrice: startN, buyNowPrice: buyN, durationHours: duration },
-      { onSuccess: () => setListed({ start: startN, buy: buyN, hours: duration }), onError: (e) => setProblem(errorText(e, 'Could not list it.')) },
+      { onSuccess: () => setListed({ start: startN, buy: buyN, hours: duration }), onError: (e) => setProblem(errorText(e, 'Couldn’t list it. Try again.')) },
     );
   };
 
@@ -158,10 +157,10 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
       </h2>
       {quote && (
         <>
-          {row(mobile ? 'At the starting price' : 'Sold at the starting price', CR(quote.atStart))}
+          {row('Sold at the starting price', CR(quote.atStart))}
           {quote.atBuyNow !== null && row('Bought now', CR(quote.atBuyNow))}
-          {row(mobile ? `${economy.fee} fee from the final price` : `${economy.fee} market fee, taken from the final price`, `−${CR(quote.feeAtStart)}`, true)}
-          {row(mobile ? 'Recycling instead' : 'Recycling it instead', CR(quote.recycleValue), true)}
+          {row(`${economy.fee} fee, taken from the final price`, `−${CR(quote.feeAtStart)}`, true)}
+          {row('Recycling it instead', CR(quote.recycleValue), true)}
         </>
       )}
     </section>
@@ -180,7 +179,7 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
               <span className="mono" style={{ fontSize: mobile ? 16 : 18, fontWeight: on && mobile ? 600 : 500 }}>
                 {h} h
               </span>
-              {!mobile && <span style={{ fontSize: 12, opacity: 0.75 }}>{HINT[h] ?? `Ends in ${h} hours`}</span>}
+              {!mobile && <span style={{ fontSize: 12, opacity: 0.75 }}>{`Ends in ${h} hours`}</span>}
             </label>
           );
         })}
@@ -192,7 +191,7 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
     <label style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <span style={{ fontSize: 15, fontWeight: 600 }}>Starting price</span>
       {field(start, setStart)}
-      <span style={{ fontSize: mobile ? 12 : 13, color: 'var(--text-2)' }}>{mobile ? `Each bid must beat the last by ${economy.bidStep}.` : `Each new bid has to beat the previous one by at least ${economy.bidStep}.`}</span>
+      <span style={{ fontSize: mobile ? 12 : 13, color: 'var(--text-2)' }}>{`Each bid must beat the last one by at least ${economy.bidStep}.`}</span>
     </label>
   );
 
@@ -282,7 +281,7 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
             <span style={{ fontSize: 16, fontWeight: 600 }}>{finishLabel(item.skin)}</span>
             <span className="mono" style={{ fontSize: 11, color: 'var(--text-2)' }}>
               {wearText(item, ' ')}
-              {info.sales.average !== null ? ` · avg sale ${formatCredits(info.sales.average)} CR` : ''}
+              {info.sales.average !== null ? ` · average sale ${formatCredits(info.sales.average)} CR` : ''}
             </span>
           </span>
           <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 2, background: rarity.color }} />
@@ -298,6 +297,9 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
                 {n}
               </p>
             ))}
+            <p style={{ fontSize: 12, color: 'var(--text-3)' }}>
+              Locked while listed: no trades, recycling or trade-ups. Active listings: {info.activeListings} of {info.maxListings}.
+            </p>
             <div style={{ position: 'fixed', left: 0, right: 0, bottom: 'var(--tabbar)', zIndex: 5, minHeight: 76, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '10px 16px', background: 'var(--page)', borderTop: '1px solid var(--border)' }}>
               <Button size={48} block onClick={submit} disabled={invalid || create.isPending} style={{ fontSize: 16 }}>
                 List for {duration} h
@@ -335,7 +337,7 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
             </div>
             <dl style={{ margin: 0, display: 'flex', flexDirection: 'column' }}>
               {[
-                ['Average sale, 30 d', info.sales.average !== null ? CR(info.sales.average) : '—'],
+                [`Average sale, ${economy.salesWindow}`, info.sales.average !== null ? CR(info.sales.average) : '—'],
                 ['Last sale', info.sales.last !== null ? CR(info.sales.last) : '—'],
                 ['Recycle value', CR(item.recycleValue)],
               ].map(([k, v]) => (
@@ -377,7 +379,7 @@ function Form({ info, back, position, onNext, mobile }: { info: SellInfo; back: 
                   Cancel
                 </Link>
                 <span style={{ flexBasis: '100%', fontSize: 12, color: 'var(--text-3)' }}>
-                  Locked while listed: no trades, recycling or contracts. Active listings: {info.activeListings} of {info.maxListings}.
+                  Locked while listed: no trades, recycling or trade-ups. Active listings: {info.activeListings} of {info.maxListings}.
                 </span>
               </div>
             </form>

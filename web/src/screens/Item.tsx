@@ -11,7 +11,7 @@ import { ConfirmInline } from '../components/ui/ConfirmInline';
 import { EmptyState } from '../components/ui/primitives';
 import { formatCredits, formatFloat, longDate } from '../lib/format';
 import { salesLabel } from '../lib/market';
-import { useItem, useMe } from '../lib/queries';
+import { useEconomyText, useItem, useMe } from '../lib/queries';
 import { finishLabel, fullName } from '../lib/rarity';
 import { useRecycle } from '../lib/recycle';
 import { useProfile, useSetShowcase } from '../lib/social';
@@ -19,7 +19,7 @@ import { useIsMobile } from '../lib/useMediaQuery';
 
 type Back = { to: string; label: string };
 
-const STATUS: Record<ItemDetail['status'], string> = { available: 'Available', listed: 'Listed', in_trade: 'In trade', destroyed: 'Recycled' };
+const STATUS: Record<ItemDetail['status'], string> = { available: 'Available', listed: 'Listed', in_trade: 'In a trade', destroyed: 'Recycled' };
 
 function facts(item: ItemDetail) {
   const list = [
@@ -43,7 +43,7 @@ function formula(item: ItemDetail) {
 /** "This skin drops between 0.00 and 0.70." */
 const range = (item: ItemDetail) => [item.minFloat ?? 0, item.maxFloat ?? 1].map((f) => f.toFixed(2));
 
-/** Add to / remove from your showcase (5 items; adding goes to the first free slot). */
+/** Add to / remove from your showcase (SHOWCASE_SIZE items; adding goes to the first free slot). */
 function useShowcaseToggle(item: ItemDetail | undefined) {
   const { data: me } = useMe();
   const own = Boolean(item?.owner.isYou && me && !me.isGuest && me.username);
@@ -90,7 +90,7 @@ function MoreMenu({ showcase }: { showcase: NonNullable<ReturnType<typeof useSho
             }}
             style={{ width: '100%', height: 44, padding: '0 12px', border: 0, background: 'none', color: showcase.full ? 'var(--text-3)' : 'var(--text)', font: 'inherit', fontSize: 14, textAlign: 'left', cursor: 'pointer' }}
           >
-            {showcase.inShowcase ? 'Remove from showcase' : showcase.full ? 'Showcase is full (5)' : 'Add to showcase'}
+            {showcase.inShowcase ? 'Remove from showcase' : showcase.full ? `Showcase is full (${SHOWCASE_SIZE})` : 'Add to showcase'}
           </button>
           <Link
             to={`/trades/new?give=${showcase.itemId}`}
@@ -108,6 +108,7 @@ function MoreMenu({ showcase }: { showcase: NonNullable<ReturnType<typeof useSho
 export function Item() {
   const { id = '' } = useParams();
   const mobile = useIsMobile();
+  const economy = useEconomyText();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { back?: Back; from?: string } | null;
@@ -121,9 +122,9 @@ export function Item() {
   if (error) {
     return (
       <Page gap={24} top={32} back={back}>
-        <EmptyState title="This item is not available">
+        <EmptyState title="This item isn’t available">
           <Button variant="secondary" size={44} to={back.to}>
-            Back
+            Back to {back.label}
           </Button>
         </EmptyState>
       </Page>
@@ -151,7 +152,7 @@ export function Item() {
           Cancel
         </Button>
         <Button size={mobile ? 48 : 44} bevel="none" onClick={confirm} disabled={recycle.isPending}>
-          {mobile ? 'Recycle' : `Recycle for ${value}`}
+          {`Recycle for ${value}`}
         </Button>
       </div>
     </ConfirmInline>
@@ -169,7 +170,7 @@ export function Item() {
     <section aria-labelledby="float-title" style={{ display: 'flex', flexDirection: 'column', gap: mobile ? 10 : 12, padding: mobile ? 16 : 22, border: '1px solid var(--border)', borderRadius: 'var(--radius-panel)', background: 'var(--surface)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
         <h2 id="float-title" className="lbl">
-          Float
+          // Float
         </h2>
         <span className="mono" style={{ fontSize: mobile ? 20 : 26, fontWeight: 500 }}>
           {formatFloat(item.float, 9)}
@@ -177,7 +178,7 @@ export function Item() {
       </div>
       <FloatBar float={item.float} min={item.minFloat} max={item.maxFloat} size={mobile ? 'pageMobile' : 'page'} />
       <p style={{ fontSize: mobile ? 12 : 13, color: 'var(--text-2)' }}>
-        {mobile ? 'Drops' : 'This skin drops'} between <span className="mono">{min}</span> and <span className="mono">{max}</span>.{mobile ? '' : ' The hatched part can never happen.'}
+        This skin drops between <span className="mono">{min}</span> and <span className="mono">{max}</span>. Floats in the hatched part can’t drop.
       </p>
     </section>
   );
@@ -196,10 +197,10 @@ export function Item() {
     <section aria-labelledby="value-title" style={{ display: 'flex', flexDirection: 'column', gap: mobile ? 14 : 18, padding: mobile ? 16 : 22, border: '1px solid var(--border)', borderRadius: 'var(--radius-panel)', background: 'var(--surface)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
         <h2 id="value-title" className="lbl">
-          {mobile ? 'Recent sales · 30 d' : `Recent sales · ${salesLabel(sales)}`}
+          {`// Recent sales · ${salesLabel(sales)}`}
         </h2>
         <span className="mono" style={{ fontSize: mobile ? 11 : 12, color: 'var(--text-3)' }}>
-          {mobile ? `${sales.count} ${sales.count === 1 ? 'sale' : 'sales'}` : '30 days'}
+          {economy.salesWindow}
         </span>
       </div>
       {sales.count > 0 ? (
@@ -207,12 +208,12 @@ export function Item() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
             {stat('Average', `${formatCredits(sales.average ?? 0)} CR`)}
             {stat('Last sale', `${formatCredits(sales.last ?? 0)} CR`)}
-            {!mobile && stat('Sales', formatCredits(sales.count))}
+            {stat('Sales', formatCredits(sales.count))}
           </div>
-          <SalesChart sales={sales} height={mobile ? 80 : 120} label={salesAria(sales, 'Sale prices over the last 30 days')} caption={mobile ? undefined : salesDates(sales)} />
+          <SalesChart sales={sales} height={mobile ? 80 : 120} label={salesAria(sales, `Sale prices over the last ${economy.salesWindow}`)} caption={mobile ? undefined : salesDates(sales)} />
         </>
       ) : (
-        <p style={{ fontSize: mobile ? 13 : 14, color: 'var(--text-2)' }}>No sales of this skin and wear in the last 30 days.</p>
+        <p style={{ fontSize: mobile ? 13 : 14, color: 'var(--text-2)' }}>No sales of this skin and wear in the last {economy.salesWindow}.</p>
       )}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, paddingTop: mobile ? 12 : 16, borderTop: '1px solid var(--separator)' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -256,7 +257,7 @@ export function Item() {
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: item.canList ? 'repeat(2, minmax(0, 1fr))' : '1fr', gap: 10 }}>
                   <Button variant="secondary" size={48} block onClick={ask} disabled={recycle.isPending} style={{ fontSize: 14 }}>
-                    Recycle +{formatCredits(item.recycleValue)}
+                    Recycle +{formatCredits(item.recycleValue)} CR
                   </Button>
                   {item.canList && (
                     <Button size={48} block to={sell} style={{ fontSize: 15 }}>
@@ -308,7 +309,7 @@ export function Item() {
                 {showcase && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                     <Button variant="secondary" size={44} onClick={showcase.toggle} disabled={showcase.full || showcase.pending} style={{ paddingInline: 16 }}>
-                      {showcase.inShowcase ? 'Remove from showcase' : showcase.full ? 'Showcase is full (5)' : 'Add to showcase'}
+                      {showcase.inShowcase ? 'Remove from showcase' : showcase.full ? `Showcase is full (${SHOWCASE_SIZE})` : 'Add to showcase'}
                     </Button>
                     <Button variant="secondary" size={44} to={`/trades/new?give=${item.id}`} style={{ paddingInline: 16 }}>
                       Offer in a trade

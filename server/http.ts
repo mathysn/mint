@@ -53,7 +53,7 @@ export const isBanned = (u: BanFields, now = new Date()) => !!u.bannedAt && (u.b
 
 export function banInfo(u: BanFields, now = new Date()): BanInfo | null {
   if (!isBanned(u, now)) return null;
-  const message = u.banUntil ? `You’re banned until ${utcDateTime(u.banUntil)}.` : 'You’re banned from Mint.';
+  const message = u.banUntil ? `You’re banned until ${utcDateTime(u.banUntil)} UTC.` : 'You’re banned from Mint.';
   return { until: u.banUntil?.toISOString() ?? null, reason: u.banReason ?? '', message };
 }
 

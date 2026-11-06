@@ -89,7 +89,7 @@ function Side({ label, side, mobile, first }: { label: string; side: TradeSideVi
       {empty && <span style={{ fontSize: 13, color: 'var(--text-3)' }}>Nothing</span>}
       {side.credits > 0 && (
         <span className="mono" style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', height: 32, padding: '0 12px', border: '1px dashed var(--border-strong)', borderRadius: 'var(--radius-control)', fontSize: 13 }}>
-          + {formatCredits(side.credits)} CR
+          +{formatCredits(side.credits)} CR
         </span>
       )}
     </div>
@@ -110,7 +110,17 @@ export function OfferCard({ offer, now, mobile, actions }: { offer: TradeOffer; 
         <Avatar name={who} url={offer.counterparty.avatarUrl} size={mobile ? 30 : 32} />
         {mobile ? (
           <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <span style={{ fontSize: 15, fontWeight: 600 }}>{fromYou ? `To ${who}` : who}</span>
+            <span style={{ fontSize: 15 }}>
+              {fromYou ? (
+                <>
+                  <strong>You</strong> <span style={{ color: 'var(--text-2)' }}>offered</span> <strong>{who}</strong>
+                </>
+              ) : (
+                <>
+                  <strong>{who}</strong> <span style={{ color: 'var(--text-2)' }}>offered you a trade</span>
+                </>
+              )}
+            </span>
             <span className="mono" style={{ fontSize: 11, color: 'var(--text-3)' }}>
               {when}
             </span>

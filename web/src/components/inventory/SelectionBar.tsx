@@ -83,14 +83,14 @@ export function SelectionBar({ selected, quote, stale, freshQuote, pending, mobi
     <ConfirmInline
       onCancel={cancel}
       style={mobile ? { display: 'flex', flexDirection: 'column', gap: 10 } : { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}
-      message={<span style={{ fontSize: mobile ? 13 : 14, lineHeight: 1.45 }}>Includes Classified or better. Recycle {selected} {selected === 1 ? 'item' : 'items'} for good?</span>}
+      message={<span style={{ fontSize: mobile ? 13 : 14, lineHeight: 1.45 }}>Recycle {selected} {selected === 1 ? 'item' : 'items'} for {total} CR? Includes Classified or better. {selected === 1 ? 'It is' : 'They are'} destroyed for good.</span>}
     >
       <div style={mobile ? { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 } : { display: 'flex', gap: 12 }}>
         <Button variant="secondary" size={44} onClick={cancel}>
           Cancel
         </Button>
         <Button size={44} bevel="none" onClick={() => onRecycle(true)} disabled={pending}>
-          {mobile ? 'Recycle' : `Recycle for ${total} CR`}
+          {`Recycle for ${total} CR`}
         </Button>
       </div>
     </ConfirmInline>
@@ -123,7 +123,7 @@ export function SelectionBar({ selected, quote, stale, freshQuote, pending, mobi
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <span style={{ fontSize: 15, fontWeight: 600 }}>{lastCount.current} selected</span>
           <span className="mono" style={{ fontSize: 12, color: 'var(--text-2)' }}>
-            ≈ {total} CR
+            {total} CR
           </span>
         </div>
         {confirming ? (
@@ -136,7 +136,7 @@ export function SelectionBar({ selected, quote, stale, freshQuote, pending, mobi
               </Button>
             )}
             <Button size={44} bevel={10} block onClick={() => void recycle()} disabled={pending || checking}>
-              Recycle +{total}
+              Recycle +{total} CR
             </Button>
           </div>
         )}
@@ -176,7 +176,7 @@ export function SelectionBar({ selected, quote, stale, freshQuote, pending, mobi
       </button>
       {active && (
         <span className="mono" style={{ fontSize: 13, color: 'var(--text-2)', animation: 'mint-fade 200ms var(--ease-out) both' }}>
-          ≈ {total} CR
+          {total} CR
         </span>
       )}
       {active && cap && <span style={{ fontSize: 13, color: 'var(--text-3)' }}>First {cap} only (most per recycle)</span>}

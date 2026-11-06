@@ -6,7 +6,7 @@ import { useDebounced } from '../../lib/useDebounced';
 import { useIsMobile } from '../../lib/useMediaQuery';
 import { AdminPage } from '../AdminApp';
 import { ago, cr, num, rowsOf, useAdminAction, usePlayers, utcDay } from '../lib';
-import { Avatar, Btn, CLOSE, EmptyBox, ErrorBox, Header, ListFooter, SEARCH, cx, s } from '../ui';
+import { Avatar, Btn, CLOSE, EmptyBox, ErrorBox, Header, ListFooter, Logged, SEARCH, cx, s } from '../ui';
 
 type Type = 'all' | 'account' | 'guest';
 type Status = 'all' | 'active' | 'banned' | 'flagged';
@@ -180,7 +180,7 @@ function Desktop() {
         label="Players"
         title="Players"
         subMono
-        sub={page ? `${num(page.counts.all)} players · ${num(page.counts.accounts)} accounts · ${num(page.counts.guests)} guests · all times UTC` : 'all times UTC'}
+        sub={page ? `${num(page.counts.all)} players · ${num(page.counts.accounts)} accounts · ${num(page.counts.guests)} guests. All times UTC.` : 'All times UTC.'}
       />
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 12 }}>
         <label className={s.filterSearch} style={{ flex: '1 1 280px', maxWidth: 380 }}>
@@ -191,7 +191,7 @@ function Desktop() {
           <input type="search" className={s.field} value={text} onChange={(e) => setText(e.target.value)} placeholder="Name or Discord ID" />
         </label>
         <Select<Type> label="Type" value={f.type} onChange={(v) => set({ type: v })} options={[{ value: 'all', label: 'All' }, { value: 'account', label: 'Accounts' }, { value: 'guest', label: 'Guests' }]} />
-        <Select<Status> label="Status" value={f.status} onChange={(v) => set({ status: v })} options={[{ value: 'all', label: 'All' }, { value: 'active', label: 'Active' }, { value: 'banned', label: 'Banned' }]} />
+        <Select<Status> label="Status" value={f.status} onChange={(v) => set({ status: v })} options={[{ value: 'all', label: 'All' }, { value: 'active', label: 'Active' }, { value: 'flagged', label: 'Flagged' }, { value: 'banned', label: 'Banned' }]} />
         <Select<Joined> label="Joined" value={f.joined} onChange={(v) => set({ joined: v })} options={[{ value: 'any', label: 'Any time' }, { value: '7', label: 'Last 7 days' }, { value: '30', label: 'Last 30 days' }]} />
         <div style={{ marginLeft: 'auto' }}>
           <Select<Sort>
@@ -244,7 +244,7 @@ function Desktop() {
             <>
               <label className={s.reasonInline}>
                 <span>Reason</span>
-                <input className={s.field} autoFocus value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Shown in the admin log" />
+                <input className={s.field} autoFocus value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason, shown in the admin log" />
               </label>
               <Btn variant="quiet" onClick={() => setConfirming(false)}>
                 Cancel
@@ -252,6 +252,7 @@ function Desktop() {
               <Btn variant="danger" min="admin" onClick={() => void deleteGuests()} disabled={!reason.trim() || action.busy}>
                 {deleteLabel} for good
               </Btn>
+              <Logged />
               {error && (
                 <span role="alert" className={s.alertText} style={{ flexBasis: '100%' }}>
                   {error}
@@ -263,7 +264,7 @@ function Desktop() {
       )}
 
       {list.isError ? (
-        <ErrorBox title="Couldn't load players" error={list.error} onRetry={() => void list.refetch()} />
+        <ErrorBox title="Couldn’t load the players" error={list.error} onRetry={() => void list.refetch()} />
       ) : list.isPending ? (
         <SkeletonTable />
       ) : rows.length === 0 ? (
@@ -425,7 +426,7 @@ function Mobile() {
         />
       </div>
       {list.isError ? (
-        <ErrorBox title="Couldn't load players" error={list.error} onRetry={() => void list.refetch()} />
+        <ErrorBox title="Couldn’t load the players" error={list.error} onRetry={() => void list.refetch()} />
       ) : list.isPending ? (
         <div aria-busy="true" aria-label="Loading players" className={s.mList} style={{ marginTop: -8 }}>
           {['60%', '45%', '55%', '40%', '65%', '50%', '58%', '42%'].map((w, i) => (

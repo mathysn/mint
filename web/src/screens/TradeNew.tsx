@@ -131,11 +131,11 @@ export function TradeNew() {
       total: q?.giveTotal ?? 0,
       items: chosen(give),
       emptyText: 'Pick items from your inventory below',
-      crLabel: mobile ? 'Add credits' : `Add credits from your balance (${formatCredits(balance)} CR)`,
+      crLabel: `Add credits · you have ${formatCredits(balance)} CR`,
       cr: giveCr,
       setCr: setGiveCr,
       pickerTitle: 'Your inventory',
-      pickerHint: 'Listed and traded items are locked',
+      pickerHint: 'Listed items and items in a trade are locked',
       pool: options.data?.mine ?? [],
       list: give,
       set: setGive,
@@ -146,7 +146,7 @@ export function TradeNew() {
       total: q?.getTotal ?? 0,
       items: chosen(ask),
       emptyText: `Pick items from ${to}’s inventory below`,
-      crLabel: mobile ? `Ask ${to} · has ${formatCredits(partnerBalance)} CR` : `Ask ${to} for credits (${formatCredits(partnerBalance)} CR)`,
+      crLabel: `Ask ${to} for credits · has ${formatCredits(partnerBalance)} CR`,
       cr: askCr,
       setCr: setAskCr,
       pickerTitle: `${to}’s inventory`,
@@ -232,7 +232,7 @@ export function TradeNew() {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingTop: 6 }}>
           <span className="lbl">{c.pickerTitle}</span>
-          <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{c.key === 'give' ? 'Locked items are greyed' : '“Album +1” fills a slot'}</span>
+          <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{c.pickerHint}</span>
         </div>
         {pool(c)}
         <section aria-label="Offer summary" style={{ position: 'fixed', left: 0, right: 0, bottom: 'var(--tabbar)', zIndex: 5, height: 88, display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: 'var(--surface-bar)', borderTop: '1px solid var(--border-strong)' }}>
@@ -241,7 +241,7 @@ export function TradeNew() {
               {formatCredits(q?.giveTotal ?? 0)} <span style={{ color: 'var(--text-3)' }}>⇄</span> {formatCredits(q?.getTotal ?? 0)} CR
             </span>
             <span className="mono" style={{ fontSize: 11, color: tooMuch || askTooMuch ? 'var(--error)' : 'var(--text-2)' }}>
-              {tooMuch ? 'More than your balance' : askTooMuch ? `${to} only has ${formatCredits(partnerBalance)} CR` : diffLine(q?.diff ?? 0, formatCredits)}
+              {tooMuch ? 'You can’t offer more credits than your balance' : askTooMuch ? `${to} only has ${formatCredits(partnerBalance)} CR` : diffLine(q?.diff ?? 0, formatCredits)}
             </span>
           </div>
           <Button size={48} bevel={10} onClick={submit} disabled={cantSend} style={{ paddingInline: 20 }}>

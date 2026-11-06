@@ -155,7 +155,7 @@ describe('admin log', () => {
     const [entry] = await logRows();
     expect(entry).toMatchObject({
       staffName: 'mathys',
-      action: 'credits.add',
+      action: 'player.add_credits',
       targetType: 'player',
       targetId: vex.user.id,
       targetLabel: 'vex',
@@ -205,7 +205,7 @@ describe('credits', () => {
     const ok = await admin.client.json(`/admin/players/${vex.user.id}/credits`, { method: 'POST', json: { mode: 'remove', amount: 1000, reason: 'duplicate refund' } });
     expect(ok.body.toast).toBe('Removed 1,000 CR from vex · logged');
     expect(await balanceOf(vex.user.id)).toBe(0);
-    expect((await logRows())[0]).toMatchObject({ action: 'credits.remove', change: '−1,000 CR' });
+    expect((await logRows())[0]).toMatchObject({ action: 'player.remove_credits', change: '−1,000 CR' });
     expect(await ledgerMatchesBalances()).toBe(true);
   });
 });
@@ -239,14 +239,14 @@ describe('stuck items', () => {
     expect(stuck.body.rows.map((r: { id: string }) => r.id).sort()).toEqual([orphanListed.id, orphanTrade.id].sort());
     expect(stuck.body.rows.every((r: { stuck: boolean }) => r.stuck)).toBe(true);
     const detail = await admin.client.json(`/admin/items/${orphanTrade.id}`);
-    expect(detail.body.stuckNote).toContain('No live listing or offer holds it, so vex can\'t sell, trade or recycle it.');
+    expect(detail.body.stuckNote).toContain('No live listing or offer holds it, so vex can’t sell, trade or recycle it.');
     expect(detail.body.timeline.some((t: { kind: string }) => t.kind === 'alert')).toBe(true);
 
     const refused = await admin.client.json(`/admin/items/${reallyListed.id}/unlock`, { method: 'POST', json: { reason: 'support' } });
     expect(refused).toMatchObject({ status: 409, body: { error: { code: 'not_stuck' } } });
     const unlocked = await admin.client.json(`/admin/items/${orphanTrade.id}/unlock`, { method: 'POST', json: { reason: 'ticket #58' } });
     expect(unlocked.status).toBe(200);
-    expect(unlocked.body.toast).toMatch(/^Unlocked Gun \| r1 \(\d{9}\) · logged$/);
+    expect(unlocked.body.toast).toBe('Unlocked Gun | r1 · logged');
     expect((await itemOf(orphanTrade.id)).status).toBe('available');
     expect((await logRows()).at(-1)).toMatchObject({ action: 'item.unlock', before: { status: 'In trade' }, after: { status: 'Available', owner: 'vex (unchanged)' } });
     const after = await admin.client.json('/admin/items?status=stuck');
@@ -322,7 +322,7 @@ describe('ban', () => {
     const me = await s.vex.client.json('/me');
     expect(me.status).toBe(403);
     expect(me.body.error.code).toBe('banned');
-    expect(me.body.error.message).toMatch(/^You’re banned until [A-Z][a-z]{2} \d{1,2}, \d{2}:\d{2}\. Reason: scam attempt in trades$/);
+    expect(me.body.error.message).toMatch(/^You’re banned until [A-Z][a-z]{2} \d{1,2}, \d{2}:\d{2} UTC\. Reason: scam attempt in trades$/);
     expect(me.body.error.ban).toMatchObject({ reason: 'scam attempt in trades' });
 
     // Signing in again: read-only, with the ban in /me.

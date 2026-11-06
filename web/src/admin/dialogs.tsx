@@ -6,7 +6,7 @@ import { useConfig } from '../lib/queries';
 import { RARITY } from '../lib/rarity';
 import { useDebounced } from '../lib/useDebounced';
 import { adminKeys, cr, num, useAdminAction, usePlayer, usePreview, useStaff, utcDateTime } from './lib';
-import { Btn, Dialog, FloatBar, ItemArt, Logged, ReasonField, SEARCH, StBadge, Switch, TypeName, cx, s } from './ui';
+import { Btn, Dialog, Dot, FloatBar, ItemArt, Logged, ReasonField, SEARCH, StBadge, Switch, TypeName, cx, s } from './ui';
 
 interface DialogProps {
   player: AdminPlayer;
@@ -107,7 +107,7 @@ export function CreditsDialog({ player, onClose, mobile }: DialogProps) {
         </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '16px 18px', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', background: 'var(--page)' }}>
-        <span className={cx('lbl', s.lbl10)}>{name}'s balance</span>
+        <span className={cx('lbl', s.lbl10)}>{name}’s balance</span>
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '8px 14px' }}>
           <span className="mono" style={{ fontSize: 20, color: 'var(--text-2)' }}>
             {p ? cr(p.before) : '—'}
@@ -116,11 +116,12 @@ export function CreditsDialog({ player, onClose, mobile }: DialogProps) {
             →
           </span>
           <span className="sr-only">becomes</span>
-          <span className="mono" style={{ fontSize: 28, fontWeight: 500, color: blocked ? 'var(--error)' : 'var(--text)', textDecoration: blocked ? 'line-through' : undefined }}>
+          <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 28, fontWeight: 500, color: 'var(--text)', textDecoration: blocked ? 'line-through' : undefined }}>
+            {blocked && <Dot />}
             {p ? `${p.after < 0 ? '−' : ''}${num(Math.abs(p.after))} CR` : '—'}
           </span>
         </div>
-        <span style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text-2)' }}>
+        <span style={{ fontSize: 13, lineHeight: 1.5, color: blocked ? 'var(--error)' : 'var(--text-2)' }}>
           {blocked ? 'A balance can’t go below 0 CR.' : `Held in bids (${cr(p?.held ?? 0)}) stays as it is. Adds a ${add ? 'admin_grant' : 'admin_remove'} entry to ${name}’s ledger.`}
         </span>
       </div>
@@ -132,7 +133,7 @@ export function CreditsDialog({ player, onClose, mobile }: DialogProps) {
           </Btn>
         </div>
       )}
-      <ReasonField value={reason} onChange={setReason} hint={`required, shown in the admin log and ${name}'s ledger`} placeholder="e.g. compensation, outage" />
+      <ReasonField value={reason} onChange={setReason} hint={`required, shown in the admin log and ${name}’s ledger`} placeholder="e.g. compensation, outage" />
       <ErrorLine error={error} />
     </Dialog>
   );
@@ -376,7 +377,7 @@ export function GrantDialog({ player, onClose, mobile }: DialogProps) {
         <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, lineHeight: 1.5, color: 'var(--text-2)' }}>
           <span className={cx('lbl', s.lbl10)}>Preview</span>
           <span>
-            Lands in {player.label}'s inventory as <span style={{ color: 'var(--text)' }}>Available</span>, with a new 9-digit ID. Origin shows “Granted by {staff.name}”.
+            Lands in {player.label}’s inventory as <span style={{ color: 'var(--text)' }}>Available</span>, with a new 9-digit ID. Origin shows “Granted by {staff.name}”.
           </span>
           <span>
             Inventory value{' '}
@@ -401,15 +402,15 @@ const DURATIONS: { key: BanDuration; label: string; short: string; title: string
   { key: 'permanent', label: 'Permanent', short: 'Perm', title: 'permanently', chip: 'Permanent' },
 ];
 
-function banEffects(p: BanPreview, name: string, mobile?: boolean): { n: number; head: string; text: string }[] {
+function banEffects(p: BanPreview, name: string): { n: number; head: string; text: string }[] {
   const lines: { n: number; head: string; text: string }[] = [];
   if (p.sessions === 0) lines.push({ n: 0, head: 'sessions', text: 'to sign out.' });
-  else lines.push({ n: p.sessions, head: p.sessions === 1 ? 'session signed out,' : 'sessions signed out,', text: mobile ? 'Discord activity included.' : 'including the Discord activity.' });
+  else lines.push({ n: p.sessions, head: p.sessions === 1 ? 'session signed out,' : 'sessions signed out,', text: 'including the Discord activity.' });
   if (p.listings.length === 0) lines.push({ n: 0, head: 'listings', text: 'to cancel.' });
   else if (p.listings.length === 1) {
     const l = p.listings[0]!;
-    const refunds = l.bids > 0 ? (mobile ? `, ${l.bids} bid${l.bids === 1 ? '' : 's'} refunded.` : ` ${l.bids} bid${l.bids === 1 ? '' : 's'} refunded, the leading ${cr(l.leading ?? 0)} to ${l.leader}.`) : mobile ? '.' : '';
-    lines.push({ n: 1, head: 'listing cancelled:', text: mobile ? `${l.item} back to ${name}${refunds}` : `${l.item} goes back to ${name}’s inventory.${refunds}` });
+    const refunds = l.bids > 0 ? ` ${l.bids} bid${l.bids === 1 ? '' : 's'} refunded, the leading ${cr(l.leading ?? 0)} to ${l.leader}.` : '';
+    lines.push({ n: 1, head: 'listing cancelled:', text: `${l.item} goes back to ${name}’s inventory.${refunds}` });
   } else {
     lines.push({ n: p.listings.length, head: 'listings cancelled:', text: `${p.listings.map((l) => l.item).join(', ')} go back to ${name}’s inventory. Every leading bid is refunded.` });
   }
@@ -418,7 +419,7 @@ function banEffects(p: BanPreview, name: string, mobile?: boolean): { n: number;
     lines.push({
       n: p.bids.length,
       head: p.bids.length === 1 ? 'bid cancelled:' : 'bids cancelled:',
-      text: mobile ? `${cr(total)} back to ${name}.` : `${p.bids.map((b) => b.item).join(', ')}. ${cr(total)} goes back to ${name}’s balance.`,
+      text: `${p.bids.map((b) => b.item).join(', ')}. ${cr(total)} goes back to ${name}’s balance.`,
     });
   }
   lines.push({ n: p.offers, head: p.offers === 1 ? 'open offer' : 'open offers', text: p.offers === 0 ? 'to cancel.' : 'cancelled: items and credits go back to their senders.' });
@@ -443,7 +444,7 @@ export function BanDialog({ player, onClose, mobile }: DialogProps) {
     if (message) setError(message);
     else onClose();
   };
-  const effects = preview.data ? banEffects(preview.data, name, mobile) : [];
+  const effects = preview.data ? banEffects(preview.data, name) : [];
   const banButton = (
     <Btn size={mobile ? 48 : 44} variant="danger" min="moderator" onClick={() => void go()} disabled={cantGo} style={mobile ? { width: '100%' } : undefined}>
       {title}
@@ -496,7 +497,7 @@ export function BanDialog({ player, onClose, mobile }: DialogProps) {
           {perm ? 'No end date. Only an unban lifts it.' : until ? `Until ${utcDateTime(until)} UTC` : '—'}
         </span>
       </div>
-      <ReasonField value={reason} onChange={setReason} hint={mobile ? `shown to ${name}` : `required, shown to ${name} and in the admin log`} placeholder="e.g. scam attempt in trades" />
+      <ReasonField value={reason} onChange={setReason} hint={`required, shown to ${name} and in the admin log`} placeholder="e.g. scam attempt in trades" />
       <section aria-label="Happens right away" style={{ display: 'flex', flexDirection: 'column', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)' }}>
         <h3 className={cx('lbl', s.lbl10)} style={{ padding: mobile ? '10px 12px 6px' : '12px 14px 8px' }}>
           Happens right away
@@ -514,17 +515,17 @@ export function BanDialog({ player, onClose, mobile }: DialogProps) {
         ))}
       </section>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {!mobile && <span style={{ fontSize: 13, color: 'var(--text-2)' }}>What {name} sees</span>}
+        <span style={{ fontSize: 13, color: 'var(--text-2)' }}>What {name} sees</span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: mobile ? 4 : 6, padding: mobile ? '12px 14px' : '16px 18px', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-card)', background: 'var(--rail)' }}>
-          <span className={cx('lbl', s.lbl10)}>{mobile ? `What ${name} sees` : '// Account'}</span>
-          <span style={{ fontSize: mobile ? 15 : 16, fontWeight: 600 }}>{perm ? 'You’re banned from Mint.' : until ? `You’re banned until ${utcDateTime(until)}.` : '…'}</span>
+          <span className={cx('lbl', s.lbl10)}>// Account</span>
+          <span style={{ fontSize: mobile ? 15 : 16, fontWeight: 600 }}>{perm ? 'You’re banned from Mint.' : until ? `You’re banned until ${utcDateTime(until)} UTC.` : '…'}</span>
           <span style={{ fontSize: mobile ? 13 : 14, color: 'var(--text-2)' }}>
             Reason: <span style={{ color: 'var(--text)' }}>{reason.trim() || '…'}</span>
           </span>
-          {!mobile && <span style={{ fontSize: 12, color: 'var(--text-3)' }}>Your items and credits are safe. You can still look at your inventory.</span>}
+          <span style={{ fontSize: 12, color: 'var(--text-3)' }}>Your items and credits are safe. You can still look at your inventory.</span>
         </div>
       </div>
-      {perm && <TypeName name={name} value={typed} onChange={setTyped} label={mobile ? 'to confirm' : 'to confirm a permanent ban'} />}
+      {perm && <TypeName name={name} value={typed} onChange={setTyped} label="to confirm a permanent ban" />}
       <ErrorLine error={error} />
     </Dialog>
   );
@@ -549,8 +550,8 @@ export function DeleteDialog({ player, onClose, mobile }: DialogProps) {
   const deleted: [string, string][] = p
     ? [
         ['Account and Discord link', ''],
-        ['Balance', `${cr(p.balance)} → 0`],
-        [`Inventory, ${p.items} item${p.items === 1 ? '' : 's'}`, `${cr(p.itemsValue)} → 0`],
+        ['Balance', `${cr(p.balance)} → 0 CR`],
+        [`Inventory, ${p.items} item${p.items === 1 ? '' : 's'}`, `${cr(p.itemsValue)} → 0 CR`],
         ['Friends', num(p.friends)],
         ['Sessions', num(p.sessions)],
         ['Showcase and albums', `${p.albumsPct}%`],
@@ -567,7 +568,7 @@ export function DeleteDialog({ player, onClose, mobile }: DialogProps) {
   const before = p
     ? [
         p.listing ? `the live listing (${p.listing.item}) is cancelled and its ${p.listing.bids} bid${p.listing.bids === 1 ? '' : 's'} go back to the bidders.` : null,
-        p.ownBid ? `${name}'s own ${cr(p.ownBid)} bid is cancelled.` : null,
+        p.ownBid ? `${name}’s own ${cr(p.ownBid)} bid is cancelled.` : null,
       ].filter(Boolean)
     : [];
   return (
@@ -585,7 +586,7 @@ export function DeleteDialog({ player, onClose, mobile }: DialogProps) {
       }
     >
       <p style={{ marginTop: -8, fontSize: 14, lineHeight: 1.5, color: 'var(--error)' }}>
-        This can't be undone. {name} can come back with the same Discord account, but as a new player with {cr(config.data?.startingBalance ?? 1000)}.
+        This can’t be undone. {name} can come back with the same Discord account, but as a new player with {cr(config.data?.startingBalance ?? 1000)}.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
         <section aria-label="Deleted" style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-card)' }}>

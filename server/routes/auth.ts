@@ -12,7 +12,7 @@ import { parseJson } from '../validate.js';
 export const authRoutes = new Hono<AppEnv>();
 
 const requireDiscord = () => {
-  if (!discordEnabled()) fail(503, 'discord_disabled', 'Discord sign-in is not configured on this deployment.');
+  if (!discordEnabled()) fail(503, 'discord_disabled', 'Discord sign-in isn’t set up on this deployment.');
 };
 
 /** First visit on the web: a real guest account, so every draw stays server-side. */

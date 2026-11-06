@@ -151,7 +151,7 @@ export async function moderationPage(): Promise<AdminModeration> {
         { k: 'Players', v: fmt(players) },
         { k: 'Expected credits added', v: `≈ ${cr(Math.round(players * expected))}` },
       ],
-      button: 'Give everyone a free case',
+      button: `Give a free case to ${plural(players, 'player')}`,
       players,
     },
   };
@@ -176,7 +176,7 @@ export async function dismissReport(staff: StaffMember, id: number, reason: stri
       after: { status: `dismissed by ${staff.name}` },
       reason,
     });
-    return { toast: `Dismissed report on ${label} · logged` };
+    return { toast: `Dismissed the report on ${label} · logged` };
   });
 }
 
@@ -188,13 +188,13 @@ export const reportSchema = z.object({
 /** A player reports another one: one open report per pair, 10 a day. */
 export async function fileReport(me: UserRow, username: string, body: z.infer<typeof reportSchema>) {
   const [t] = await db().select().from(users).where(and(eq(users.username, username), isNull(users.deletedAt)));
-  if (!t || t.isGuest) return fail(404, 'not_found', 'Unknown player.');
-  if (t.id === me.id) fail(400, 'bad_request', 'You can’t report yourself.');
+  if (!t || t.isGuest) return fail(404, 'not_found', `No player called “${username}”.`);
+  if (t.id === me.id) fail(403, 'forbidden', 'You can’t report yourself.');
   const [today] = await db()
     .select({ n: count() })
     .from(reports)
     .where(and(eq(reports.reporterId, me.id), gt(reports.createdAt, sql`now() - interval '24 hours'`)));
-  if ((today?.n ?? 0) >= REPORTS_PER_DAY) fail(429, 'rate_limited', 'You sent a lot of reports today. Try again tomorrow.');
+  if ((today?.n ?? 0) >= REPORTS_PER_DAY) fail(429, 'rate_limited', `You sent ${REPORTS_PER_DAY} reports in the last 24 hours. Try again later.`);
   const inserted = await db()
     .insert(reports)
     .values({ reporterId: me.id, targetId: t.id, category: body.category, message: body.message })
@@ -222,7 +222,7 @@ export async function setDropHidden(staff: StaffMember, id: number, hide: boolea
       .update(activity)
       .set(hide ? { hiddenAt: new Date(), hiddenBy: staff.name } : { hiddenAt: null, hiddenBy: null })
       .where(eq(activity.id, id));
-    const who = row.isGuest ? 'A guest' : labelOf(row.a.userId, row.username, row.deletedAt);
+    const who = labelOf(row.a.userId, row.username, row.deletedAt);
     await writeAdminLog(tx, staff, {
       action: hide ? 'drop.hide' : 'drop.show',
       target: { type: 'drop', id: String(id), label: `${row.name} · ${who}` },
@@ -231,7 +231,7 @@ export async function setDropHidden(staff: StaffMember, id: number, hide: boolea
       after: { banner: hide ? `hidden by ${staff.name}` : 'shown' },
       reason,
     });
-    return { toast: hide ? `Hid ${who}’s drop from the banner · logged` : `Showing ${who}’s drop in the banner again · logged` };
+    return { toast: hide ? `Hid ${who}’s drop from the banner · logged` : `Showed ${who}’s drop in the banner again · logged` };
   });
 }
 
@@ -270,7 +270,7 @@ export async function createAnnouncement(staff: StaffMember, body: z.infer<typeo
       after: { text: body.text, window: windowText(body.startsAt, body.endsAt) },
       reason: body.reason,
     });
-    return { toast: live ? 'Posted the announcement · logged' : `Scheduled the announcement for ${utcDateTime(body.startsAt)} · logged` };
+    return { toast: live ? 'Posted the announcement · logged' : `Scheduled the announcement for ${utcDateTime(body.startsAt)} UTC · logged` };
   });
 }
 
@@ -279,7 +279,7 @@ export async function endAnnouncement(staff: StaffMember, id: number, reason: st
     const [a] = await tx.select().from(announcements).where(eq(announcements.id, id)).for('update');
     if (!a) return fail(404, 'not_found', 'Unknown announcement.');
     const now = new Date();
-    if (a.endedAt || a.endsAt <= now) fail(409, 'conflict', 'This announcement already ended.');
+    if (a.endedAt || a.endsAt <= now) fail(409, 'conflict', 'This announcement has already ended.');
     await tx.update(announcements).set({ endedAt: now, endedBy: staff.name }).where(eq(announcements.id, id));
     const live = a.startsAt <= now;
     await writeAdminLog(tx, staff, {
@@ -318,7 +318,7 @@ export async function giftPreview(amount: number): Promise<GiftPreview> {
     players,
     costs: [
       { k: 'Total cost', v: cr(total) },
-      { k: `In circulation after, +${pct.toFixed(1)}%`, v: cr(circ + total) },
+      { k: 'In circulation after', v: `${cr(circ + total)} (+${pct.toFixed(1)}%)` },
     ],
     button: `Gift ${cr(amount)} to ${plural(players, 'player')}`,
   };
@@ -372,7 +372,7 @@ export async function freeCaseEveryone(staff: StaffMember, reason: string): Prom
       after: { players: fmt(players), each: '+1 free case of the day' },
       reason,
     });
-    return { toast: `Gave ${plural(players, 'player')} a free case · logged` };
+    return { toast: `Gave a free case to ${plural(players, 'player')} · logged` };
   });
 }
 

@@ -103,7 +103,7 @@ export function Leaderboard() {
           onChange={(b) => set({ board: b })}
           tabs={[
             { value: 'value', label: 'Inventory value' },
-            { value: 'albums', label: 'Albums' },
+            { value: 'albums', label: 'Album completion' },
           ]}
         />
         {scopes}
@@ -155,7 +155,7 @@ export function Leaderboard() {
                     <span style={{ fontSize: 11, color: sub.color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{sub.text}</span>
                   </span>
                   <span className="mono" style={{ fontSize: 13 }}>
-                    {board === 'value' ? formatCredits(e.metric) : `${formatCredits(e.metric)} skins`}
+                    {board === 'value' ? `${formatCredits(e.metric)} CR` : `${formatCredits(e.metric)} skins`}
                   </span>
                 </Link>
               </li>
@@ -169,7 +169,7 @@ export function Leaderboard() {
             style={{ position: 'fixed', left: 12, right: 12, bottom: 96, zIndex: 5, display: 'flex', alignItems: 'center', gap: 12, height: 48, padding: '0 14px', border: '1px solid var(--text)', borderRadius: 'var(--radius-card)', background: 'var(--nav-hover)', color: 'var(--text)', textDecoration: 'none' }}
           >
             <span className="mono" style={{ fontSize: 13 }}>
-              {you.rank}
+              {rankLabel(you.rank)}
             </span>
             <Avatar name={you.player.username} url={you.player.avatarUrl} size={28} />
             <span style={{ flex: 1, minWidth: 0, fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

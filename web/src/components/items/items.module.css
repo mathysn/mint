@@ -189,7 +189,7 @@ a.skinName {
   border-radius: var(--radius-control);
   display: grid;
   place-items: center;
-  background: rgba(10, 11, 13, 0.7);
+  background: color-mix(in srgb, var(--page) 70%, transparent);
   border: 1px solid var(--border-hover);
   transition:
     background-color var(--dur-fast) ease,
@@ -420,7 +420,7 @@ a.skinName {
   position: absolute;
   top: 0;
   bottom: 0;
-  background: repeating-linear-gradient(135deg, rgba(10, 11, 13, 0.82) 0 4px, rgba(10, 11, 13, 0.6) 4px 8px);
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--page) 82%, transparent) 0 4px, color-mix(in srgb, var(--page) 60%, transparent) 4px 8px);
 }
 .cursor {
   position: absolute;

@@ -161,7 +161,7 @@ function JobRow({ job }: { job: AdminJob }) {
         </span>
         <Btn size={36} min="admin" disabled={action.busy || confirm} onClick={() => setConfirm(true)} style={{ fontSize: 12 }}>
           {action.busy && <span aria-hidden="true" className="anim" style={{ width: 10, height: 10, borderRadius: '50%', border: '1.5px solid var(--border-hover)', borderTopColor: 'var(--text)', animation: 'mint-spin 800ms linear infinite' }} />}
-          {action.busy ? 'Running' : 'Run now'}
+          {action.busy ? 'Running…' : 'Run now'}
         </Btn>
       </div>
       {confirm && (
@@ -193,7 +193,7 @@ function Desktop() {
     <AdminPage gap={24}>
       <Header label="Overview" title="Overview" sub="Health of the game at a glance. All times UTC." right={<PeriodChips value={period} onChange={setPeriod} />} />
       {q.isError && !o ? (
-        <ErrorBox title="Couldn't load the overview" error={q.error} onRetry={() => void q.refetch()} />
+        <ErrorBox title="Couldn’t load the overview" error={q.error} onRetry={() => void q.refetch()} />
       ) : !o ? (
         <OverviewSkeleton />
       ) : (
@@ -202,7 +202,7 @@ function Desktop() {
             {o.kpis.map((kpi) => (
               <div key={kpi.key} style={{ flex: '1 1 calc(33.333% - 1px)', minWidth: 220, display: 'flex', flexDirection: 'column', gap: 8, padding: '18px 20px 16px', background: 'var(--surface)' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-2)' }}>
-                  {kpi.alert && <Dot label="Needs review" />}
+                  {kpi.alert && <Dot />}
                   {KPI_LABEL[kpi.key]}
                 </span>
                 <span className="mono" style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.01em' }}>
@@ -223,8 +223,7 @@ function Desktop() {
                   Credits flow
                 </h2>
                 <span className="mono" style={{ fontSize: 12, color: 'var(--text-2)' }}>
-                  created {k(o.flow.created)} · destroyed {k(o.flow.destroyed)} · net {o.flow.net >= 0 ? '+' : ''}
-                  {k(o.flow.net)} CR
+                  created {num(o.flow.created)} · destroyed {num(o.flow.destroyed)} · net {signed(o.flow.net)} CR
                 </span>
               </div>
               <FlowChart flow={o.flow} />
@@ -385,7 +384,7 @@ function OverviewSkeleton() {
 const MOBILE_KPI: Record<AdminKpi['key'], { label: string; to: string }> = {
   players: { label: 'Players', to: '/admin/players' },
   active: { label: 'Active today', to: '/admin/players' },
-  cases: { label: 'Cases opened', to: '/admin/catalog' },
+  cases: { label: 'Cases opened today', to: '/admin/catalog' },
   circulation: { label: 'Credits in circulation', to: '/admin/economy' },
   sales: { label: 'Market sales 24 h', to: '/admin/market' },
   flags: { label: 'Open flags', to: '/admin/market' },
@@ -419,7 +418,7 @@ function Mobile() {
         ))}
       </div>
       {q.isError && !o ? (
-        <ErrorBox title="Couldn't load the overview" error={q.error} onRetry={() => void q.refetch()} />
+        <ErrorBox title="Couldn’t load the overview" error={q.error} onRetry={() => void q.refetch()} />
       ) : !o ? (
         <OverviewSkeleton />
       ) : (
@@ -431,7 +430,7 @@ function Mobile() {
               return (
                 <Link key={kpi.key} to={MOBILE_KPI[kpi.key].to} style={{ display: 'flex', flexDirection: 'column', gap: 6, minHeight: 112, padding: 12, border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', background: 'var(--surface)', color: 'var(--text)', textDecoration: 'none' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)' }}>
-                    {kpi.alert && <span className={s.dot} aria-hidden="true" style={{ width: 6, height: 6 }} />}
+                    {kpi.alert && <Dot size={6} />}
                     {MOBILE_KPI[kpi.key].label}
                   </span>
                   <span className="mono" style={{ fontSize: value.length > 7 ? 20 : 24, fontWeight: 500, lineHeight: 1.1 }}>
@@ -530,7 +529,7 @@ function Mobile() {
                   </span>
                 </span>
                 <span className={cx('mono', s.statusChip, s.chipOutline)} style={{ color: j.ok === false ? 'var(--text)' : 'var(--text-2)' }}>
-                  {j.ok === false && <span className={s.dot} aria-hidden="true" style={{ width: 6, height: 6 }} />}
+                  {j.ok === false && <Dot size={6} />}
                   {j.ok === null ? '—' : j.ok ? 'OK' : 'Warning'}
                 </span>
               </div>

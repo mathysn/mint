@@ -7,13 +7,14 @@ import type { StaffMember } from './staff.js';
 export const reasonSchema = z.string().trim().min(1, 'A reason is required.').max(500);
 
 export type LogTarget = {
-  type: 'player' | 'item' | 'case' | 'catalog' | 'guests' | 'job' | 'economy' | 'auction' | 'trade' | 'flag' | 'report' | 'drop' | 'announcement' | 'event';
+  // 'guests' and 'trade' only on old rows (now 'player' and 'offer').
+  type: 'player' | 'item' | 'case' | 'catalog' | 'guests' | 'job' | 'economy' | 'auction' | 'trade' | 'offer' | 'flag' | 'report' | 'drop' | 'announcement' | 'event';
   id: string | null;
   label: string;
 };
 
 export interface LogEntry {
-  /** "credits.add", "player.ban"… */
+  /** "player.add_credits", "player.ban"… (verb after the dot; old rows keep their old names). */
   action: string;
   target: LogTarget;
   /** Short change shown in the table ("−5,000 CR", "7 days", "active → off"). */

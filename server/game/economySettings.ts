@@ -13,12 +13,17 @@ export interface SettingDef {
   /** Decimals shown; lists are shown joined by "·". */
   decimals: number;
   list?: { length?: number; min: number; max: number };
+  /** Only these values are allowed (a single number). */
+  choices?: readonly number[];
   min: number;
   max: number;
   tier?: Tier;
   read: (e: Economy) => SettingValue;
   write: (e: Economy, v: SettingValue) => Economy;
 }
+
+/** Rotation lengths that divide a day, so every slot starts on the same UTC hours each day. */
+export const CASE_ROTATION_HOURS = [1, 2, 3, 4, 6, 8, 12, 24] as const;
 
 const TIER_LABEL: Record<Tier, string> = { milspec: 'Mil-Spec', restricted: 'Restricted', classified: 'Classified', covert: 'Covert', gold: '★ Rare special' };
 
@@ -31,7 +36,8 @@ export const SETTINGS: SettingDef[] = [
   // New keys (the old `free_case.every` was in hours): a value saved in hours is never read as minutes.
   { key: 'free_case.every_min', group: 'cases', label: 'Free case every', help: 'Time for the stack to gain one free case.', unit: 'min', decimals: 0, min: 1, max: 10_080, read: (e) => e.freeCaseMinutes, write: (e, v) => ({ ...e, freeCaseMinutes: n(v) }) },
   { key: 'free_case.max', group: 'cases', label: 'Free case stack', help: 'Free cases a player can save up.', unit: 'max', decimals: 0, min: 1, max: 50, read: (e) => e.freeCaseMax, write: (e, v) => ({ ...e, freeCaseMax: n(v) }) },
-  { key: 'case_of_day.every_h', group: 'cases', label: 'Case of the day every', help: 'Time before the free case moves to the next case.', unit: 'h', decimals: 0, min: 1, max: 168, read: (e) => e.caseRotationHours, write: (e, v) => ({ ...e, caseRotationHours: n(v) }) },
+  // Divisors of 24 only, so the rotation always restarts at 00:00 UTC (game/dailyCrate.ts).
+  { key: 'case_of_day.every_h', group: 'cases', label: 'Case of the day every', help: 'Time before the free case moves to the next case. 1, 2, 3, 4, 6, 8, 12 or 24.', unit: 'h', decimals: 0, min: 1, max: 24, choices: CASE_ROTATION_HOURS, read: (e) => e.caseRotationHours, write: (e, v) => ({ ...e, caseRotationHours: n(v) }) },
   ...TIERS.map(
     (tier): SettingDef => ({
       key: `odds.${tier}`,
@@ -91,12 +97,13 @@ export const SETTINGS: SettingDef[] = [
 
 export const SETTING_BY_KEY = new Map(SETTINGS.map((s) => [s.key, s]));
 
+/** Group headings; the admin screen adds the HUD "// " prefix itself. */
 export const GROUP_TITLE: Record<SettingDef['group'], string> = {
-  cases: '// Cases',
-  rarity: '// Odds and recycle',
-  stattrak: '// StatTrak™ and wear',
-  market: '// Market',
-  trades: '// Trades and trade-up',
+  cases: 'Cases',
+  rarity: 'Odds and recycle',
+  stattrak: 'StatTrak™ and wear',
+  market: 'Market',
+  trades: 'Trades and trade-up',
 };
 
 /** Label used in diffs and the history ("Odds Mil-Spec", "Recycle Covert", "Case price"). */
@@ -105,14 +112,26 @@ export const longLabel = (def: SettingDef) => (def.group === 'rarity' ? `${def.k
 const fmtNumber = (v: number, decimals: number) =>
   v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: Math.max(decimals, 2) });
 
-/** "250", "79.92", "1.5·1.2·1·0.9·0.8", "24·48". */
+/** "250", "79.92", "1.5 · 1.2 · 1 · 0.9 · 0.8", "24 · 48". */
 export function formatSetting(def: SettingDef, v: SettingValue): string {
-  if (Array.isArray(v)) return v.map((x) => String(x)).join('·');
+  if (Array.isArray(v)) return v.map((x) => x.toLocaleString('en-US', { maximumFractionDigits: Math.max(def.decimals, 2) })).join(' · ');
   return fmtNumber(v, def.decimals);
 }
 
-/** "250 → 300 CR". */
-export const changeText = (def: SettingDef, from: SettingValue, to: SettingValue) => `${formatSetting(def, from)} → ${formatSetting(def, to)} ${def.unit}`;
+/** A value with its unit, the way the game writes it: "250 CR", "5%", "2×", "max 10", "1 in 10", "24 · 48 h". */
+export function withUnit(def: SettingDef, v: SettingValue): string {
+  const text = formatSetting(def, v);
+  if (def.unit === '%' || def.unit === '×') return `${text}${def.unit}`;
+  if (def.unit === 'max') return `max ${text}`;
+  if (def.unit === 'N') return `1 in ${text}`;
+  return `${text} ${def.unit}`;
+}
+
+/** Unit after a bare number in a sentence ("Goes from 0 to 100%."); counts get none. */
+const unitAfter = (def: SettingDef) => (def.unit === '%' || def.unit === '×' ? def.unit : def.unit === 'max' || def.unit === 'N' ? '' : ` ${def.unit}`);
+
+/** "250 CR → 300 CR", "5% → 6%". */
+export const changeText = (def: SettingDef, from: SettingValue, to: SettingValue) => `${withUnit(def, from)} → ${withUnit(def, to)}`;
 
 /** Parses what staff typed; returns the value or the reason it can't be saved. */
 export function parseSetting(def: SettingDef, input: string): { value: SettingValue } | { error: string } {
@@ -130,7 +149,8 @@ export function parseSetting(def: SettingDef, input: string): { value: SettingVa
   if (!clean || !Number.isFinite(value)) return { error: 'Type a number.' };
   if (def.decimals === 0 && !Number.isInteger(value)) return { error: 'Use a whole number.' };
   if (Math.round(value * 10 ** def.decimals) / 10 ** def.decimals !== value) return { error: `Use at most ${def.decimals} decimals.` };
-  if (value < def.min || value > def.max) return { error: `Goes from ${fmtNumber(def.min, 0)} to ${fmtNumber(def.max, 0)} ${def.unit}.` };
+  if (value < def.min || value > def.max) return { error: `Goes from ${fmtNumber(def.min, 0)} to ${fmtNumber(def.max, 0)}${unitAfter(def)}.` };
+  if (def.choices && !def.choices.includes(value)) return { error: `Use ${def.choices.slice(0, -1).join(', ')} or ${def.choices.at(-1)}${unitAfter(def)}.` };
   return { value };
 }
 

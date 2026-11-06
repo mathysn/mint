@@ -59,6 +59,10 @@ describe('economy settings', () => {
     expect(parseSetting(def('recycle.wear'), '1.5 · 1.25 · 1 · 0.9 · 0.85')).toEqual({ value: [1.5, 1.25, 1, 0.9, 0.85] });
     expect(parseSetting(def('market.durations'), '48·24·24')).toEqual({ value: [24, 48] });
     expect(parseSetting(def('trades.expiry'), '1·2.5')).toEqual({ error: 'Use whole numbers.' });
+    // The case of the day rotation divides a day, so slots always start at 00:00 UTC.
+    expect(parseSetting(def('case_of_day.every_h'), '6')).toEqual({ value: 6 });
+    expect(parseSetting(def('case_of_day.every_h'), '5')).toEqual({ error: 'Use 1, 2, 3, 4, 6, 8, 12 or 24 h.' });
+    expect(parseSetting(def('case_of_day.every_h'), '48')).toMatchObject({ error: expect.stringContaining('Goes from 1') });
   });
 
   it('writes the saved rows over the defaults, and formats the changes', () => {
@@ -73,8 +77,10 @@ describe('economy settings', () => {
     expect(e.marketFeeBp).toBe(600);
     expect(oddsTotalBp(e)).toBe(10_004);
     expect(oddsTotalBp(DEFAULT_ECONOMY)).toBe(10_000);
-    expect(changeText(def('cases.price'), 250, 300)).toBe('250 → 300 CR');
+    expect(changeText(def('cases.price'), 250, 300)).toBe('250 CR → 300 CR');
+    expect(changeText(def('market.fee'), 5, 6)).toBe('5% → 6%');
+    expect(changeText(def('market.listings'), 10, 12)).toBe('max 10 → max 12');
     expect(formatSetting(def('odds.milspec'), 79.92)).toBe('79.92');
-    expect(formatSetting(def('recycle.wear'), [1.5, 1.2, 1, 0.9, 0.8])).toBe('1.5·1.2·1·0.9·0.8');
+    expect(formatSetting(def('recycle.wear'), [1.5, 1.2, 1, 0.9, 0.8])).toBe('1.5 · 1.2 · 1 · 0.9 · 0.8');
   });
 });

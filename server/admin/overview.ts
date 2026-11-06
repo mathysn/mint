@@ -18,8 +18,8 @@ const MINT_BURN = ['starting_balance', 'recycle', 'admin_grant', 'admin_gift', '
 
 const PERIODS: Record<AdminPeriod, { unit: 'hour' | 'day'; n: number; vs: string; over: string }> = {
   '24h': { unit: 'hour', n: 24, vs: 'vs previous 24 h', over: 'over previous 24 h' },
-  '7d': { unit: 'day', n: 7, vs: 'vs 7 d', over: 'over 7 d' },
-  '30d': { unit: 'day', n: 30, vs: 'vs 30 d', over: 'over 30 d' },
+  '7d': { unit: 'day', n: 7, vs: 'vs previous 7 d', over: 'over previous 7 d' },
+  '30d': { unit: 'day', n: 30, vs: 'vs previous 30 d', over: 'over previous 30 d' },
 };
 
 const inList = (types: readonly string[]) => sql.raw(types.map((t) => `'${t}'`).join(', '));

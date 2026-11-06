@@ -50,9 +50,9 @@ export async function recycleItems(userId: string, itemIds: string[], confirm: b
   const ids = [...new Set(itemIds)];
   return db().transaction(async (tx) => {
     const [user] = await tx.select().from(users).where(eq(users.id, userId)).for('update');
-    if (!user) return fail(401, 'unauthorized', 'Unknown player.');
+    if (!user) return fail(401, 'unauthorized', 'Sign in or start a guest session first.');
     const s = summarise(ids, await ownedItems(tx, user.id, ids, true));
-    if (s.unavailable.length) return fail(409, 'items_unavailable', 'Some of these items can no longer be recycled.');
+    if (s.unavailable.length) return fail(409, 'items_unavailable', 'Some of these items are no longer available (listed, in a trade or gone).');
     if (s.requiresConfirmation && !confirm) return fail(409, 'confirmation_required', 'Recycling Classified or better needs a confirmation.');
 
     const now = new Date();

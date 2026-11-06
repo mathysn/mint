@@ -82,7 +82,7 @@ export const PATTERN_COUNT = 1000;
 export const RECYCLE_CONFIRM_TIERS: readonly Tier[] = ['classified', 'covert', 'gold'];
 export const RECYCLE_MAX_ITEMS = 200;
 
-/** Unboxings that appear in the friends' feed (cahier des charges: "ouvertures à partir de Classified"). */
+/** Unboxings, sales and trade-ups that appear in the friends’ feed (cahier des charges: "à partir de Classified"). */
 export const FEED_TIERS: readonly Tier[] = ['classified', 'covert', 'gold'];
 
 /** Quick-bid buttons, basis points above the current bid. */

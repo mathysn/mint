@@ -9,7 +9,7 @@ import { plural } from '../format.js';
 import { checkLedger } from '../services/ledgerCheck.js';
 import { JOB_NAMES, JOBS, lastRuns, scheduleOf, type JobName } from './jobs.js';
 import { labelOf } from './labels.js';
-import { describeLedger } from './players.js';
+import { describeLedger, TYPE_LABEL } from './players.js';
 import { stuckSql } from './stuck.js';
 
 const PAGE = 50;
@@ -24,7 +24,9 @@ function ledgerWhere(q: string | undefined): SQL | undefined {
   if (!q) return undefined;
   const id = q.replace(/^#/, '');
   if (/^\d{1,15}$/.test(id)) return eq(ledger.id, Number(id));
-  const type = q.toLowerCase().replace(/\s+/g, '_');
+  const typed = q.toLowerCase().replace(/\s+/g, '_');
+  // The ledger shows some types under a short name ("start_balance"): search finds them by either.
+  const type = Object.keys(TYPE_LABEL).find((k) => TYPE_LABEL[k] === typed) ?? typed;
   if ((ledgerTypeEnum.enumValues as readonly string[]).includes(type)) return eq(ledger.type, type as (typeof ledgerTypeEnum.enumValues)[number]);
   const guest = q.match(/^guest\s*#?\s*([0-9a-f]{2,8})$/i);
   const players = guest
@@ -129,7 +131,7 @@ export async function jobsPage(): Promise<AdminJobCard[]> {
 // ── Errors ──────────────────────────────────────────────────────────────────
 
 const HINTS: Record<string, string> = {
-  insufficient_balance: 'Normal: players trying to open a case without enough CR.',
+  insufficient_balance: 'Normal: a player without enough CR to open a case, bid, buy now or accept an offer.',
   items_unavailable: 'Item already listed, traded or recycled.',
   unauthorized: 'Normal: a first visit, before the guest account exists.',
   rate_limited: 'Too many requests from one player or address.',
@@ -146,9 +148,10 @@ const HINTS: Record<string, string> = {
   account_required: 'A guest tried an action that needs an account.',
   crate_inactive: 'Someone tried to open a case that is turned off.',
   discord_disabled: 'Discord sign-in isn’t configured on this server.',
-  balance_too_low: 'Staff: a credit removal that would go below 0 CR.',
+  balance_too_low: 'Staff: a credit removal or a restore clawback that would go below 0 CR.',
   not_stuck: 'Staff: Unlock on an item that isn’t stuck.',
   confirm_name_mismatch: 'Staff: the typed name didn’t match.',
+  upstream_failed: 'GitHub (catalog import) or Discord failed or answered something unusable.',
   internal: 'Server error. Always worth a look.',
 };
 

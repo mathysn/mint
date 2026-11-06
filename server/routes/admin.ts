@@ -79,8 +79,8 @@ export const adminRoutes = new Hono<AppEnv>();
 
 const body = async <S extends z.ZodType>(c: { req: { json: () => Promise<unknown> } }, schema: S) => parseJson(schema, await c.req.json().catch(() => null));
 const query = <S extends z.ZodType>(c: { req: { query: () => Record<string, string> } }, schema: S) => parseJson(schema, c.req.query());
-const uuidParam = (id: string) => (z.uuid().safeParse(id).success ? id : fail(404, 'not_found', 'Not found.'));
-const intParam = (id: string) => (/^\d{1,15}$/.test(id) ? Number(id) : fail(404, 'not_found', 'Not found.'));
+const uuidParam = (id: string) => (z.uuid().safeParse(id).success ? id : fail(404, 'not_found', 'Unknown ID.'));
+const intParam = (id: string) => (/^\d{1,15}$/.test(id) ? Number(id) : fail(404, 'not_found', 'Unknown ID.'));
 
 adminRoutes.get('/admin/me', async (c) => {
   const staff = await requireStaff(c, 'viewer');

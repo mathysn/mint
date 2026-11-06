@@ -95,7 +95,9 @@ describe('friends', () => {
     expect((await guest.json('/friends')).body.error.code).toBe('account_required');
     expect((await request(guest, 'vex')).status).toBe(403);
     expect((await request(vex.client, 'nobody')).status).toBe(404);
-    expect((await request(vex.client, 'vex')).status).toBe(404);
+    const self = await request(vex.client, 'vex');
+    expect(self.status).toBe(403);
+    expect(self.body.error.message).toBe('You can’t add yourself as a friend.');
   });
 
   it('finds players by name with their relation, never guests or yourself', async () => {
@@ -132,8 +134,8 @@ describe('showcase and profile', () => {
     const kenji = await account('kenji');
     const theirs = await give(kenji.user.id, 'covert');
     const gone = await give(vex.user.id, 'covert', { destroyed: true });
-    expect((await vex.client.json('/me/showcase', { method: 'PUT', json: { itemIds: [theirs.id] } })).status).toBe(409);
-    expect((await vex.client.json('/me/showcase', { method: 'PUT', json: { itemIds: [gone.id] } })).status).toBe(409);
+    expect((await vex.client.json('/me/showcase', { method: 'PUT', json: { itemIds: [theirs.id] } })).status).toBe(403);
+    expect((await vex.client.json('/me/showcase', { method: 'PUT', json: { itemIds: [gone.id] } })).status).toBe(403);
     const six = await Promise.all(Array.from({ length: 6 }, () => give(vex.user.id, 'milspec')));
     expect((await vex.client.json('/me/showcase', { method: 'PUT', json: { itemIds: six.map((i) => i.id) } })).status).toBe(400);
   });

@@ -7,7 +7,13 @@ import { useIsMobile } from '../../lib/useMediaQuery';
 import { AdminPage } from '../AdminApp';
 import { BanDialog, CreditsDialog, DeleteDialog, GrantDialog } from '../dialogs';
 import { ROLE_HINT, ago, cr, num, signedCr, useAdminAction, usePlayer, usePlayerTab, useStaff, utcDateTime, utcStamp } from '../lib';
-import { Avatar, Btn, Chip, EmptyBox, ErrorBox, InlineConfirm, ItemArt, LockIcon, StBadge, cx, s } from '../ui';
+import { Avatar, Btn, Chip, Dot, EmptyBox, Logged, ErrorBox, InlineConfirm, ItemArt, LockIcon, StBadge, cx, s } from '../ui';
+
+/** Role hints of the player page, same on desktop and mobile (server/routes/admin.ts roles). */
+const PLAYER_HINT = {
+  viewer: 'Read-only: you’re a Viewer. Ban, Unban, Sign out everywhere, Rename and Add note: Moderators and admins. Adjust credits, Grant item, Refill free cases and Delete account: Admins only.',
+  moderator: 'Adjust credits, Grant item, Refill free cases and Delete account: Admins only.',
+} as const;
 
 type Confirm = 'reset' | 'signout' | 'rename' | 'unban';
 type DialogKind = 'credits' | 'grant' | 'ban' | 'delete';
@@ -36,7 +42,7 @@ function confirmCopy(kind: Confirm, p: AdminPlayer, mobile: boolean): { title: s
         text: `Their stack goes back to ${p.freeCaseMax} free cases right away.`,
         button: 'Refill free cases',
         diff: [
-          { label: 'Free cases', before: `${p.freeCases}/${p.freeCaseMax}`, after: `${p.freeCaseMax}/${p.freeCaseMax}` },
+          { label: 'Free cases', before: `${p.freeCases} / ${p.freeCaseMax}`, after: `${p.freeCaseMax} / ${p.freeCaseMax}` },
           { label: 'Next free case', before: p.freeCaseNextAt ? `${utcDateTime(p.freeCaseNextAt)} UTC` : 'stack full', after: 'stack full' },
         ],
       };
@@ -44,7 +50,7 @@ function confirmCopy(kind: Confirm, p: AdminPlayer, mobile: boolean): { title: s
       return {
         title: `Sign ${name} out everywhere`,
         text: `Ends ${p.sessions} ${p.sessions === 1 ? 'session' : 'sessions'}, including the Discord activity.`,
-        button: mobile ? 'Sign out' : 'Sign out everywhere',
+        button: 'Sign out everywhere',
         diff: [{ label: 'Live sessions', before: num(p.sessions), after: '0' }],
       };
     case 'rename':
@@ -127,7 +133,7 @@ function BanBand({ p, onUnban, mobile }: { p: AdminPlayer; onUnban: () => void; 
 const CHIP_STYLE = { solid: 'solid', outline: 'outline', dashed: 'dashed', flag: 'flag' } as const;
 
 function TabState({ query, label, children, empty }: { query: ReturnType<typeof usePlayerTab>; label: string; children: React.ReactNode; empty: boolean }) {
-  if (query.isError) return <ErrorBox title={`Couldn't load ${label}`} error={query.error} onRetry={() => void query.refetch()} />;
+  if (query.isError) return <ErrorBox title={`Couldn’t load ${label}`} error={query.error} onRetry={() => void query.refetch()} />;
   if (query.isPending)
     return (
       <div className={s.panel} aria-busy="true" aria-label={`Loading ${label}`}>
@@ -319,7 +325,7 @@ function NotesTab({ id, mobile }: { id: string; mobile?: boolean }) {
   const canWrite = staff.can('moderator');
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      {q.isError && <ErrorBox title="Couldn't load the notes" error={q.error} onRetry={() => void q.refetch()} />}
+      {q.isError && <ErrorBox title="Couldn’t load the notes" error={q.error} onRetry={() => void q.refetch()} />}
       {notes.map((n) => (
         <article key={n.id} className={s.panel} style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '14px 16px', borderRadius: 'var(--radius-card)' }}>
           <span className="mono" style={{ fontSize: 11, color: 'var(--text-3)' }}>
@@ -385,9 +391,9 @@ function Desktop({ p }: { p: AdminPlayer }) {
   };
   const roleHint =
     staff.role === 'viewer'
-      ? 'Read-only: you’re a Viewer. Adjust credits, Grant item and Refill free cases are for admins; Ban and Sign out everywhere for moderators and admins.'
+      ? PLAYER_HINT.viewer
       : staff.role === 'moderator'
-        ? 'Adjust credits, Grant item, Refill free cases and Delete account: Admins only.'
+        ? PLAYER_HINT.moderator
         : '';
   const copy = confirm ? confirmCopy(confirm, p, false) : null;
   const stats: [string, string][] = [
@@ -524,7 +530,7 @@ function Desktop({ p }: { p: AdminPlayer }) {
             <div key={sig.key} style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '12px 0', borderTop: '1px solid var(--separator)' }}>
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, fontSize: 13 }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-2)' }}>
-                  {sig.alert && <span className={s.dot} aria-label="Worth a look" role="img" />}
+                  {sig.alert && <Dot />}
                   {SIGNAL_LABEL[sig.key]}
                 </span>
                 <span className="mono" style={{ fontSize: 14 }}>
@@ -648,21 +654,23 @@ function Mobile({ p }: { p: AdminPlayer }) {
     if (message) setError(message);
     else setConfirm(null);
   };
-  const admin = staff.can('admin');
   const stats: [string, string][] = [
     ['Balance', cr(p.stats.balance)],
     ['Held in bids', cr(p.stats.heldInBids)],
-    ['Inventory', cr(p.stats.inventoryValue)],
+    ['Inventory value', cr(p.stats.inventoryValue)],
     ['Cases opened', num(p.stats.casesOpened)],
-    ['Trades', num(p.stats.tradesCompleted)],
+    ['Trades completed', num(p.stats.tradesCompleted)],
     ['Albums', `${p.stats.albumsPct}%`],
   ];
-  const more: { label: string; go: () => void; danger?: boolean }[] = [
-    { label: 'Adjust credits', go: () => setDialog('credits') },
-    { label: 'Grant item', go: () => setDialog('grant') },
-    { label: 'Refill free cases', go: () => ask('reset') },
-    { label: 'Delete account', go: () => setDialog('delete'), danger: true },
+  // Same actions and roles as the desktop page and its "More actions" menu.
+  const more: { label: string; go: () => void; min: 'moderator' | 'admin'; off?: string; danger?: boolean }[] = [
+    { label: 'Adjust credits', go: () => setDialog('credits'), min: 'admin' },
+    { label: 'Grant item', go: () => setDialog('grant'), min: 'admin' },
+    { label: 'Refill free cases', go: () => ask('reset'), min: 'admin' },
+    { label: 'Rename', go: () => ask('rename'), min: 'moderator', off: p.isGuest ? 'Guests have no name' : undefined },
+    { label: 'Delete account', go: () => setDialog('delete'), min: 'admin', danger: true },
   ];
+  const allowedMore = more.filter((m) => staff.can(m.min)).length;
   return (
     <AdminPage gap={20}>
       <Link to="/admin/players" className={cx('mono', s.back)} style={{ display: 'inline-flex', alignItems: 'center', height: 32, margin: '-8px 0 -12px' }}>
@@ -696,7 +704,7 @@ function Mobile({ p }: { p: AdminPlayer }) {
           </span>
         )}
         <span style={{ fontSize: 12, color: 'var(--text-2)' }}>
-          Joined {utcDateTime(p.joinedAt).split(',')[0]} · last seen {ago(p.lastSeenAt)}
+          Joined {utcDateTime(p.joinedAt)} · Last seen {ago(p.lastSeenAt)}
         </span>
       </div>
       <BanBand p={p} onUnban={() => ask('unban')} mobile />
@@ -724,35 +732,40 @@ function Mobile({ p }: { p: AdminPlayer }) {
         <summary style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 48, padding: '0 14px', fontSize: 14, cursor: 'pointer', listStyle: 'none' }}>
           More actions{' '}
           <span className="mono" style={{ fontSize: 11, color: 'var(--text-3)' }}>
-            {admin ? '4' : ROLE_HINT.admin}
+            {allowedMore > 0 ? String(allowedMore) : ROLE_HINT.moderator}
           </span>
         </summary>
         <div style={{ display: 'flex', flexDirection: 'column', padding: '0 14px 6px' }}>
-          {more.map((m) => (
-            <button
-              key={m.label}
-              type="button"
-              disabled={!admin || !!gone}
-              aria-disabled={!admin || !!gone}
-              onClick={m.go}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 48, padding: 0, border: 0, borderTop: '1px solid var(--separator)', background: 'none', color: m.danger ? 'var(--error)' : 'var(--text)', font: 'inherit', fontSize: 14, textAlign: 'left', opacity: admin ? 1 : 0.45, cursor: admin ? 'pointer' : 'not-allowed' }}
-            >
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                {!admin && <LockIcon />}
-                {m.label}
-              </span>
-              {!admin && (
-                <span className="mono" style={{ fontSize: 10, color: 'var(--text-3)' }}>
-                  {ROLE_HINT.admin}
+          {more.map((m) => {
+            const allowed = staff.can(m.min);
+            const off = !allowed || !!gone || !!m.off;
+            const hint = !allowed ? ROLE_HINT[m.min] : m.off;
+            return (
+              <button
+                key={m.label}
+                type="button"
+                disabled={off}
+                aria-disabled={off}
+                onClick={m.go}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 48, padding: 0, border: 0, borderTop: '1px solid var(--separator)', background: 'none', color: m.danger ? 'var(--error)' : 'var(--text)', font: 'inherit', fontSize: 14, textAlign: 'left', opacity: off ? 0.45 : 1, cursor: off ? 'not-allowed' : 'pointer' }}
+              >
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  {!allowed && <LockIcon />}
+                  {m.label}
                 </span>
-              )}
-            </button>
-          ))}
+                {hint && (
+                  <span className="mono" style={{ fontSize: 10, color: 'var(--text-3)' }}>
+                    {hint}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </details>
-      {staff.role === 'viewer' && (
+      {staff.role !== 'admin' && (
         <span className={cx('mono', s.hint)} style={{ marginTop: -10 }}>
-          Read-only: you’re a Viewer. Ban and sign out are for moderators and admins.
+          {PLAYER_HINT[staff.role]}
         </span>
       )}
       {copy && (
@@ -774,6 +787,7 @@ function Mobile({ p }: { p: AdminPlayer }) {
               {copy.button}
             </Btn>
           </div>
+          <Logged />
         </div>
       )}
       <section aria-labelledby="m-signals" className={s.panel} style={{ display: 'flex', flexDirection: 'column', padding: '12px 14px 4px' }}>
@@ -783,7 +797,7 @@ function Mobile({ p }: { p: AdminPlayer }) {
         {p.signals.map((sig) => (
           <div key={sig.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, minHeight: 40, borderTop: '1px solid var(--separator)', fontSize: 13 }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-2)' }}>
-              {sig.alert && <span className={s.dot} aria-hidden="true" style={{ width: 6, height: 6 }} />}
+              {sig.alert && <Dot size={6} />}
               {SIGNAL_SHORT[sig.key]}
             </span>
             <span className="mono">{sig.value}</span>
@@ -829,7 +843,7 @@ export function Player() {
         <Link to="/admin/players" className={cx('mono', s.back)}>
           ← Players
         </Link>
-        {missing ? <EmptyBox>No player has this ID.</EmptyBox> : <ErrorBox title="Couldn't load this player" error={q.error} onRetry={() => void q.refetch()} />}
+        {missing ? <EmptyBox>No player has this ID.</EmptyBox> : <ErrorBox title="Couldn’t load this player" error={q.error} onRetry={() => void q.refetch()} />}
       </AdminPage>
     );
   }

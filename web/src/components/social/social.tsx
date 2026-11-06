@@ -90,7 +90,7 @@ export function FriendRow({ friend }: { friend: FriendCard }) {
         <MiniShowcase tiers={friend.showcase} />
       </div>
       <Button variant="secondary" size={44} to={`/trades/new?with=${encodeURIComponent(friend.username)}`} style={{ ...ABOVE, height: 40, fontSize: 13, paddingInline: 14 }}>
-        Trade
+        Propose a trade
       </Button>
     </li>
   );
@@ -109,7 +109,7 @@ export function FriendCardMobile({ friend }: { friend: FriendCard }) {
         <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
           <span style={{ fontSize: 15, fontWeight: 600 }}>{name(friend)}</span>
           <span className="mono" style={{ fontSize: 11, color: 'var(--text-2)' }}>
-            {formatCredits(friend.stats.inventoryValue)} CR · {friend.stats.albumsPct}%
+            {statsLine(friend.stats)}
           </span>
         </span>
         <MiniShowcase tiers={friend.showcase} mobile />
@@ -137,12 +137,12 @@ export function SearchResults({ results }: { results: PlayerCard[] }) {
           </span>
           {r.relation === 'none' && (
             <Button variant="secondary" size={44} onClick={() => add.mutate(r.username)} disabled={add.isPending} style={{ ...ABOVE, height: 36, fontSize: 13, paddingInline: 12 }}>
-              Add
+              Add friend
             </Button>
           )}
           {r.relation === 'incoming' && (
             <Button size={44} bevel="none" onClick={() => accept.mutate(r.id)} disabled={accept.isPending} style={{ ...ABOVE, height: 36, fontSize: 13, paddingInline: 12 }}>
-              Accept
+              Accept request
             </Button>
           )}
           {(r.relation === 'friend' || r.relation === 'outgoing') && (
@@ -188,7 +188,7 @@ export function IncomingRow({ player, mobile }: { player: PlayerCard; mobile?: b
           </Button>
         )}
         <Button size={44} bevel="none" onClick={() => accept.mutate(player.id)} disabled={accept.isPending} style={mobile ? { fontSize: 14, paddingInline: 14 } : { height: 36, fontSize: 13, paddingInline: 12 }}>
-          Accept
+          Accept request
         </Button>
       </span>
     </li>
@@ -205,7 +205,7 @@ export function OutgoingRow({ player }: { player: PlayerCard }) {
         {name(player)}
       </Link>
       <span className="lbl" style={{ fontSize: 10 }}>
-        Pending
+        Requested
       </span>
       <Button variant="ghost" size={44} onClick={() => drop.mutate(player.id)} style={{ ...ABOVE, height: 36, fontSize: 13, paddingInline: 8 }}>
         Cancel

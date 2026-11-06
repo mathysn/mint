@@ -4,7 +4,7 @@ import type { AuctionDetail } from '../../../shared/api';
 import { Page } from '../components/layout/AppShell';
 import { FactsList, ItemStage, RarityPill } from '../components/items/detail';
 import { FloatBar, StatTrakPill, WearPill } from '../components/items/items';
-import { BidRow, CompactStage, SalesChart, UrgentDot, salesAria } from '../components/market/market';
+import { BidRow, CompactStage, SalesChart, UrgentDot, salesAria, salesDates } from '../components/market/market';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/primitives';
 import { formatCredits, formatFloat, shortDate } from '../lib/format';
@@ -26,7 +26,7 @@ function useOutbidToast(auction: AuctionDetail | undefined, say: (text: string) 
     last.current = auction;
     if (!auction || !before || before.id !== auction.id) return;
     if (before.role === 'leading' && auction.role === 'outbid' && auction.leader && before.currentBid !== null && auction.currentBid !== null) {
-      say(`${auction.leader.username} outbid you with ${CR(auction.currentBid)}. Your ${CR(before.currentBid)} are back in your balance.`);
+      say(`${auction.leader.username} outbid you with ${CR(auction.currentBid)}. Your ${CR(before.currentBid)} is back in your balance.`);
     }
   }, [auction, say]);
 }
@@ -68,7 +68,7 @@ export function Auction() {
   if (error) {
     return (
       <Page gap={24} top={32} back={back}>
-        <EmptyState title="This auction does not exist">
+        <EmptyState title="This auction isn’t available">
           <Button variant="secondary" size={44} to="/market">
             Back to the market
           </Button>
@@ -83,7 +83,7 @@ export function Auction() {
   const urgent = urgentOf(auction, now);
   const hasBids = auction.currentBid !== null;
   const typed = amount === '' ? auction.minNextBid : Number(amount);
-  const leaderLine = hasBids ? `${auction.role === 'leading' ? 'You' : auction.leader?.username ?? '—'} leading · ${auction.bidCount} ${auction.bidCount > 1 ? 'bids' : 'bid'}` : 'No bids yet';
+  const leaderLine = hasBids ? `${auction.role === 'leading' ? 'You lead' : `${auction.leader?.username ?? '—'} leads`} · ${auction.bidCount} ${auction.bidCount > 1 ? 'bids' : 'bid'}` : 'No bids yet';
 
   // Checks the server would make anyway, done first so a doomed request is never sent.
   const bidProblem = () => {
@@ -109,7 +109,7 @@ export function Auction() {
               : `You lead with ${CR(r.auction.currentBid ?? typed)}, held from your balance.`,
           );
         },
-        onError: (e) => setProblem(errorText(e, 'Could not place the bid.')),
+        onError: (e) => setProblem(errorText(e, 'Couldn’t place the bid. Try again.')),
       },
     );
   };
@@ -128,7 +128,7 @@ export function Auction() {
         },
         onError: (e) => {
           setConfirmBuy(false);
-          setProblem(errorText(e, 'Could not buy it.'));
+          setProblem(errorText(e, 'Couldn’t buy it. Try again.'));
         },
       },
     );
@@ -153,7 +153,7 @@ export function Auction() {
             Cancel
           </Button>
           <Button size={44} bevel="none" onClick={buyNow} disabled={buy.isPending} style={{ paddingInline: 16, fontSize: 14 }}>
-            Confirm · {CR(auction.buyNowPrice)}
+            Buy for {CR(auction.buyNowPrice)}
           </Button>
         </span>
       ) : (
@@ -173,7 +173,7 @@ export function Auction() {
         ? 'This is your listing. You can take it off the market while nobody has bid.'
         : 'This is your listing. Bids are held from the bidders and the best one wins.'
       : auction.role === 'leading'
-        ? `You have the highest bid. Your ${CR(auction.currentBid ?? 0)} are held until someone outbids you.`
+        ? `You have the highest bid. Your ${CR(auction.currentBid ?? 0)} is held until someone outbids you.`
         : me?.isGuest
           ? 'Sign in with Discord to bid and sell.'
           : null;
@@ -182,7 +182,7 @@ export function Auction() {
     <section aria-labelledby="hist-title" style={{ flex: '1 1 420px', display: 'flex', flexDirection: 'column', gap: mobile ? 0 : 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: mobile ? 6 : 0 }}>
         <h2 id="hist-title" className="lbl">
-          {mobile ? `// Bids · ${auction.bidCount}` : '// Bid history'}
+          {`// Bid history · ${auction.bidCount}`}
         </h2>
         {!mobile && (
           <span className="mono" style={{ fontSize: 12, color: 'var(--text-3)' }}>
@@ -213,7 +213,7 @@ export function Auction() {
         mobilePadding={`0 20px ${bar ? 120 : 32}px`}
         mobileRight={
           <span className="mono" style={{ marginRight: 12, fontSize: 12, color: 'var(--text-2)' }}>
-            Held {formatCredits(me?.heldInBids ?? 0)} CR
+            Held {CR(me?.heldInBids ?? 0)}
           </span>
         }
       >
@@ -241,18 +241,30 @@ export function Auction() {
                 {auction.status === 'sold' ? 'Sold for' : hasBids ? 'Current bid' : 'Starting price'}
               </span>
               <span key={bidChanges} className="mono" style={{ fontSize: 22, fontWeight: 500, ...flash }}>
-                {formatCredits(auction.finalPrice ?? auction.currentBid ?? auction.startPrice)}
+                {CR(auction.finalPrice ?? auction.currentBid ?? auction.startPrice)}
               </span>
             </div>
           </div>
           <span style={{ fontSize: 13, color: 'var(--text-2)' }}>
-            {[leaderLine, `sold by ${auction.seller.username}`, auction.buyNowPrice !== null ? `buy now ${formatCredits(auction.buyNowPrice)} CR` : null].filter(Boolean).join(' · ')}
+            {[leaderLine, `sold by ${auction.seller.username}`, auction.buyNowPrice !== null ? `buy now ${CR(auction.buyNowPrice)}` : null].filter(Boolean).join(' · ')}
           </span>
           {toastBox}
           {ended && (
             <div role="status" style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: 16, border: '1px solid var(--text)', borderRadius: 'var(--radius-card)', background: 'var(--surface-bar)' }}>
+              <span className="lbl" style={{ fontSize: 10, color: 'var(--text)' }}>
+                Auction ended
+              </span>
               <span style={{ fontSize: 15, fontWeight: 600 }}>{ended.title}</span>
               <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{ended.text}</span>
+            </div>
+          )}
+          {/* Timer at 00:00 before the server settles: same notice as on desktop. */}
+          {!running && auction.status === 'active' && (
+            <div role="status" style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: 16, border: '1px solid var(--text)', borderRadius: 'var(--radius-card)', background: 'var(--surface-bar)' }}>
+              <span className="lbl" style={{ fontSize: 10, color: 'var(--text)' }}>
+                Auction ended
+              </span>
+              <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Closing the sale…</span>
             </div>
           )}
           {running && blocked && <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text-2)' }}>{blocked}</p>}
@@ -270,7 +282,7 @@ export function Auction() {
             <div style={{ display: 'flex', gap: 8 }}>
               <label style={{ position: 'relative', flex: 1, display: 'block' }}>
                 <span className="lbl" style={{ position: 'absolute', left: 12, top: 6, fontSize: 9 }}>
-                  Your bid · min {formatCredits(auction.minNextBid)}
+                  Your bid · min. {CR(auction.minNextBid)}
                 </span>
                 <input
                   type="number"
@@ -410,7 +422,7 @@ export function Auction() {
                         }}
                         style={{ flex: 1, height: 40, border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-control)', background: 'transparent', color: 'var(--text)', fontSize: 13, cursor: 'pointer' }}
                       >
-                        {q.label} · {formatCredits(q.amount)}
+                        {q.label} · {CR(q.amount)}
                       </button>
                     ))}
                   </div>
@@ -478,7 +490,7 @@ export function Auction() {
             </h2>
             {auction.sales.average !== null && (
               <span className="mono" style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                avg {CR(auction.sales.average)}
+                Average {CR(auction.sales.average)}
               </span>
             )}
           </div>
@@ -488,7 +500,7 @@ export function Auction() {
                 sales={auction.sales}
                 height={140}
                 label={salesAria(auction.sales, `Last ${auction.sales.count} sales of this skin and wear`)}
-                caption={[`${auction.sales.count} ${auction.sales.count === 1 ? 'sale' : 'sales'} ago`, 'dashed line · average', 'latest']}
+                caption={salesDates(auction.sales)}
               />
             ) : (
               <p style={{ fontSize: 14, color: 'var(--text-2)' }}>No sales of this skin and wear yet.</p>

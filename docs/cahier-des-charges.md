@@ -19,13 +19,15 @@ Tout le catalogue vient de [ByMykel/CSGO-API](https://github.com/ByMykel/CSGO-AP
 
 | Fichier | Contenu | Usage dans le jeu |
 |---|---|---|
-| `skins_not_grouped.json` | Un skin par état et variante (normal, StatTrak, souvenir), avec `min_float` et `max_float` | Catalogue des skins tirables et intervalle de float |
-| `skins.json` | Skins groupés, avec rareté et image | Fiches skin |
+| `skins.json` | Skins groupés, avec rareté, image, `min_float` / `max_float` et StatTrak possible | Catalogue des skins tirables, fiches skin, intervalle de float |
 | `crates.json` | Caisses et leur contenu | Définition des caisses et de leurs objets spéciaux |
+| `collections.json` | Collections | Albums et contrats d'échange (rareté supérieure de la même collection) |
+
+L'import (`server/services/catalogImport.ts`) lit ces trois fichiers en anglais, à un commit précis (revu le 06/11/2026 : `skins_not_grouped.json` n'est pas utilisé).
 | `collections.json` | Collections de skins | Albums à compléter |
 | `keys.json` | Clés de caisse | Optionnel |
 
-Les images sont hébergées sur GitHub et référencées par URL dans les JSON. Le jeu importe ces fichiers dans sa base avec un script, plutôt que d'appeler l'API à chaque requête. Le script se relance quand Valve ajoute des caisses.
+Les images sont référencées par URL dans les JSON et servies par le CDN de Steam (`community.akamai.steamstatic.com`). Le jeu importe ces fichiers dans sa base avec un script, plutôt que d'appeler l'API à chaque requête. Le script se relance quand Valve ajoute des caisses.
 
 Points à vérifier à l'import : les noms exacts des champs de contenu des caisses (objets normaux et objets spéciaux séparés) et la disponibilité du français.
 
@@ -47,7 +49,7 @@ Toutes les caisses utilisent les mêmes taux. À l'intérieur d'une rareté, cha
 
 ### StatTrak
 
-10 % de chance qu'un objet tiré soit StatTrak. C'est une variante à part entière : elle vaut plus cher et ne se mélange pas avec les versions normales dans les contrats d'échange.
+Un objet tiré sur 10 est StatTrak, si son skin existe en StatTrak (réglable dans Economy). C'est une variante à part entière : elle vaut plus cher et ne se mélange pas avec les versions normales dans les contrats d'échange.
 
 ### Float et état
 
@@ -71,7 +73,7 @@ Un entier de 0 à 999 tiré à l'ouverture et affiché sur la fiche de l'objet. 
 
 Une seule monnaie virtuelle (nom à choisir), qui ne s'achète jamais avec de l'argent réel. La monnaie doit sortir du jeu plus vite qu'elle n'y entre, sinon les prix s'envolent.
 
-Boucle de l'économie (7 étapes) : la monnaie sort par les caisses et la taxe de 5 %.
+Boucle de l'économie (5 étapes) : la monnaie sort par les caisses et la taxe de 5 %.
 
 - Caisses gratuites (une toutes les 10 min, jusqu'à 5 en réserve) → objet tiré → Inventaire (le recyclage ou la vente le transforme en monnaie)
 - Monnaie → Ouvrir une caisse (prix de la caisse, tirage côté serveur) → objet tiré → Inventaire (exemplaires uniques)
@@ -146,7 +148,7 @@ Dix fonctionnalités : six de base (ouverture, inventaire, recyclage, trade, mai
 
 - Ajout par pseudo, avec une demande à accepter.
 - Consultation de l'inventaire, de l'album et du profil d'un ami.
-- Fil d'activité des amis : ouvertures à partir de Classified, ventes conclues, contrats réussis.
+- Fil d'activité des amis : ouvertures, ventes conclues et contrats réussis, à partir de Classified (`FEED_TIERS`), 10 dernières entrées.
 
 ### Contrat d'échange
 
@@ -267,7 +269,7 @@ Chaque phase doit être jouable avant de passer à la suivante.
 - [x] Float tiré uniformément ou pondéré pour rendre Factory New plus rare ? → **uniforme** dans la plage du skin (pas de pondération)
 - [ ] Valeurs de l'économie à rééquilibrer après les premiers tests (à surveiller en priorité depuis le passage à une caisse gratuite toutes les 10 min : jusqu'à 144 caisses gratuites par jour pour un joueur très actif, contre 6 avant)
 - [x] Caisse gratuite : par jour ou par heure ? → **toutes les 4 h**, et la récompense quotidienne de 250 CR est supprimée ; revu le 05/11/2026 : **une toutes les 10 min, jusqu'à 5 en réserve**, toujours sur la caisse du jour, ouvertes une par une, réserve pleine au départ (nouveaux joueurs et joueurs existants)
-- [x] Caisse du jour : une par jour ? → revu le 06/11/2026 : **elle change toutes les 4 h** (créneaux alignés sur 00:00 UTC), durée réglable dans admin › Economy (« Case of the day every », 1 à 168 h). Un choix du staff dans Catalog reste prioritaire et fige la caisse
+- [x] Caisse du jour : une par jour ? → revu le 06/11/2026 : **elle change toutes les 4 h** (créneaux alignés sur 00:00 UTC), durée réglable dans admin › Economy (« Case of the day every » : 1, 2, 3, 4, 6, 8, 12 ou 24 h, pour garder des créneaux alignés sur 00:00 UTC). Un choix du staff dans Catalog reste prioritaire et fige la caisse
 - [x] Progression invité → **jamais transférée**, ni dans un compte existant ni dans un nouveau (anti-farm) : le compte Discord démarre avec sa propre collection et l'invité est supprimé
 
 ## Sources

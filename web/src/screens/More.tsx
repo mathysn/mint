@@ -50,7 +50,7 @@ export function More() {
           <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
             <span style={{ fontSize: 17, fontWeight: 600 }}>{name}</span>
             <span className="mono" style={{ fontSize: 12, color: 'var(--text-2)' }}>
-              {profile ? `#${profile.ranks.value} by value · #${profile.ranks.albums} by albums` : 'View profile'}
+              {profile ? `#${profile.ranks.value} by inventory value · #${profile.ranks.albums} by albums` : 'View profile'}
             </span>
           </span>
           {chevron}
@@ -60,7 +60,7 @@ export function More() {
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <Avatar name={null} guest />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <span style={{ fontSize: 15, fontWeight: 600 }}>Playing as guest</span>
+              <span style={{ fontSize: 15, fontWeight: 600 }}>Playing as a guest</span>
               <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Sign in with Discord to trade, sell and add friends.</span>
             </div>
           </div>

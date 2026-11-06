@@ -48,7 +48,7 @@ describe('economy settings', () => {
     expect(preview.body.diff).toEqual([
       { key: 'cases.price', label: 'Case price', from: '250 CR', to: '300 CR' },
       { key: 'recycle.covert', label: 'Recycle Covert', from: '2,500 CR', to: '3,000 CR' },
-      { key: 'market.fee', label: 'Sale fee', from: '5 %', to: '6 %' },
+      { key: 'market.fee', label: 'Sale fee', from: '5%', to: '6%' },
     ]);
     expect(preview.body.impacts).toContain('Live auctions keep the fee they started with. New listings pay 6%.');
     expect(preview.body.sim.price).toBe(300);
@@ -57,15 +57,15 @@ describe('economy settings', () => {
     expect(res.body).toEqual({ toast: 'Saved 3 economy changes · logged' });
     const logs = await logsOf('economy.update');
     expect(logs.map((l) => [l.targetId, l.change, l.reason])).toEqual([
-      ['cases.price', '250 → 300 CR', 'too many credits'],
-      ['recycle.covert', '2,500 → 3,000 CR', 'too many credits'],
-      ['market.fee', '5 → 6 %', 'too many credits'],
+      ['cases.price', '250 CR → 300 CR', 'too many credits'],
+      ['recycle.covert', '2,500 CR → 3,000 CR', 'too many credits'],
+      ['market.fee', '5% → 6%', 'too many credits'],
     ]);
 
     const page = (await admin.client.json('/admin/economy')).body;
     const price = page.groups.find((g: any) => g.id === 'cases').settings.find((s: any) => s.key === 'cases.price');
     expect(price).toMatchObject({ value: '300', changed: expect.stringMatching(/^Changed .* by mathys$/) });
-    expect(page.history[0]).toMatchObject({ staff: 'mathys', key: 'market.fee', change: '5 → 6 %' });
+    expect(page.history[0]).toMatchObject({ staff: 'mathys', key: 'market.fee', label: 'Sale fee', change: '5% → 6%' });
 
     // The game: /config, a paid opening, a new listing's fee.
     expect((await vex.client.json('/config')).body).toMatchObject({ cratePrice: 300, marketFeePct: 6 });
@@ -107,7 +107,7 @@ describe('case of the day rotation', () => {
     expect(preview.body.impacts[0]).toMatch(/^The case of the day may change right away/);
     const save = await post(admin.client, '/admin/economy', { edits: { 'case_of_day.every_h': '1' }, reason: 'faster rotation' });
     expect(save.body).toEqual({ toast: 'Saved 1 economy change · logged' });
-    expect((await logsOf('economy.update')).map((l) => [l.targetId, l.change])).toEqual([['case_of_day.every_h', '4 → 1 h']]);
+    expect((await logsOf('economy.update')).map((l) => [l.targetId, l.change])).toEqual([['case_of_day.every_h', '4 h → 1 h']]);
     expect((await vex.client.json('/me')).body.freeCase.crateChangesAt).toBe(boundary(H));
 
     await post(admin.client, '/admin/catalog/case-of-day', { crateId: 'crate-b', reason: 'event' });
@@ -134,7 +134,7 @@ describe('market and trades', () => {
     expect(detail.settle).toBeNull();
 
     const res = await post(mod.client, `/admin/market/auctions/${id}/cancel`, { reason: 'listing abuse' });
-    expect(res.body).toEqual({ toast: `Cancelled auction ${detail.number}, refunded kenji · logged` });
+    expect(res.body).toEqual({ toast: `Cancelled auction ${detail.number}, refunded 300 CR to kenji · logged` });
     expect(await balanceOf(kenji.user.id)).toBe(1000);
     expect((await db().select().from(items).where(eq(items.id, item.id)))[0]).toMatchObject({ status: 'available', ownerId: vex.user.id });
     expect((await db().select().from(auctions).where(eq(auctions.id, id)))[0]).toMatchObject({ status: 'cancelled', cancelReason: 'admin', cancelledBy: 'lea' });
@@ -184,7 +184,7 @@ describe('market and trades', () => {
     expect(page.rows[0]).toMatchObject({ live: true, status: 'Pending', give: 'Gun | c1 + 200 CR', get: 'nothing', cancelText: 'Gun | c1 + 200 CR goes back to vex.' });
 
     const res = await post(mod.client, `/admin/market/trades/${sent.body.id}/cancel`, { reason: 'scam report' });
-    expect(res.body.toast).toMatch(/^Cancelled offer #\d+, items and credits released · logged$/);
+    expect(res.body.toast).toMatch(/^Cancelled offer #\d+, released 1 item and [\d,]+ CR · logged$/);
     expect(await balanceOf(vex.user.id)).toBe(1000);
     expect((await db().select().from(items).where(eq(items.id, item.id)))[0]!.status).toBe('available');
     expect((await db().select().from(trades).where(eq(trades.id, sent.body.id)))[0]).toMatchObject({ status: 'cancelled', cancelReason: 'admin', cancelledBy: 'lea' });
@@ -226,7 +226,7 @@ describe('monitors', () => {
     const listed = (await mod.client.json('/admin/flags')).body;
     expect(listed.open).toBe(2);
     const res = await post(mod.client, `/admin/flags/${flag!.id}/dismiss`, { reason: 'brothers, checked on Discord' });
-    expect(res.body).toEqual({ toast: 'Dismissed flag “Repeated trades” · logged' });
+    expect(res.body).toEqual({ toast: 'Dismissed the “Repeated trades” flag · logged' });
     await post(mod.client, `/admin/players/${kenji.user.id}/ban`, { duration: '7d', reason: 'alt account' });
     const after = (await mod.client.json('/admin/flags')).body;
     expect(after.open).toBe(0);
@@ -285,7 +285,7 @@ describe('moderation', () => {
     await newAccount('l0ser_dune');
     expect((await post(dune.client, '/players/l0ser_dune/report', { category: 'Offensive name', message: 'This name is about me.' })).status).toBe(200);
     expect((await post(dune.client, '/players/l0ser_dune/report', { category: 'Other', message: 'again' })).status).toBe(409);
-    expect((await post(dune.client, '/players/dune/report', { category: 'Scam', message: 'me' })).status).toBe(400);
+    expect((await post(dune.client, '/players/dune/report', { category: 'Scam', message: 'me' })).status).toBe(403);
     expect((await post(ash.client, '/players/dune/report', { category: 'Scam', message: 'Never sent the CR.' })).status).toBe(200);
     const guest = await newGuest();
     expect((await post(guest, '/players/dune/report', { category: 'Scam', message: 'x' })).status).toBe(403);
@@ -298,7 +298,7 @@ describe('moderation', () => {
     expect(scam).toMatchObject({ urgent: true, hideName: false, meta: expect.stringMatching(/^reported by ash · /) });
 
     const dismissed = await post(mod.client, `/admin/reports/${scam.id}/dismiss`, { reason: 'no proof' });
-    expect(dismissed.body).toEqual({ toast: 'Dismissed report on dune · logged' });
+    expect(dismissed.body).toEqual({ toast: 'Dismissed the report on dune · logged' });
     await post(mod.client, `/admin/players/${offensive.target.id}/rename`, { name: offensive.suggestedName, reason: 'offensive name' });
     const rows = await db().select().from(reports).orderBy(reports.id);
     expect(rows.map((r) => [r.status, r.handledNote?.split(',')[0]])).toEqual([
@@ -317,7 +317,7 @@ describe('moderation', () => {
     expect((await post(mod.client, `/admin/drops/${row!.id}/hide`, { reason: 'name' })).body).toEqual({ toast: 'Hid vex’s drop from the banner · logged' });
     expect((await vex.client.json('/drops/latest')).body.drop).toBeNull();
     expect((await mod.client.json('/admin/moderation')).body.drops[0]).toMatchObject({ hidden: true, state: 'Hidden by lea' });
-    expect((await post(mod.client, `/admin/drops/${row!.id}/show`, { reason: 'renamed' })).body.toast).toBe('Showing vex’s drop in the banner again · logged');
+    expect((await post(mod.client, `/admin/drops/${row!.id}/show`, { reason: 'renamed' })).body.toast).toBe('Showed vex’s drop in the banner again · logged');
     expect((await vex.client.json('/drops/latest')).body.drop).toMatchObject({ id: row!.id });
   });
 
@@ -369,7 +369,7 @@ describe('moderation', () => {
     // Empty stack: the timer just started.
     await db().update(users).set({ freeCaseAnchor: new Date() }).where(eq(users.id, vex.user.id));
     expect((await vex.client.json('/me')).body.freeCase.available).toBe(false);
-    expect((await post(admin.client, '/admin/events/free-case', { reason: 'sorry for the outage' })).body).toEqual({ toast: 'Gave 2 players a free case · logged' });
+    expect((await post(admin.client, '/admin/events/free-case', { reason: 'sorry for the outage' })).body).toEqual({ toast: 'Gave a free case to 2 players · logged' });
     expect((await vex.client.json('/me')).body.freeCase).toMatchObject({ available: true, count: 1 });
     expect((await vex.client.open(daily, { free: true })).status).toBe(200);
     expect((await vex.client.open(daily, { free: true })).status).not.toBe(200);

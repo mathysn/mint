@@ -128,7 +128,7 @@ function ActivityGate({ children }: { children: React.ReactNode }) {
         </div>
       ) : (
         <div role="alert" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <h1 style={{ fontSize: 26, fontWeight: 600 }}>Discord didn't confirm.</h1>
+          <h1 style={{ fontSize: 26, fontWeight: 600 }}>Discord didn’t confirm.</h1>
           <Button size={48} onClick={() => window.location.reload()}>
             Try again
           </Button>

@@ -8,6 +8,7 @@ import { adminLog, economySettings } from '../db/schema.js';
 import type { Economy, Tier } from '../game/economy.js';
 import {
   changeText,
+  withUnit,
   economyFrom,
   formatSetting,
   GROUP_TITLE,
@@ -83,7 +84,10 @@ export async function economyPage(): Promise<AdminEconomy> {
     groups,
     oddsTotal: pct(oddsTotalBp(e)),
     sim: round(simulate(await simCrates(), e)),
-    history: logs.slice(0, 50).map((l) => ({ id: l.id, at: l.at.toISOString(), staff: l.staff, key: l.key ?? '', change: l.change, reason: l.reason })),
+    history: logs.slice(0, 50).map((l) => {
+      const def = l.key ? SETTING_BY_KEY.get(l.key) : undefined;
+      return { id: l.id, at: l.at.toISOString(), staff: l.staff, key: l.key ?? '', label: def ? longLabel(def) : (l.key ?? ''), change: l.change, reason: l.reason };
+    }),
   };
 }
 
@@ -135,8 +139,8 @@ const diffRows = (changes: Checked['changes']): EconomyDiffRow[] =>
   changes.map(({ def, from, to }) => ({
     key: def.key,
     label: longLabel(def),
-    from: `${formatSetting(def, from)} ${def.unit}`,
-    to: `${formatSetting(def, to)} ${def.unit}`,
+    from: withUnit(def, from),
+    to: withUnit(def, to),
   }));
 
 export async function previewEconomy(edits: Record<string, string>): Promise<EconomyPreview> {
@@ -179,8 +183,8 @@ export async function saveEconomy(staff: StaffMember, input: z.infer<typeof save
         action: 'economy.update',
         target: { type: 'economy', id: def.key, label: longLabel(def) },
         change: changeText(def, from, to),
-        before: { [longLabel(def)]: `${formatSetting(def, from)} ${def.unit}` },
-        after: { [longLabel(def)]: `${formatSetting(def, to)} ${def.unit}` },
+        before: { [longLabel(def)]: withUnit(def, from) },
+        after: { [longLabel(def)]: withUnit(def, to) },
         reason: input.reason,
       });
     }

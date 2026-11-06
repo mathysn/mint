@@ -10,8 +10,8 @@ type Edits = Record<string, string>;
 
 const panel: CSSProperties = { border: '1px solid var(--border)', borderRadius: 'var(--radius-panel)', background: 'var(--surface)' };
 
-/** "79 CR", "32% of 250". */
-const simText = (sim: EconomySim) => ({ value: cr(sim.average), pct: `${Math.round(sim.share * 100)}% of ${num(sim.price)}`, width: `${Math.min(100, sim.share * 100).toFixed(1)}%` });
+/** "79 CR", "32% of 250 CR". */
+const simText = (sim: EconomySim) => ({ value: cr(sim.average), pct: `${Math.round(sim.share * 100)}% of ${cr(sim.price)}`, width: `${Math.min(100, sim.share * 100).toFixed(1)}%` });
 
 function EditedTag() {
   return (
@@ -308,7 +308,7 @@ export function Economy() {
     return (
       <AdminPage>
         <Header label="Economy" title="Economy settings" />
-        <ErrorBox title="Couldn't load the economy settings" error={economy.error} onRetry={() => void economy.refetch()} />
+        <ErrorBox title="Couldn’t load the economy settings" error={economy.error} onRetry={() => void economy.refetch()} />
       </AdminPage>
     );
   }
@@ -339,7 +339,7 @@ export function Economy() {
       <Header
         label="Economy"
         title="Economy settings"
-        sub="Tune the game's numbers without a deploy. Nothing changes until you save, and every save is kept below. All times UTC."
+        sub="Tune the game’s numbers without a deploy. Nothing changes until you save, and every save is kept below. All times UTC."
         right={
           !isAdmin ? (
             <span className="mono" style={{ fontSize: 11, color: 'var(--text-3)' }}>
@@ -369,10 +369,10 @@ export function Economy() {
                 <section key={g.id} aria-labelledby={`g-${g.id}`} style={panel}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'baseline', gap: '8px 16px', padding: '16px 20px 12px' }}>
                     <h2 id={`g-${g.id}`} className="lbl">
-                      {g.title}
+                      {`// ${g.title}`}
                     </h2>
                     {g.id === 'rarity' && (
-                      <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, color: oddsOk ? 'var(--text-2)' : 'var(--error)' }}>
+                      <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--text-2)' }}>
                         {!oddsOk && <Dot />}
                         Odds total {oddsTotal}%{oddsOk ? '' : ' · must be 100.00%'}
                       </span>
@@ -406,8 +406,8 @@ export function Economy() {
                   <span role="cell" className={s.ellipsis}>
                     {h.staff}
                   </span>
-                  <span role="cell" className={cx('mono', s.ellipsis)} style={{ fontSize: 13 }}>
-                    {h.key}
+                  <span role="cell" className={s.ellipsis} style={{ fontSize: 13 }} title={h.key}>
+                    {h.label}
                   </span>
                   <span role="cell" className={cx('mono', s.ellipsis)} style={{ fontSize: 13 }}>
                     {h.change}

@@ -41,7 +41,7 @@ const recycle = (client: Client, itemIds: string[], confirm = false) =>
   client.json('/items/recycle', { method: 'POST', json: { itemIds, confirm } });
 
 describe('no daily credits', () => {
-  it('has no daily reward any more: the free case every 4 h replaces it', async () => {
+  it('has no daily reward any more: the free case stack replaces it', async () => {
     const client = await newGuest();
     const me = (await client.json('/me')).body;
     expect(me).not.toHaveProperty('dailyReward');

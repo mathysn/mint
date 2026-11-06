@@ -103,7 +103,7 @@
   display: grid;
   place-items: center;
   border-left: 1px solid var(--border);
-  background: radial-gradient(closest-side at 50% 52%, rgba(236, 237, 239, 0.1), rgba(236, 237, 239, 0));
+  background: radial-gradient(closest-side at 50% 52%, color-mix(in srgb, var(--text) 10%, transparent), color-mix(in srgb, var(--text) 0%, transparent));
 }
 .heroCase {
   width: 60%;
@@ -115,7 +115,7 @@
   height: 210px;
   display: grid;
   place-items: center;
-  background: radial-gradient(closest-side at 50% 52%, rgba(236, 237, 239, 0.1), rgba(236, 237, 239, 0));
+  background: radial-gradient(closest-side at 50% 52%, color-mix(in srgb, var(--text) 10%, transparent), color-mix(in srgb, var(--text) 0%, transparent));
   border-bottom: 1px solid var(--border);
 }
 .mobileHeroArt .heroCase {
@@ -146,7 +146,7 @@
   position: fixed;
   inset: 0;
   z-index: 30;
-  background: rgba(10, 11, 13, 0.6);
+  background: color-mix(in srgb, var(--page) 60%, transparent);
   animation: mint-fade var(--dur-base) var(--ease-out) both;
 }
 .sheetBackdrop[data-closing] {

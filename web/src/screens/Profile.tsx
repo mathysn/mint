@@ -90,7 +90,7 @@ export function Profile() {
   if (error) {
     return (
       <Page gap={24}>
-        <EmptyState title="No player with this name">
+        <EmptyState title="This player isn’t available">
           <Button variant="secondary" size={44} to="/friends">
             Back to friends
           </Button>
@@ -127,7 +127,7 @@ export function Profile() {
   const showcaseBody =
     profile.showcase.length === 0 && !editing ? (
       <div className={s.panel} style={{ borderStyle: 'dashed', background: 'transparent', alignItems: 'flex-start', gap: 12 }}>
-        <p style={{ fontSize: 15, color: 'var(--text-2)' }}>{self ? 'Your showcase is empty. Pick up to 5 items for every player to see.' : 'Nothing in the showcase yet.'}</p>
+        <p style={{ fontSize: 15, color: 'var(--text-2)' }}>{self ? `Your showcase is empty. Pick up to ${SHOWCASE_SIZE} items for every player to see.` : 'Nothing in the showcase yet.'}</p>
         {self && (
           <Button variant="secondary" size={44} onClick={() => setEditing(true)}>
             Edit showcase
@@ -209,7 +209,7 @@ export function Profile() {
           username={name}
           trigger={(open) => (
             <Button variant="ghost" size={44} onClick={open} style={{ paddingInline: 10, color: 'var(--text-3)' }}>
-              Delete account
+              Delete my account
             </Button>
           )}
         />
@@ -237,7 +237,7 @@ export function Profile() {
       : { display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px 16px 16px', border: '1px solid var(--border)', borderRadius: 'var(--radius-panel)', background: 'var(--surface)' };
     const body = (
       <>
-        <span aria-hidden="true" style={{ flex: 'none', width: mobile ? 48 : 64, height: mobile ? 36 : 48, display: 'grid', placeItems: 'center', background: 'radial-gradient(closest-side, rgba(236,237,239,0.08), rgba(236,237,239,0))' }}>
+        <span aria-hidden="true" style={{ flex: 'none', width: mobile ? 48 : 64, height: mobile ? 36 : 48, display: 'grid', placeItems: 'center', background: 'radial-gradient(closest-side, color-mix(in srgb, var(--text) 8%, transparent), color-mix(in srgb, var(--text) 0%, transparent))' }}>
           <img src={a.crate.imageUrl} alt="" loading="lazy" draggable={false} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
         </span>
         <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: mobile ? 8 : 12 }}>
@@ -246,7 +246,7 @@ export function Profile() {
               {a.name}
             </span>
             <span className="mono" style={{ flex: 'none', whiteSpace: 'nowrap', fontSize: 13, color: 'var(--text-2)' }}>
-              {mobile ? `${a.owned}/${a.total}` : `${a.owned} / ${a.total}`}
+              {`${a.owned} / ${a.total}`}
             </span>
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -299,13 +299,13 @@ export function Profile() {
         </h2>
         {albumsLink && (
           <Link to={albumsLink} style={{ fontSize: 14, color: 'var(--text-2)' }}>
-            Open albums
+            View all
           </Link>
         )}
       </div>
       {profile.albums.length === 0 ? (
         <div className={s.panel} style={{ borderStyle: 'dashed', background: 'transparent', alignItems: 'flex-start', gap: 12 }}>
-          <p style={{ fontSize: 15, color: 'var(--text-2)' }}>{self ? 'No album started yet. Every case you open fills its album.' : `${name} hasn't started an album yet.`}</p>
+          <p style={{ fontSize: 15, color: 'var(--text-2)' }}>{self ? 'No album started yet. Every case you open fills its album.' : `${name} hasn’t started an album yet.`}</p>
           {self && (
             <Button variant="secondary" size={44} to="/cases">
               Browse cases
@@ -344,7 +344,7 @@ export function Profile() {
             <h1 style={{ fontSize: 30, lineHeight: 1, fontWeight: 600, letterSpacing: '-0.02em' }}>{name}</h1>
             <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{metaLine(profile, true)}</span>
             <Link to="/leaderboard" className="mono" style={{ fontSize: 12, color: 'var(--text)', textDecoration: 'none' }}>
-              #{profile.ranks.value} by value · #{profile.ranks.albums} by albums
+              #{profile.ranks.value} by inventory value · #{profile.ranks.albums} by albums
             </Link>
           </div>
         </div>

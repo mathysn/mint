@@ -26,7 +26,7 @@ interface Group {
 function groupsOf(detail: AlbumDetail, missingOnly: boolean): Group[] {
   const groups: Group[] = detail.groups.map((g) => ({ key: g.tier, tier: g.tier, name: RARITY[g.tier].name, owned: g.owned, total: g.total, skins: g.skins }));
   if (detail.special.length) {
-    groups.push({ key: 'gold', tier: 'gold', name: '★ Rare special · knife finishes found', owned: detail.special.length, total: 'any', skins: detail.special });
+    groups.push({ key: 'gold', tier: 'gold', name: '★ Rare special · finishes found', owned: detail.special.length, total: 'any', skins: detail.special });
   }
   return groups.map((g) => ({ ...g, skins: missingOnly ? g.skins.filter((x) => !x.best) : g.skins })).filter((g) => g.skins.length > 0);
 }
@@ -114,7 +114,7 @@ export function Album() {
           <h2 style={{ fontSize: mobile ? 13 : 14, fontWeight: 600, color: rarity.text }}>{g.name}</h2>
           <span aria-hidden="true" style={{ flex: 1, height: 1, background: 'var(--separator)' }} />
           <span className="mono" style={{ fontSize: mobile ? 11 : 12, color: 'var(--text-3)' }}>
-            {mobile ? `${g.owned}/${g.total}` : `${g.owned} / ${g.total}`}
+            {`${g.owned} / ${g.total}`}
           </span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: mobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))', gap: mobile ? 10 : 14 }}>
@@ -133,9 +133,9 @@ export function Album() {
           <span aria-hidden="true" style={{ width: 8, height: 8, background: RARITY[g.tier].color, flex: 'none' }} />
           <span style={{ color: 'var(--text-2)' }}>{RARITY[g.tier].name}</span>
           <span className="mono" style={mobile ? { marginLeft: 'auto' } : undefined}>
-            {g.owned}/{g.total}
+            {g.owned} / {g.total}
           </span>
-          {!mobile && g.owned === g.total && (
+          {g.owned === g.total && (
             <span className="lbl" style={{ color: 'var(--text)' }}>
               Complete
             </span>
@@ -154,8 +154,8 @@ export function Album() {
           onClick={() => setPicker(true)}
           style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 8, height: 44, padding: 0, border: 0, background: 'none', color: 'var(--text-2)', fontSize: 14, cursor: 'pointer' }}
         >
-          <span className="lbl">// Album</span>
-          <span>· {albums?.length ?? 0} albums</span>
+          <span className="lbl">// Albums</span>
+          <span>· {albums?.length ?? 0}</span>
           <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 2 }}>
             <path d="M6 9l6 6 6-6" />
           </svg>
@@ -176,6 +176,7 @@ export function Album() {
             {summaryList}
             {chips}
             {groupSections}
+            {groups.length === 0 && <EmptyState title="Album complete" />}
           </>
         )}
         {pickerPresence.mounted && albums && (
@@ -207,7 +208,7 @@ export function Album() {
             </Link>
           )}
           <h2 id="albums-title" className="lbl">
-            {player ? `// ${player}'s albums` : '// Albums'}
+            {player ? `// ${player}’s albums` : '// Albums'}
           </h2>
           {albums && <AlbumList albums={albums} currentId={id} base={base} />}
         </ScrollArea>

@@ -67,7 +67,7 @@ export function ItemCard({
             <svg aria-hidden="true" width={mobile ? 10 : 12} height={mobile ? 10 : 12} viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 2 }}>
               <path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>
-            {item.status === 'listed' ? 'Listed' : 'In trade'}
+            {item.status === 'listed' ? 'Listed' : 'In a trade'}
           </span>
         )}
       </div>
@@ -78,7 +78,7 @@ export function ItemCard({
         </Link>
         <div className={s.cardMeta}>
           <WearLine wear={item.wear} float={item.float} mobile={mobile} />
-          <span className={`mono ${s.value}`}>{mobile ? formatCredits(item.value) : `${formatCredits(item.value)} CR`}</span>
+          <span className={`mono ${s.value}`}>{`${formatCredits(item.value)} CR`}</span>
         </div>
       </div>
       <span aria-hidden="true" className={s.rarityBar} style={{ background: rarity.color }} />
@@ -194,11 +194,11 @@ export function CaseTile({ crate, variant, free, drops, to, index }: { crate: Cr
   const tagStyle: CSSProperties = small ? { left: 8, top: 8, fontSize: 9, padding: free ? '3px 6px' : '2px 5px' } : {};
   return (
     <Link to={to ?? `/cases/${crate.id}`} className={cx(s.caseTile, index !== undefined && 'stagger')} style={{ ...stagger(index), ...(variant === 'scroll' ? { flex: 'none', width: 150 } : undefined) }}>
-      <span className={s.caseImage} style={{ ...image, background: `radial-gradient(closest-side, rgba(236,237,239,${glow}), rgba(236,237,239,0))` }}>
+      <span className={s.caseImage} style={{ ...image, background: `radial-gradient(closest-side, color-mix(in srgb, var(--text) ${glow * 100}%, transparent), color-mix(in srgb, var(--text) 0%, transparent))` }}>
         <img src={crate.imageUrl} alt={variant === 'grid' || variant === 'mobileGrid' ? crate.name : ''} loading="lazy" className={s.caseArt} style={{ width: artWidth }} />
         {variant !== 'scroll' && free && (variant === 'grid' || variant === 'mobileGrid') && (
           <span className={s.caseTag} style={tagStyle}>
-            <Tag solid>Free today</Tag>
+            <Tag solid>Free now</Tag>
           </span>
         )}
         {variant !== 'scroll' && crate.isNew && !(free && variant !== 'home') && (

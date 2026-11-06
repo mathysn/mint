@@ -45,7 +45,7 @@ async function lockPlayer(tx: Tx, id: string): Promise<{ user: UserRow; players:
   await loadPlayer(tx, id);
   const players = await lockUsers(tx, [id]);
   const user = players.get(id)!;
-  if (user.deletedAt) fail(409, 'conflict', 'This account was deleted.');
+  if (user.deletedAt) fail(409, 'conflict', 'This account was already deleted.');
   return { user, players };
 }
 
@@ -85,7 +85,7 @@ export async function adjustCredits(staff: StaffMember, id: string, body: z.infe
     const ledgerIds = await wallets.save(tx);
     const held = cr(await heldInBids(user.id, tx));
     await writeAdminLog(tx, staff, {
-      action: `credits.${body.mode}`,
+      action: body.mode === 'add' ? 'player.add_credits' : 'player.remove_credits',
       target: target(user),
       change: signedCr(amount),
       before: { balance: cr(user.balance), held },
@@ -136,7 +136,7 @@ async function grantable(tx: DbOrTx, body: z.infer<typeof grantQuoteSchema>) {
     if (float < lo || float >= hi + (hi === 1 ? 1e-9 : 0)) error = `${body.wear} floats go from ${f2(lo)} to ${f2(hi)}. Pick another wear or change the float.`;
   }
   if (!error && float !== null && (float < skin.minFloat! || float > skin.maxFloat!)) {
-    error = `This skin's floats go from ${f2(skin.minFloat!)} to ${f2(skin.maxFloat!)}.`;
+    error = `This skin’s floats go from ${f2(skin.minFloat!)} to ${f2(skin.maxFloat!)}.`;
   }
   if (!error && body.stattrak && !skin.stattrakAvailable) error = 'This skin has no StatTrak™ version.';
   return { skin, tier: tierRow.tier, float, error };
@@ -187,7 +187,7 @@ export async function grantItem(staff: StaffMember, id: string, body: z.infer<ty
     const wear = wearOf(g.float);
     const label = wear ? `${g.skin.name} (${wear.code} ${g.float!.toFixed(4)})` : g.skin.name;
     await writeAdminLog(tx, staff, {
-      action: 'item.grant',
+      action: 'player.grant_item',
       target: target(user),
       change: `+ ${label}`,
       before: { items: fmt(await countItems(tx, user.id) - 1) },
@@ -216,7 +216,7 @@ export async function resetFreeCase(staff: StaffMember, id: string, reason: stri
     const full = `${stack.max}/${stack.max} (full)`;
     await tx.update(users).set({ freeCaseAnchor: null }).where(eq(users.id, user.id));
     await writeAdminLog(tx, staff, {
-      action: 'player.free_case',
+      action: 'player.refill_free_cases',
       target: target(user),
       change: 'free cases refilled',
       before: { 'free cases': stack.nextAt ? `${stack.count}/${stack.max} · next ${utcDateTime(stack.nextAt)} UTC` : full },
@@ -232,7 +232,7 @@ export async function signOutEverywhere(staff: StaffMember, id: string, reason: 
     const { user } = await lockPlayer(tx, id);
     const ended = await revokeAllSessions(tx, user.id, 'admin');
     await writeAdminLog(tx, staff, {
-      action: 'player.signout',
+      action: 'player.sign_out',
       target: target(user),
       change: plural(ended, 'session') + ' ended',
       before: { sessions: fmt(ended) },
@@ -243,7 +243,7 @@ export async function signOutEverywhere(staff: StaffMember, id: string, reason: 
   });
 }
 
-export const renameSchema = z.object({ name: z.string().regex(/^player_[a-z0-9]{3,12}$/), reason: reasonSchema });
+export const renameSchema = z.object({ name: z.string().regex(/^player_[a-z0-9]{3,12}$/, 'The new name must look like player_abc123.'), reason: reasonSchema });
 
 export async function renamePlayer(staff: StaffMember, id: string, body: z.infer<typeof renameSchema>): Promise<AdminActionResult> {
   return db().transaction(async (tx) => {
@@ -255,7 +255,8 @@ export async function renamePlayer(staff: StaffMember, id: string, body: z.infer
     await handleOpenFor(tx, user.id, staff.name, `renamed to ${body.name}`, false);
     await writeAdminLog(tx, staff, {
       action: 'player.rename',
-      target: { ...target(user), label: body.name },
+      // The target keeps the name staff knew; the new one is in `after`.
+      target: target(user),
       change: 'name reset',
       before: { name: user.username },
       after: { name: body.name },
@@ -271,7 +272,7 @@ export async function addNote(staff: StaffMember, id: string, text: string): Pro
   return db().transaction(async (tx) => {
     const user = await loadPlayer(tx, id);
     await tx.insert(staffNotes).values({ userId: user.id, staffName: staff.name, text });
-    await writeAdminLog(tx, staff, { action: 'player.note', target: target(user), change: 'note added', before: {}, after: { note: text }, reason: text });
+    await writeAdminLog(tx, staff, { action: 'player.add_note', target: target(user), change: 'note added', before: {}, after: { note: text }, reason: text });
     return { toast: `Added a note on ${playerLabel(user)} · logged` };
   });
 }
@@ -367,7 +368,7 @@ export async function banPlayer(staff: StaffMember, id: string, body: z.infer<ty
   return db().transaction(async (tx) => {
     const user = await loadPlayer(tx, id);
     const label = playerLabel(user);
-    if (user.deletedAt) fail(409, 'conflict', 'This account was deleted.');
+    if (user.deletedAt) fail(409, 'conflict', 'This account was already deleted.');
     if (body.duration === 'permanent' && body.confirmName?.trim() !== label) fail(400, 'confirm_name_mismatch', `Type ${label} to confirm a permanent ban.`);
     if (isBanned(user)) fail(409, 'conflict', `${label} is already banned.`);
     const sessionsBefore = await liveSessions(tx, user.id);
@@ -407,7 +408,7 @@ export async function unbanPlayer(staff: StaffMember, id: string, reason: string
   return db().transaction(async (tx) => {
     const { user } = await lockPlayer(tx, id);
     const label = playerLabel(user);
-    if (!isBanned(user)) fail(409, 'conflict', `${label} isn't banned.`);
+    if (!isBanned(user)) fail(409, 'conflict', `${label} isn’t banned.`);
     await tx.update(users).set({ bannedAt: null, banUntil: null, banReason: null, bannedBy: null }).where(eq(users.id, user.id));
     await writeAdminLog(tx, staff, {
       action: 'player.unban',
@@ -483,7 +484,8 @@ export async function deleteAccount(staff: StaffMember, id: string, body: z.infe
         after: { account: 'deleted' },
         reason: body.reason,
       });
-      return { toast: `Deleted ${label}’s account · logged` };
+      // A guest has no account: "Deleted Guest #91c0".
+      return { toast: `Deleted ${label} · logged` };
     }
 
     await anonymizeAccount(tx, user, staff, body.reason, {
@@ -595,8 +597,8 @@ export async function deleteGuests(staff: StaffMember, body: z.infer<typeof gues
     const balance = rows.reduce((s, u) => s + u.balance, 0);
     for (const u of rows) await deleteGuest(tx, u.id);
     await writeAdminLog(tx, staff, {
-      action: 'guests.delete',
-      target: { type: 'guests', id: null, label: plural(rows.length, 'guest') },
+      action: 'player.delete_guests',
+      target: { type: 'player', id: null, label: plural(rows.length, 'guest') },
       change: `${fmt(rows.length)} deleted`,
       before: { guests: rows.map(playerLabel).join(', '), balance: cr(balance), cases: fmt(cases?.n ?? 0) },
       after: { guests: 'deleted' },

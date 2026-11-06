@@ -62,7 +62,7 @@ function BanPage({ ban }: { ban: BanInfo }) {
       <BanCard ban={ban} />
       {!isActivity && (
         <Button size={48} block onClick={() => void signIn.start()} disabled={signIn.state === 'waiting'}>
-          {signIn.state === 'waiting' ? 'Waiting for Discord…' : 'Sign in with Discord'}
+          {signIn.state === 'waiting' ? 'Waiting for Discord…' : 'Continue with Discord'}
         </Button>
       )}
     </Centered>
@@ -81,7 +81,7 @@ function PickName({ me }: { me: Me }) {
     try {
       client.setQueryData(keys.me, await api<Me>('/me/username', { method: 'POST', json: { username: name } }));
     } catch (err) {
-      setError(err instanceof ApiRequestError ? err.message : 'Something went wrong.');
+      setError(err instanceof ApiRequestError ? err.message : 'Couldn’t save your name. Try again.');
     } finally {
       setBusy(false);
     }

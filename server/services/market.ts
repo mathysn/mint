@@ -29,6 +29,7 @@ import {
   econ,
 } from '../game/economy.js';
 import { endAfterBid, marketFee, minNextBid, quickBids, sellerNet } from '../game/market.js';
+import { cr } from '../format.js';
 import { recycleValue } from '../game/value.js';
 import { wearOf } from '../game/wear.js';
 import { assertNotBanned, fail, type UserRow } from '../http.js';
@@ -43,11 +44,10 @@ type AuctionRow = typeof auctions.$inferSelect;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const PAGE_SIZE = 60;
 const SETTLE_BATCH = 20;
-const fmt = (n: number) => n.toLocaleString('en-US');
 
 // Limits come from the economy in force when the request is validated.
 const maxPrice = (n: number) => n <= econ().maxPrice;
-const tooHigh = { error: () => `The highest price is ${fmt(econ().maxPrice)} CR.` };
+const tooHigh = { error: () => `The highest price is ${cr(econ().maxPrice)}.` };
 const price = z.number().int().min(1).refine(maxPrice, tooHigh);
 const duration = z.number().int().refine((h) => econ().durationsH.includes(h), { error: () => `Pick one of ${econ().durationsH.join(', ')} hours.` });
 
@@ -295,12 +295,12 @@ export async function placeBid(me: UserRow, id: string, amount: number): Promise
     if (auction.leaderId === me.id) fail(409, 'conflict', 'You already have the highest bid.');
     const min = minNextBid(auction.currentBid, auction.startPrice);
     if (amount < min) {
-      fail(400, 'bid_too_low', auction.currentBid === null ? `The first bid has to be at least the starting price, ${fmt(min)} CR.` : `Your bid has to be at least ${fmt(min)} CR, 5% above the current one.`);
+      fail(400, 'bid_too_low', auction.currentBid === null ? `The first bid has to be at least the starting price, ${cr(min)}.` : `Your bid has to be at least ${cr(min)}, ${econ().bidStepBp / 100}% above the current one.`);
     }
     const bidders = await lockUsers(tx, auction.leaderId ? [me.id, auction.leaderId] : [me.id]);
     assertNotBanned(bidders.get(me.id)!);
     const wallets = new Wallets(bidders);
-    if (wallets.get(me.id) < amount) fail(402, 'insufficient_balance', `You only have ${fmt(wallets.get(me.id))} CR available.`);
+    if (wallets.get(me.id) < amount) fail(402, 'insufficient_balance', `You need ${cr(amount)} to bid. You have ${cr(wallets.get(me.id))}.`);
     const refs = { refId: auction.id, itemId: auction.itemId };
     if (auction.leaderId && auction.currentBid !== null) wallets.move(auction.leaderId, 'bid_release', auction.currentBid, refs);
     wallets.move(me.id, 'bid_hold', -amount, refs);
@@ -329,7 +329,7 @@ export async function buyNow(me: UserRow, id: string): Promise<BuyNowResult> {
     const wallets = new Wallets(buyers);
     const refs = { refId: auction.id, itemId: auction.itemId };
     if (auction.leaderId && auction.currentBid !== null) wallets.move(auction.leaderId, 'bid_release', auction.currentBid, refs);
-    if (wallets.get(me.id) < priceNow) fail(402, 'insufficient_balance', `You need ${fmt(priceNow)} CR to buy it now.`);
+    if (wallets.get(me.id) < priceNow) fail(402, 'insufficient_balance', `You need ${cr(priceNow)} to buy it now. You have ${cr(wallets.get(me.id))}.`);
     wallets.move(me.id, 'auction_buy', -priceNow, refs);
     const now = new Date();
     const fee = await transferSold(tx, auction, me.id, priceNow, now, wallets);

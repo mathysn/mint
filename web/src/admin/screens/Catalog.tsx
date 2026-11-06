@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import type { AdminCrateRow, DiffRow, ImportReport } from '../../../../shared/api';
 import { api } from '../../lib/api';
+import { useEconomyText } from '../../lib/queries';
 import { RARITY } from '../../lib/rarity';
 import { useIsMobile } from '../../lib/useMediaQuery';
 import { AdminPage } from '../AdminApp';
-import { cr, errorText, isoDay, num, useAdminAction, useCatalog, useCrateDetail, useStaff, utcDay } from '../lib';
-import { Btn, Corners, Dot, Drawer, ErrorBox, Header, InlineConfirm, Logged, ReasonField, Switch, cx, s } from '../ui';
+import { ROLE_HINT, cr, errorText, isoDay, num, useAdminAction, useCatalog, useCrateDetail, useStaff, utcDay } from '../lib';
+import { Btn, Corners, Dot, Drawer, ErrorBox, Header, InlineConfirm, LockIcon, Logged, ReasonField, Switch, cx, s } from '../ui';
 
 const GRID = '84px minmax(0, 1fr) 110px 92px 70px 80px 62px 100px';
 const plural = (n: number, one: string, many = `${one}s`) => `${num(n)} ${n === 1 ? one : many}`;
@@ -17,7 +18,7 @@ function pendingCopy(p: Pending): { title: string; text: string; button: string;
   const { crate, kind, value } = p;
   if (kind === 'active') {
     const diff = [{ label: 'Active', before: crate.active ? 'on' : 'off', after: value ? 'on' : 'off' }];
-    if (!value && crate.caseOfDay) return { title: `Turn off ${crate.name}`, text: 'It’s today’s case of the day. Pick another case of the day first, then turn it off.', button: 'OK', diff: [], blocked: true };
+    if (!value && crate.caseOfDay) return { title: `Turn off ${crate.name}`, text: 'It’s the case of the day right now. Pick another case of the day first, then turn it off.', button: 'OK', diff: [], blocked: true };
     if (!value) return { title: `Turn off ${crate.name}`, text: `Players can’t buy it or get it for free anymore. Items already opened stay where they are. ${plural(crate.opened7d, 'opening')} in the last 7 days.`, button: `Turn off ${crate.name}`, diff };
     if (crate.brokenImages > 0) return { title: `Turn on ${crate.name}`, text: `${plural(crate.brokenImages, 'broken image')} ${crate.brokenImages === 1 ? 'is' : 'are'} still there: players would open skins with a blank card.`, button: 'Turn on anyway', diff };
     return { title: `Turn on ${crate.name}`, text: `Players can buy it right away for ${cr(crate.price)}.`, button: `Turn on ${crate.name}`, diff };
@@ -25,7 +26,7 @@ function pendingCopy(p: Pending): { title: string; text: string; button: string;
   const diff = [{ label: 'NEW badge', before: crate.isNew ? 'shown' : 'hidden', after: value ? 'shown' : 'hidden' }];
   return value
     ? { title: `Mark ${crate.name} as new`, text: 'Shows a NEW badge on it in the shop.', button: 'Mark as new', diff }
-    : { title: `Remove the NEW badge from ${crate.name}`, text: 'The shop stops highlighting it. Nothing else changes.', button: 'Remove NEW badge', diff };
+    : { title: `Remove the NEW badge from ${crate.name}`, text: 'The shop stops highlighting it. Nothing else changes.', button: 'Remove the NEW badge', diff };
 }
 
 // ── Import ──────────────────────────────────────────────────────────────────
@@ -170,7 +171,7 @@ function ImportPanel({ current, importedOn, caseCount, skinCount, imports }: { c
             {confirming ? (
               <div role="group" aria-label="Apply import" style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 14, border: '1px solid var(--text)', borderRadius: 'var(--radius-card)', background: 'var(--surface-bar)' }}>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>Apply import {report.to}</span>
-                <span className={s.note}>New cases start off. Odds and prices don't change. Items players own are never touched.</span>
+                <span className={s.note}>New cases start off. Odds and prices don’t change. Items players own are never touched.</span>
                 <span className={s.confirmDiff}>
                   Commit {report.from ?? '—'} → {report.to} · Cases {num(caseCount)} → {num(caseCount + report.casesAdded)}
                 </span>
@@ -210,7 +211,7 @@ function CaseDrawer({ id, onClose }: { id: string; onClose: () => void }) {
     <Drawer label={c?.caseOfDay ? '// Case of the day' : '// Case'} onClose={onClose}>
       {!c ? (
         q.isError ? (
-          <ErrorBox title="Couldn't load this case" error={q.error} onRetry={() => void q.refetch()} />
+          <ErrorBox title="Couldn’t load this case" error={q.error} onRetry={() => void q.refetch()} />
         ) : (
           <>
             <span className={s.skel} style={{ width: '100%', height: 180 }} />
@@ -348,6 +349,7 @@ function CaseOfDayDrawer({ rows, onClose }: { rows: AdminCrateRow[]; onClose: ()
   const [reason, setReason] = useState('');
   const [error, setError] = useState<string | null>(null);
   const action = useAdminAction();
+  const rotation = useEconomyText().rotationLong;
   const picked = rows.find((r) => r.id === pick);
   const save = async () => {
     const message = await action.run('/admin/catalog/case-of-day', { crateId: pick, reason: reason.trim() });
@@ -358,7 +360,7 @@ function CaseOfDayDrawer({ rows, onClose }: { rows: AdminCrateRow[]; onClose: ()
     <Drawer label="// Case of the day" onClose={onClose}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <h2 style={{ fontSize: 28, lineHeight: 1.1, fontWeight: 600, letterSpacing: '-0.01em' }}>Change case of the day</h2>
-        <p style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--text-2)' }}>The case players get for free every 4 hours. The change applies right away. Cases that are off can't be picked.</p>
+        <p style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--text-2)' }}>The case players open their free cases on. Without a pick it moves to the next case every {rotation}; a pick stays until you change it. The change applies right away. Cases that are off can’t be picked.</p>
       </div>
       <div role="radiogroup" aria-label="Case of the day" style={{ display: 'flex', flexDirection: 'column', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)' }}>
         {rows.map((o) => {
@@ -407,7 +409,7 @@ function CaseOfDayDrawer({ rows, onClose }: { rows: AdminCrateRow[]; onClose: ()
           Cancel
         </Btn>
         <Btn size={44} variant="primary" min="admin" onClick={() => void save()} disabled={!picked || pick === current || !reason.trim() || action.busy}>
-          {!picked || pick === current ? 'Pick another case' : `Make it ${picked.name}`}
+          {!picked || pick === current ? 'Pick another case' : `Make ${picked.name} the case of the day`}
         </Btn>
       </div>
       <Logged />
@@ -454,7 +456,7 @@ export function Catalog() {
             <Btn size={44} min="admin" onClick={() => setCotd(true)} disabled={!c}>
               Change case of the day
             </Btn>
-            {!admin && <span className={cx('mono', s.hint)}>Read-only: catalog changes are for admins.</span>}
+            {!admin && <span className={cx('mono', s.hint)}>Dry run is open to all staff. Switches, case of the day and Apply import: Admins only.</span>}
           </div>
         }
       />
@@ -475,7 +477,7 @@ export function Catalog() {
         />
       )}
       {q.isError && !c ? (
-        <ErrorBox title="Couldn't load the catalog" error={q.error} onRetry={() => void q.refetch()} />
+        <ErrorBox title="Couldn’t load the catalog" error={q.error} onRetry={() => void q.refetch()} />
       ) : !c ? (
         <div aria-busy="true" aria-label="Loading the catalog" className={s.panel}>
           {Array.from({ length: 8 }, (_, i) => (
@@ -558,14 +560,16 @@ export function Catalog() {
                       {r.normalCount}
                       {r.hasGold ? ' + ★' : ''}
                     </span>
-                    <span role="cell">
-                      <Switch checked={r.active} label={r.active ? `Turn off ${r.name}` : `Turn on ${r.name}`} disabled={!admin} title={admin ? undefined : 'Admins only'} onChange={() => setPending({ crate: r, kind: 'active', value: !r.active })} />
+                    <span role="cell" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <Switch checked={r.active} label={r.active ? `Turn off ${r.name}` : `Turn on ${r.name}`} disabled={!admin} title={admin ? undefined : ROLE_HINT.admin} onChange={() => setPending({ crate: r, kind: 'active', value: !r.active })} />
+                      {!admin && <LockIcon />}
                     </span>
                     <span role="cell" className="mono" style={{ fontSize: 13, textAlign: 'right', paddingRight: 18 }}>
                       {cr(r.price)}
                     </span>
-                    <span role="cell">
-                      <Switch checked={r.isNew} label={r.isNew ? `Remove NEW badge from ${r.name}` : `Mark as new: ${r.name}`} disabled={!admin} title={admin ? undefined : 'Admins only'} onChange={() => setPending({ crate: r, kind: 'new', value: !r.isNew })} />
+                    <span role="cell" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <Switch checked={r.isNew} label={r.isNew ? `Remove the NEW badge from ${r.name}` : `Mark ${r.name} as new`} disabled={!admin} title={admin ? undefined : ROLE_HINT.admin} onChange={() => setPending({ crate: r, kind: 'new', value: !r.isNew })} />
+                      {!admin && <LockIcon />}
                     </span>
                     <span role="cell" className="mono" style={{ fontSize: 14, textAlign: 'right' }}>
                       {num(r.opened7d)}

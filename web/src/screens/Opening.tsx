@@ -11,7 +11,7 @@ import { EmptyState, HudLabel } from '../components/ui/primitives';
 import { useToast } from '../components/ui/Toast';
 import { ApiRequestError, api } from '../lib/api';
 import { formatCredits } from '../lib/format';
-import { keys, useCaseFinder, useCrate, useMe, useRefreshPlayerData } from '../lib/queries';
+import { keys, useCaseFinder, useCrate, useEconomyText, useMe, useRefreshPlayerData } from '../lib/queries';
 import { fullName } from '../lib/rarity';
 import { useRecycle } from '../lib/recycle';
 import { sound } from '../lib/sound';
@@ -62,7 +62,8 @@ export function Opening() {
   const requestKey = useRef<string | null>(null);
 
   const freeHere = Boolean(me?.freeCase.available && me.freeCase.crateId === id);
-  const price = detail?.crate.price ?? 250;
+  const economyPrice = useEconomyText().price;
+  const price = detail?.crate.price ?? economyPrice;
 
   const open = useMutation({
     mutationFn: () => {
@@ -91,7 +92,7 @@ export function Opening() {
         }
         if (err.code === 'free_case_unavailable') void client.invalidateQueries({ queryKey: keys.me });
       }
-      toast(err instanceof Error ? err.message : 'Could not open the case.', { error: true });
+      toast(err instanceof ApiRequestError ? err.message : 'Couldn’t open the case. Try again.', { error: true });
       setPhase('ready');
     },
   });
@@ -145,7 +146,7 @@ export function Opening() {
   if (error) {
     return (
       <Page gap={28} back={{ to: '/cases', label: 'Cases' }}>
-        <EmptyState title="This case cannot be opened">
+        <EmptyState title="This case isn’t available">
           <Button variant="secondary" size={44} to="/cases">
             Back to cases
           </Button>
@@ -160,7 +161,9 @@ export function Opening() {
   const openLabel = busy ? 'Opening…' : freeHere ? 'Open free case' : `Open case · ${formatCredits(price)} CR`;
   // `me.freeCase` is updated by each opening, so this stays free while the stack lasts.
   const againLabel = freeHere ? 'Open another · Free' : `Open another · ${formatCredits(price)} CR`;
-  const priceLabel = freeHere ? `Free · ${me!.freeCase.count} left` : `${formatCredits(price)} CR`;
+  // Same stock format as Home and the sidebar ("3 / 5"; bonus cases can go above the stack).
+  const freeStock = me ? (me.freeCase.count > me.freeCase.max ? String(me.freeCase.count) : `${me.freeCase.count} / ${me.freeCase.max}`) : '';
+  const priceLabel = freeHere ? `Free · ${freeStock}` : `${formatCredits(price)} CR`;
   const item = revealed ? result.item : null;
   const value = item ? `${formatCredits(item.recycleValue)} CR` : '';
   const askRecycle = () => {
@@ -236,15 +239,9 @@ export function Opening() {
                   onCancel={cancelConfirm}
                   style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: mobile ? 12 : 14, padding: mobile ? 16 : 18, border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-card)', background: 'var(--page)' }}
                   message={
-                    mobile ? (
-                      <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-                        Recycle <strong>{fullName(result.item.skin)}</strong> for <span className="mono">{value}</span>? It is destroyed for good.
-                      </p>
-                    ) : (
-                      <p style={{ fontSize: 15, lineHeight: 1.5 }}>
-                        Recycle <strong>{fullName(result.item.skin)}</strong>? It is destroyed for good and you get <span className="mono">{value}</span>.
-                      </p>
-                    )
+                    <p style={{ fontSize: mobile ? 14 : 15, lineHeight: 1.5 }}>
+                      Recycle <strong>{fullName(result.item.skin)}</strong> for <span className="mono">{value}</span>? It is destroyed for good.
+                    </p>
                   }
                 >
                   <div style={mobile ? { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10 } : { display: 'flex', flexWrap: 'wrap', gap: 10 }}>
@@ -252,7 +249,7 @@ export function Opening() {
                       Cancel
                     </Button>
                     <Button size={mobile ? 48 : 44} bevel="none" onClick={confirmRecycle} disabled={recycle.isPending}>
-                      {mobile ? 'Recycle' : `Recycle for ${value}`}
+                      {`Recycle for ${value}`}
                     </Button>
                   </div>
                 </ConfirmInline>
@@ -264,7 +261,7 @@ export function Opening() {
                   {mobile ? (
                     <div style={{ display: 'grid', gridTemplateColumns: canSell ? 'repeat(2, minmax(0, 1fr))' : '1fr', gap: 10 }}>
                       <Button variant="secondary" size={48} block onClick={askRecycle} disabled={recycle.isPending} style={{ fontSize: 14 }}>
-                        Recycle +{formatCredits(result.item.recycleValue)}
+                        Recycle +{formatCredits(result.item.recycleValue)} CR
                       </Button>
                       {canSell && (
                         <Button variant="secondary" size={48} block to={sellLink} style={{ fontSize: 14 }}>
@@ -302,10 +299,10 @@ export function Opening() {
         <section aria-labelledby="inside-title" style={{ display: 'flex', flexDirection: 'column', gap: mobile ? 20 : 28, paddingTop: mobile ? 8 : 12, ...behindGold }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 16 }}>
             <h2 id="inside-title" style={{ fontSize: mobile ? 17 : 20, fontWeight: 600 }}>
-              What's inside
+              What’s inside
             </h2>
             <HudLabel style={mobile ? { fontSize: 10 } : undefined}>
-              {mobile ? `${detail.crate.skinCount} + ★` : `${detail.crate.skinCount} skins + ★ rare special`}
+              {mobile ? `${detail.crate.skinCount} + ★` : `${detail.crate.skinCount} skins + ★ Rare special`}
             </HudLabel>
           </div>
           <WhatsInside detail={detail} mobile={mobile} match={match} />
@@ -334,7 +331,7 @@ export function Opening() {
                     Cancel
                   </Button>
                   <Button size={44} bevel="none" onClick={confirmRecycle} disabled={recycle.isPending}>
-                    Recycle
+                    {`Recycle for ${value}`}
                   </Button>
                 </div>
               </ConfirmInline>

@@ -69,11 +69,11 @@ export class ImportError extends Error {}
 async function download<T>(commit: string, file: string, itemSchema: z.ZodType<T>): Promise<T[]> {
   const url = `https://raw.githubusercontent.com/${REPO}/${commit}/public/api/${LANG}/${file}`;
   const res = await fetch(url);
-  if (!res.ok) throw new ImportError(`${res.status} on ${url}`);
+  if (!res.ok) throw new ImportError(`GitHub answered ${res.status} for ${file} at this commit. Check the commit and try again.`);
   const parsed = z.array(itemSchema).safeParse(await res.json());
   if (!parsed.success) {
     const issue = parsed.error.issues[0]!;
-    throw new ImportError(`${file} does not match the expected shape at [${issue.path.join('.')}]: ${issue.message}`);
+    throw new ImportError(`${file} doesn’t have the expected shape (at ${issue.path.join('.') || 'the top'}: ${issue.message}). Try another commit.`);
   }
   return parsed.data;
 }
@@ -312,7 +312,7 @@ export async function applyCatalog(tx: DbOrTx, build: CatalogBuild, images: { ch
 export async function dryRun(commit: string | null, staffName: string): Promise<StoredReport> {
   const sha = await resolveCommit(commit);
   const build = await buildCatalog(sha);
-  if (build.problems.length) throw new ImportError(`The source has ${build.problems.length} problem(s): ${build.problems.slice(0, 3).join('; ')}`);
+  if (build.problems.length) throw new ImportError(`The source has ${build.problems.length} ${build.problems.length === 1 ? 'problem' : 'problems'}: ${build.problems.slice(0, 3).join('; ')}.`);
   const report = await diffReport(db(), build);
   const [row] = await db()
     .insert(schema.catalogImports)

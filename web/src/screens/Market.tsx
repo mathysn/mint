@@ -22,11 +22,13 @@ const SORTS: SelectOption<MarketSort>[] = [
   { value: 'bids', label: 'Most bids' },
 ];
 
-const EMPTY: Record<MarketTab, string> = {
-  browse: 'No auctions right now. List an item to start one.',
-  mine: 'You have nothing listed. Your listings show up here, and stay a week after they end.',
-  bids: 'Auctions you bid on show up here, and stay a week after they end.',
-};
+/** Empty tabs; ended listings and bids stay for `days` (from /config). */
+const emptyText = (tab: MarketTab, days: string) =>
+  ({
+    browse: 'No auctions right now. List an item to start one.',
+    mine: `You have nothing listed. Your listings show up here, and stay ${days} after they end.`,
+    bids: `Auctions you bid on show up here, and stay ${days} after they end.`,
+  })[tab];
 
 export function Market() {
   const mobile = useIsMobile();
@@ -70,8 +72,8 @@ export function Market() {
         mobile
           ? [
               { value: 'browse', label: 'Browse' },
-              { value: 'mine', label: 'Mine', count: data?.counts.mine || undefined },
-              { value: 'bids', label: 'Bids', count: data?.counts.bids || undefined },
+              { value: 'mine', label: 'My listings', count: data?.counts.mine || undefined },
+              { value: 'bids', label: 'My bids', count: data?.counts.bids || undefined },
             ]
           : [
               { value: 'browse', label: 'Browse', count: data?.counts.browse },
@@ -88,14 +90,14 @@ export function Market() {
     </RarityChip>,
     ...TIER_ORDER.map((t) => (
       <RarityChip key={t} pressed={tier === t} color={RARITY[t].color} onClick={() => update({ tier: t })}>
-        {t === 'gold' ? '★' : RARITY[t].name}
+        {RARITY[t].name}
       </RarityChip>
     )),
   ];
 
   const empty = data && auctions.length === 0 && (
     <div style={{ padding: mobile ? '40px 20px' : '64px 24px', border: '1px dashed var(--border-strong)', borderRadius: 'var(--radius-panel)', textAlign: 'center', fontSize: mobile ? 14 : 15, color: 'var(--text-2)' }}>
-      {filtered ? 'Nothing matches these filters right now.' : EMPTY[tab]}
+      {filtered ? 'Nothing matches these filters right now.' : emptyText(tab, economy.endedVisible)}
     </div>
   );
 
@@ -115,7 +117,7 @@ export function Market() {
     return (
       <Page gap={16} back={{ to: '/more', label: 'More' }} mobilePadding="8px 20px 32px" mobileRight={listButton ?? undefined}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <HudLabel>// Auction house</HudLabel>
+          <HudLabel>// Market</HudLabel>
           <h1 style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>Market</h1>
         </div>
         {tabs}
@@ -144,7 +146,7 @@ export function Market() {
     <Page gap={24}>
       <header style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <HudLabel>// Auction house</HudLabel>
+          <HudLabel>// Market</HudLabel>
           <h1 style={{ fontSize: 40, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>Market</h1>
           <p style={{ maxWidth: 600, fontSize: 14, lineHeight: 1.5, color: 'var(--text-2)' }}>
             Bids are held from your balance and returned the moment someone outbids you. The seller pays a {economy.fee} fee when the sale closes.

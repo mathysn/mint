@@ -29,7 +29,7 @@ export function DeleteAccount({ username, mobile, trigger }: { username: string;
       await client.resetQueries();
       navigate('/', { replace: true });
     } catch (err) {
-      setError(err instanceof ApiRequestError ? err.message : 'Something went wrong. Try again.');
+      setError(err instanceof ApiRequestError ? err.message : 'Couldn’t delete your account. Try again.');
       setBusy(false);
     }
   };

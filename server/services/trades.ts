@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { Item, TradeActionResult, TradeItem, TradeOffer, TradeOptions, TradeQuote } from '../../shared/api.js';
 import { db, type DbOrTx, type Tx } from '../db/client.js';
 import { items, ledger, showcase, tradeItems, trades, users } from '../db/schema.js';
+import { cr } from '../format.js';
 import { econ } from '../game/economy.js';
 import { assertNotBanned, fail, type UserRow } from '../http.js';
 import { catalog } from './catalog.js';
@@ -100,7 +101,8 @@ export async function expireDue(userIds?: string[]): Promise<number> {
 /** Sends an offer to a friend: the sender's items are locked (`in_trade`) and their credits held. */
 export async function createTrade(me: UserRow, body: CreateTrade): Promise<string> {
   const [partner] = await db().select().from(users).where(and(eq(users.username, body.to), eq(users.isGuest, false)));
-  if (!partner || partner.id === me.id) return fail(404, 'not_found', `No player called “${body.to}”.`);
+  if (!partner) return fail(404, 'not_found', `No player called “${body.to}”.`);
+  if (partner.id === me.id) return fail(403, 'forbidden', 'You can’t trade with yourself.');
   if (!(await areFriends(me.id, partner.id))) fail(403, 'forbidden', 'You can only trade with friends.');
   const give = [...new Set(body.giveItemIds)];
   const ask = [...new Set(body.askItemIds)];
@@ -113,7 +115,7 @@ export async function createTrade(me: UserRow, body: CreateTrade): Promise<strin
     if (body.counterOf) {
       [original] = await tx.select().from(trades).where(eq(trades.id, body.counterOf)).for('update');
       if (!original || original.status !== 'pending' || original.recipientId !== me.id || original.senderId !== partner.id) {
-        fail(409, 'conflict', 'The offer you are answering is no longer open.');
+        fail(409, 'conflict', 'The offer you’re answering was already answered.');
       }
     }
     const players = await lockUsers(tx, [me.id, partner.id]);
@@ -137,9 +139,9 @@ export async function createTrade(me: UserRow, body: CreateTrade): Promise<strin
         .select({ id: items.id })
         .from(items)
         .where(and(inArray(items.id, ask), eq(items.ownerId, partner.id), eq(items.status, 'available')));
-      if (theirs.length !== ask.length) fail(409, 'items_unavailable', `Some of ${partner.username}’s items are no longer available.`);
+      if (theirs.length !== ask.length) fail(409, 'items_unavailable', `Some of ${partner.username}’s items are no longer available (listed, in a trade or gone).`);
     }
-    if (sender.balance < body.giveCredits) fail(402, 'insufficient_balance', 'You can’t offer more credits than your balance.');
+    if (sender.balance < body.giveCredits) fail(402, 'insufficient_balance', `You can’t offer more credits than your balance. You have ${cr(sender.balance)}.`);
 
     const [trade] = await tx
       .insert(trades)
@@ -199,7 +201,7 @@ export async function acceptTrade(me: UserRow, tradeId: string): Promise<TradeAc
       await release(tx, trade, 'cancelled');
       return { status: 'cancelled' as const, reason: 'Some items of this offer are no longer available, so it was cancelled.' };
     }
-    if (recipient.balance < trade.recipientCredits) fail(402, 'insufficient_balance', `You need ${trade.recipientCredits} CR to accept this offer.`);
+    if (recipient.balance < trade.recipientCredits) fail(402, 'insufficient_balance', `You need ${cr(trade.recipientCredits)} to accept this offer. You have ${cr(recipient.balance)}.`);
 
     const now = new Date();
     if (senderItems.length) {
@@ -326,7 +328,8 @@ export async function listTrades(me: UserRow, box: 'received' | 'sent' | 'histor
 
 async function partnerOf(me: UserRow, username: string): Promise<UserRow> {
   const [partner] = await db().select().from(users).where(and(eq(users.username, username), eq(users.isGuest, false)));
-  if (!partner || partner.id === me.id) return fail(404, 'not_found', `No player called “${username}”.`);
+  if (!partner) return fail(404, 'not_found', `No player called “${username}”.`);
+  if (partner.id === me.id) return fail(403, 'forbidden', 'You can’t trade with yourself.');
   if (!(await areFriends(me.id, partner.id))) fail(403, 'forbidden', 'You can only trade with friends.');
   return partner;
 }

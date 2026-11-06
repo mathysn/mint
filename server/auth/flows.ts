@@ -115,7 +115,7 @@ async function consume(flowId: string, userId: string, guestId: string | null, c
       .set({ status: 'consumed' })
       .where(and(eq(authFlows.id, flowId), eq(authFlows.status, 'success')))
       .returning({ id: authFlows.id });
-    if (!taken) fail(409, 'bad_request', 'This sign-in was already used.');
+    if (!taken) fail(409, 'conflict', 'This sign-in was already used.');
     if (currentSessionId) await revokeSession(tx, currentSessionId);
     // The guest that started the flow is left behind for good (its sessions go with it).
     if (guestId && guestId !== userId) await deleteGuest(tx, guestId);

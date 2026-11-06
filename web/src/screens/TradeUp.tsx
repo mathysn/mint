@@ -60,7 +60,7 @@ export function TradeUp() {
         // The result shows above the slots.
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
-      onError: (e) => setProblem(errorText(e, 'Could not sign the contract.')),
+      onError: (e) => setProblem(errorText(e, 'Couldn’t sign the contract. Try again.')),
     });
   };
   const ready = count === size;
@@ -113,7 +113,7 @@ export function TradeUp() {
         <span className="lbl">
           Your {RARITY[tier].name} items{stattrak ? ' · StatTrak™' : ''}
         </span>
-        <span style={{ fontSize: 12, color: 'var(--text-3)' }}>Tap to add or remove</span>
+        <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{mobile ? 'Tap' : 'Click'} to add or remove</span>
       </div>
       {options && available < size && (
         <p style={{ padding: 24, border: '1px dashed var(--border-strong)', borderRadius: 'var(--radius-card)', fontSize: 14, color: 'var(--text-2)', textAlign: 'center' }}>
@@ -145,7 +145,7 @@ export function TradeUp() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <HudLabel>// Trade-up contract</HudLabel>
           <h1 style={{ fontSize: 30, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>Trade-up</h1>
-          <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text-2)' }}>10 skins of one rarity in, 1 skin of the next rarity out.</p>
+          <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text-2)' }}>{word.charAt(0).toUpperCase() + word.slice(1)} skins of one rarity in, one skin of the next rarity out.</p>
         </div>
         <div className="hscroll" style={{ display: 'flex', gap: 6, overflowX: 'auto', margin: '0 -20px', padding: '0 20px' }}>
           {rarityPicker}
@@ -164,13 +164,13 @@ export function TradeUp() {
               <span aria-hidden="true" style={{ width: 8, height: 8, background: RARITY[next].color }} />1 {nextName} skin{stattrak ? ', StatTrak™' : ''}
             </span>
             <span className="mono" style={{ fontSize: 13 }}>
-              avg {avg !== null ? formatFloat(avg, 4) : '—'}
+              Average float {avg !== null ? formatFloat(avg, 4) : '—'}
             </span>
           </div>
           <FloatBar float={avg ?? 0} min={null} max={null} labels={false} size="contractMobile" cursorHeight={avg === null ? 0 : undefined} />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span className="lbl" style={{ fontSize: 10, paddingBottom: 4 }}>
-              Possible results{outcomes.length ? ` · ${outcomes.length}` : ''}
+              Possible results{outcomes.length ? ` · ${outcomes.length} skins` : ''}
             </span>
             {!outcomes.length && <p style={{ fontSize: 13, color: 'var(--text-2)', paddingTop: 4 }}>Add skins to see what can come out.</p>}
             {shown.map((o) => (
@@ -186,7 +186,7 @@ export function TradeUp() {
         {poolGrid}
         <div style={{ position: 'fixed', left: 0, right: 0, bottom: 'var(--tabbar)', zIndex: 5, minHeight: 76, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '10px 16px', background: 'var(--page)', borderTop: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ flex: 1, fontSize: 12, lineHeight: 1.4, color: 'var(--text-3)' }}>The 10 skins are destroyed when you sign.</span>
+            <span style={{ flex: 1, fontSize: 12, lineHeight: 1.4, color: 'var(--text-3)' }}>The {word} skins are destroyed when you sign. Covert, knives and gloves can’t go in a contract for now.</span>
             <Button size={48} bevel={count === size ? 12 : 'none'} onClick={signNow} disabled={!ready || sign.isPending} style={{ paddingInline: 20, fontSize: 15 }}>
               {signLabel}
             </Button>
@@ -204,7 +204,7 @@ export function TradeUp() {
           <HudLabel>// Trade-up contract</HudLabel>
           <h1 style={{ fontSize: 40, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>Trade-up</h1>
           <p style={{ maxWidth: 620, fontSize: 14, lineHeight: 1.55, color: 'var(--text-2)' }}>
-            {word.charAt(0).toUpperCase() + word.slice(1)} skins of the same rarity become one skin of the next rarity, drawn from their collections in proportion. All StatTrak™ or none. Its float is the average of the {word}, brought into the new skin's range.
+            {word.charAt(0).toUpperCase() + word.slice(1)} skins of the same rarity become one skin of the next rarity, drawn from their collections in proportion. All StatTrak™ or none. Its float is the average of the {word}, brought into the new skin’s range.
           </p>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>{rarityPicker}</div>
@@ -258,7 +258,7 @@ export function TradeUp() {
           <Button size={52} block onClick={signNow} disabled={!ready || sign.isPending} style={{ fontSize: 16 }}>
             {signLabel}
           </Button>
-          <p style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text-3)' }}>The {word} skins are destroyed when you sign. Covert, knives and gloves can't go in a contract for now.</p>
+          <p style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text-3)' }}>The {word} skins are destroyed when you sign. Covert, knives and gloves can’t go in a contract for now.</p>
         </aside>
       </div>
     </Page>
@@ -284,7 +284,7 @@ function ResultBox({ result, mobile, onAgain }: { result: TradeUpResult; mobile:
         border: `1px solid ${rarity.text}`,
         borderRadius: 'var(--radius-panel)',
         overflow: 'hidden',
-        background: `radial-gradient(ellipse at 20% 50%, color-mix(in srgb, ${rarity.color} 12%, transparent), rgba(14,16,19,0) 60%), var(--surface)`,
+        background: `radial-gradient(ellipse at 20% 50%, color-mix(in srgb, ${rarity.color} 12%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 60%), var(--surface)`,
         animation: 'mint-pop 500ms var(--pop-ease) both',
       }}
     >

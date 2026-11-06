@@ -40,7 +40,8 @@ export async function exchangeCode(code: string, redirectUri?: string): Promise<
     body,
     signal: AbortSignal.timeout(8000),
   });
-  if (!res.ok) fail(401, 'unauthorized', `Discord refused the code (${res.status}).`);
+  // A refused code is the sign-in failing (401); the status stays out of the player's message.
+  if (!res.ok) fail(401, 'unauthorized', 'Discord didn’t accept the sign-in. Try signing in again.');
   return tokenSchema.parse(await res.json()).access_token;
 }
 
@@ -50,6 +51,6 @@ export async function fetchProfile(accessToken: string): Promise<DiscordProfile>
     headers: { Authorization: `Bearer ${accessToken}` },
     signal: AbortSignal.timeout(8000),
   });
-  if (!res.ok) fail(401, 'unauthorized', `Discord profile unavailable (${res.status}).`);
+  if (!res.ok) fail(502, 'upstream_failed', 'Discord didn’t answer. Try signing in again.');
   return profileSchema.parse(await res.json());
 }

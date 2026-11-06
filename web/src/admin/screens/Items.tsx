@@ -110,7 +110,7 @@ function ItemDrawer({ id, onClose }: { id: string; onClose: () => void }) {
   };
   const clawBlocked = d.restore?.clawback?.blocked ?? null;
   const cantGo = !reason.trim() || action.busy || (fix === 'move' && !move.data?.target) || (fix === 'restore' && claw && Boolean(clawBlocked));
-  const roleHint = staff.role === 'viewer' ? 'Read-only: you’re a Viewer. Item fixes are for admins.' : staff.role === 'moderator' ? 'Unlock, Restore and Move to player: Admins only.' : '';
+  const roleHint = staff.role === 'viewer' ? 'Read-only: you’re a Viewer. Unlock, Restore and Move to player: Admins only. Remove from showcase: Moderators and admins.' : staff.role === 'moderator' ? 'Unlock, Restore and Move to player: Admins only.' : '';
 
   return (
     <Drawer
@@ -390,7 +390,7 @@ export function Items() {
 
       {list.isError ? (
         <div role="alert" className={s.error} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12 }}>
-          <span style={{ fontSize: 15, fontWeight: 600 }}>Couldn't load items.</span>
+          <span style={{ fontSize: 15, fontWeight: 600 }}>Couldn’t load the items</span>
           <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{list.error.message} Nothing was changed.</span>
           <Btn size={44} variant="primary" onClick={() => void list.refetch()}>
             Retry

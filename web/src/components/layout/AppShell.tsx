@@ -86,7 +86,7 @@ function Sidebar() {
             <div className={s.balanceRow}>
               <span>Held in bids</span>
               <span className="mono" style={{ color: 'var(--text)' }}>
-                {formatCredits(me.heldInBids)}
+                {formatCredits(me.heldInBids)} CR
               </span>
             </div>
           )}
@@ -97,7 +97,7 @@ function Sidebar() {
               <Avatar name={null} guest />
               <div className={s.playerText}>
                 <span className={s.playerName}>Guest</span>
-                <span className={s.playerSub}>Sign in to trade and sell</span>
+                <span className={s.playerSub}>Sign in to trade, sell and add friends</span>
               </div>
             </div>
             <Button variant="secondary" size={44} to="/connect" block>

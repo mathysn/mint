@@ -29,11 +29,11 @@ export function ReportPlayer({ username, mobile }: { username: string; mobile?: 
     setError(null);
     try {
       await api(`/players/${encodeURIComponent(username)}/report`, { method: 'POST', json: { category, message: message.trim() } });
-      toast('Report sent. Staff will look at it.', { check: true });
+      toast('Report sent · staff will look at it', { check: true });
       setMessage('');
       setOpen(false);
     } catch (e) {
-      setError(e instanceof ApiRequestError ? e.message : 'Could not send the report.');
+      setError(e instanceof ApiRequestError ? e.message : 'Couldn’t send the report. Try again.');
     } finally {
       setBusy(false);
     }

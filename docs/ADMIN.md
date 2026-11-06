@@ -17,8 +17,9 @@ Référence pour construire l'espace staff. Les maquettes sont dans `design/Admi
 | Bannir, débannir, renommer, déconnecter partout | — | ✓ | ✓ |
 | Annuler enchères et offres, régler une enchère en retard, classer un signalement, traiter un report, annonces, masquer un drop | — | ✓ | ✓ |
 | Ajuster les crédits, donner / déplacer / restaurer / débloquer un objet | — | — | ✓ |
-| Réglages d'économie, catalogue et import, événements | — | — | ✓ |
-| Supprimer un compte, lancer un job, gérer le staff | — | — | ✓ |
+| Réglages d'économie, catalogue et import (le dry run, qui ne change rien, est ouvert à tous), événements | — | — | ✓ |
+| Supprimer un compte, lancer un job | — | — | ✓ |
+| Gérer le staff | hors panneau : `pnpm staff:set` / `staff:remove` / `staff:list` (README) | | |
 
 - Le serveur vérifie le rôle sur chaque route admin. L'interface ne fait que refléter ce contrôle.
 - Une action interdite n'est **jamais cachée** : bouton désactivé (icône cadenas) avec l'indication « Admins only » ou « Moderators and admins ». La puce de rôle est dans la carte staff en bas de la barre latérale.
@@ -30,9 +31,11 @@ Référence pour construire l'espace staff. Les maquettes sont dans `design/Admi
 2. Avant / après visible avant de confirmer (« Balance 4,870 → 9,870 CR »). Un résultat impossible est bloqué et expliqué (« vex only has 4,870 CR. Remove 4,870 CR or less. »).
 3. Champ **Reason** obligatoire, montré dans l'admin log. Le bouton reste désactivé tant qu'il est vide.
 4. Actions destructrices (supprimer un compte, ban permanent) : taper le pseudo pour confirmer.
-5. Le bouton nomme exactement ce qui se passe : « Ban vex for 7 days », « Cancel auction », « Delete vex for good ».
-6. Après : toast au passé qui mentionne le journal, « Banned vex for 7 days · logged ». Pied des dialogues : « Logged as mathys ».
+5. Le bouton nomme exactement ce qui se passe : « Ban vex for 7 days », « Cancel auction #12 », « Delete vex for good ». Pour renoncer : « Cancel », ou « Keep offer » / « Keep auction » quand le bouton annule déjà quelque chose.
+6. Après : toast au passé qui mentionne le journal, « Banned vex for 7 days · logged ». Pied de **tous** les dialogues et confirmations : « Logged as mathys ».
 7. Écriture en base : une transaction qui fait le changement, écrit le `ledger` si besoin, puis l'`admin_log` `{time, staff, action, target, before, after, reason}`. L'admin log n'est jamais modifié ni supprimé.
+8. Noms d'action : `domaine.verbe` (`player.add_credits`, `player.sign_out`, `case.turn_off`, `case.set_case_of_day`, `offer.cancel`). Revu le 06/11/2026 pour les nouvelles lignes seulement : les anciennes gardent `credits.add`, `credits.remove`, `item.grant`, `player.free_case`, `player.note`, `player.signout`, `item.showcase`, `case.toggle`, `case.new`, `case.cotd`, `guests.delete`, `trade.cancel`, et les filtres de Logs les incluent. Valeurs avant/après lisibles (`on` / `off`, `shown` / `hidden`), jamais `true` / `false`.
+9. Indice de rôle sous les actions : « {actions}: Admins only. » ou « {actions}: Moderators and admins. », le même texte sur desktop et mobile. Voir aussi DESIGN.md §9 (règles de texte).
 
 ## 4. Shell
 
@@ -52,9 +55,9 @@ Référence pour construire l'espace staff. Les maquettes sont dans `design/Admi
 | Items | `Admin-Items.dc.html` | — | v1 | `open` : objet bloqué, détruit, en vente ; `state` ; `role` |
 | Catalog | `Admin-Catalog.dc.html` | — | v1 | `drawer` : Fever (images cassées), Kilowatt, case of the day ; `import` |
 | Logs & tools | `Admin-Logs.dc.html` | — | v1 (admin log), plus tard (outils) | `tab` : log, ledger, jobs, errors ; `check` : ok / mismatch |
-| Market & trades | `Admin-Market.dc.html` | — | plus tard | `tab` : auctions, auction-live, auction-overdue, trades, flags |
-| Moderation | `Admin-Moderation.dc.html` | — | plus tard | reports, annonces, global drop, événements |
-| Economy | `Admin-Economy.dc.html` | — | plus tard | `edits` : pending / none |
+| Market & trades | `Admin-Market.dc.html` | — | v1 | `tab` : auctions, auction-live, auction-overdue, trades, flags |
+| Moderation | `Admin-Moderation.dc.html` | — | v1 | reports, annonces, global drop, événements |
+| Economy | `Admin-Economy.dc.html` | — | v1 | `edits` : pending / none |
 
 | Dialogue | Fichier | Bouton | Particularités |
 |---|---|---|---|
@@ -78,7 +81,7 @@ Chaque dialogue se confirme pour de vrai dans la maquette : la page derrière se
 
 **Catalog** : table des caisses (image, sortie, contenu, interrupteurs Active et New, prix, ouvertures 7 j), « Case of the day ». On ne peut pas désactiver la caisse du jour sans en choisir une autre. Rallumer une caisse avec des images cassées est possible mais annoncé. Import ByMykel en deux temps : **Dry run** (ne change rien) → rapport (+3 caisses, +58 skins, 2 retirés, 1 image cassée) → **Apply import** confirmé. Les nouvelles caisses arrivent éteintes, les objets des joueurs ne sont jamais touchés.
 
-**Economy** : chaque réglage a sa valeur actuelle, un champ avec unité et « Changed Oct 19 by mathys ». Les cotes doivent faire **100.00 %** pour enregistrer. Simulateur : retour moyen par caisse si tout est recyclé, actuel vs modifié (Σ cote × valeur de recyclage × facteur usure/StatTrak ; le facteur 1.117 des maquettes est une estimation à remplacer par le calcul réel). Changements en attente avec annulation ligne par ligne, puis dialogue d'enregistrement. Historique de tous les changements.
+**Economy** : chaque réglage a sa valeur actuelle, un champ avec unité et « Changed Oct 19 by mathys ». Les cotes doivent faire **100.00 %** pour enregistrer. Simulateur : retour moyen par caisse si tout est recyclé, actuel vs modifié (Σ cote × valeur de recyclage × facteur usure/StatTrak, calcul exact, voir §9.4 ; les maquettes montrent encore un facteur 1.117 estimé). Changements en attente avec annulation ligne par ligne, puis dialogue d'enregistrement. Historique de tous les changements.
 
 **Market & trades** : enchères (minuteur inversé avec point clignotant dans les 2 dernières minutes, statut Overdue si la clôture a raté), tiroir avec historique des enchères, **Cancel auction** (objet rendu au vendeur, meilleure enchère remboursée, pas de taxe) et **Settle now** si en retard. Offres : « Cancel offer » libère objets et crédits. Flags : cartes avec point urgent si important, joueurs, preuves chiffrées, Review player / Dismiss (raison) / Ban.
 
@@ -88,7 +91,7 @@ Chaque dialogue se confirme pour de vrai dans la maquette : la page derrière se
 
 ## 7. Données à prévoir
 
-Tables suggérées en plus du cahier des charges : `staff (discord_id, role)`, `admin_log`, `flags`, `reports`, `announcements`, `economy_settings` + `economy_history`, `catalog_imports`, `job_runs`. Les seuils des flags (trades répétés, comptes sur une même IP, prix inhabituel, compte récent) sont à définir.
+Tables suggérées en plus du cahier des charges : `staff (discord_id, role)`, `admin_log`, `flags`, `reports`, `announcements`, `economy_settings` (l'historique des changements est lu dans `admin_log`, action `economy.update`), `catalog_imports`, `job_runs`. Les seuils des flags sont tranchés (§9.3).
 
 ## 8. Histoire des données de démo
 
@@ -101,12 +104,12 @@ Les écrans racontent une même journée, utile pour vérifier qu'on n'a rien ou
 
 ## 9. Points ouverts
 
-1. ~~Caisse gratuite~~ : tranché, **une toutes les 10 min, jusqu'à 5 en réserve**, partout (jeu et admin ; revu le 05/11/2026, avant une toutes les 4 h). Les deux chiffres se règlent dans Economy (« Free case every », « Free case stack »). Les caisses gratuites d'un événement s'ajoutent à la réserve, sans plafond. La caisse du jour est choisie par un admin (Catalog) ou, à défaut, par la rotation, qui change toutes les 4 h par défaut (« Case of the day every » dans Economy, 1 à 168 h, créneaux alignés sur 00:00 UTC ; revu le 06/11/2026, avant une fois par jour) ; un choix s'applique tout de suite.
+1. ~~Caisse gratuite~~ : tranché, **une toutes les 10 min, jusqu'à 5 en réserve**, partout (jeu et admin ; revu le 05/11/2026, avant une toutes les 4 h). Les deux chiffres se règlent dans Economy (« Free case every », « Free case stack »). Les caisses gratuites d'un événement s'ajoutent à la réserve, sans plafond. La caisse du jour est choisie par un admin (Catalog) ou, à défaut, par la rotation, qui change toutes les 4 h par défaut (« Case of the day every » dans Economy : 1, 2, 3, 4, 6, 8, 12 ou 24 h, des diviseurs de 24 pour que les créneaux partent toujours de 00:00 UTC ; revu le 06/11/2026, avant une fois par jour) ; un choix s'applique tout de suite.
 2. Pas d'écran Items mobile : l'onglet Items et la feuille More renvoient vers les pages desktop.
 3. ~~Seuils des moniteurs~~ : tranchés (24/10/2026), vérifiés au moment de l'événement (acceptation d'un trade, ouverture d'une session, vente) :
    - *Repeated trades* : au moins 4 trades acceptés entre les deux mêmes joueurs en 48 h, au moins 80 % de la valeur dans un sens, au moins 10 000 CR déplacés ; urgent dès 25 000 CR ;
-   - *Many accounts, 1 IP* (revu le 05/11/2026 : les invités et le wifi partagé levaient de fausses alertes) : au moins 3 comptes Discord (jamais les invités, qui ne peuvent ni échanger ni vendre) créés depuis une même adresse en 7 jours, **qui ont envoyé ensemble au moins 10 000 CR** (objets + crédits, trades acceptés) à un même joueur ; urgent dès 25 000 CR. Plusieurs comptes sur une adresse sans transfert ne lèvent rien (le signal « autres comptes sur cette IP » de la fiche joueur reste). Vérifié à l'ouverture d'une session et après chaque trade accepté ;
+   - *Many accounts, 1 IP* (revu le 05/11/2026 : les invités et le wifi partagé levaient de fausses alertes) : au moins 3 comptes Discord (jamais les invités, qui ne peuvent ni échanger ni vendre) créés en 7 jours et vus sur une même adresse (créés depuis elle, ou une session ouverte depuis elle), **qui ont envoyé ensemble au moins 10 000 CR** (objets + crédits, trades acceptés) à un même joueur ; urgent dès 25 000 CR. Plusieurs comptes sur une adresse sans transfert ne lèvent rien (le signal « autres comptes sur cette IP » de la fiche joueur reste). Vérifié à l'ouverture d'une session et après chaque trade accepté ;
    - *Unusual price* : une vente à au moins 5 × la moyenne sur 30 jours du même skin, StatTrak et usure (valeur de recyclage sans vente) ;
-   - *New account* : un compte de moins de 3 jours qui a reçu au moins 10 000 CR d'objets en trades.
+   - *New account* : un compte de moins de 3 jours qui a reçu au moins 10 000 CR en trades (objets et crédits).
    Un ban ferme les flags ouverts du joueur ; un ban ou un rename ferme les reports sur lui.
 4. ~~Facteur du simulateur~~ : le simulateur est maintenant **exact** (taux × valeur de recyclage × multiplicateur d'usure moyen sur la plage de float de chaque skin × facteur StatTrak attendu, par caisse active), plus de facteur 1,117.

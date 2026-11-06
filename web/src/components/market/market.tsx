@@ -94,7 +94,7 @@ export function AuctionTile({ auction, now }: { auction: AuctionCard; now: Date 
           </span>
           {auction.buyNowPrice !== null && auction.status === 'active' && (
             <span className="mono" style={{ fontSize: 11, color: 'var(--text-3)' }}>
-              Buy now {formatCredits(auction.buyNowPrice)}
+              Buy now {formatCredits(auction.buyNowPrice)} CR
             </span>
           )}
         </span>
@@ -238,7 +238,7 @@ export function CompactStage({ item, height, mobile, right }: { item: AuctionCar
         display: 'grid',
         placeItems: 'center',
         overflow: 'hidden',
-        background: `radial-gradient(ellipse at 50% 50%, color-mix(in srgb, ${rarity.color} ${mobile ? 12 : 10}%, transparent), rgba(14,16,19,0) 70%)${mobile ? ', var(--surface)' : ''}`,
+        background: `radial-gradient(ellipse at 50% 50%, color-mix(in srgb, ${rarity.color} ${mobile ? 12 : 10}%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 70%)${mobile ? ', var(--surface)' : ''}`,
         ...(mobile ? { margin: '0 -20px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' } : {}),
       }}
     >

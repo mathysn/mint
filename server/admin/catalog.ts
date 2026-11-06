@@ -1,9 +1,9 @@
-import { and, count, desc, eq, gt, sql } from 'drizzle-orm';
+import { and, count, desc, eq, gt, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { AdminActionResult, AdminCatalog, AdminCrateDetail, AdminCrateRow, ImportReport, Tier } from '../../shared/api.js';
 import { db } from '../db/client.js';
 import { adminLog, caseOpenings, catalogImports, crateItems, crates, gameSettings, items, skins } from '../db/schema.js';
-import { TIERS } from '../game/economy.js';
+import { econ, TIERS } from '../game/economy.js';
 import { fmt } from '../format.js';
 import { fail } from '../http.js';
 import { bumpCatalogVersion, caseOfDay, catalog, clearCatalogCache } from '../services/catalog.js';
@@ -41,7 +41,8 @@ async function crateRows(): Promise<AdminCrateRow[]> {
     hasGold: r.goldCount > 0,
     active: r.crate.isActive,
     isNew: r.crate.isNew,
-    price: r.crate.price,
+    // One price for every case, from the economy in force (crates.price is only the import-time copy).
+    price: econ().casePrice,
     opened7d: r.opened7d,
     caseOfDay: r.crate.id === today,
     brokenImages: r.broken,
@@ -101,7 +102,7 @@ export async function crateDetail(id: string): Promise<AdminCrateDetail> {
     : await db()
         .select({ by: adminLog.staffName, at: adminLog.createdAt })
         .from(adminLog)
-        .where(and(eq(adminLog.action, 'case.toggle'), eq(adminLog.targetId, id)))
+        .where(and(inArray(adminLog.action, ['case.turn_off', 'case.toggle']), eq(adminLog.targetId, id)))
         .orderBy(desc(adminLog.id))
         .limit(1);
   return {
@@ -143,16 +144,16 @@ export async function setActive(staff: StaffMember, id: string, body: z.infer<ty
     if (crate.isActive === body.value) fail(409, 'conflict', `${crate.name} is already ${crate.isActive ? 'on' : 'off'}.`);
     if (!body.value) {
       clearCatalogCache();
-      if (caseOfDay(await catalog()) === id) fail(409, 'conflict', 'It’s today’s case of the day. Pick another case of the day first, then turn it off.');
+      if (caseOfDay(await catalog()) === id) fail(409, 'conflict', 'It’s the case of the day right now. Pick another case of the day first, then turn it off.');
     }
     await tx.update(crates).set({ isActive: body.value, updatedAt: new Date() }).where(eq(crates.id, id));
     await bumpCatalogVersion(tx, staff.name);
     await writeAdminLog(tx, staff, {
-      action: 'case.toggle',
+      action: body.value ? 'case.turn_on' : 'case.turn_off',
       target: { type: 'case', id, label: crate.name },
-      change: body.value ? 'off → active' : 'active → off',
-      before: { active: String(crate.isActive) },
-      after: { active: String(body.value) },
+      change: body.value ? 'off → on' : 'on → off',
+      before: { active: crate.isActive ? 'on' : 'off' },
+      after: { active: body.value ? 'on' : 'off' },
       reason: body.reason,
     });
     return { toast: `Turned ${body.value ? 'on' : 'off'} ${crate.name} · logged` };
@@ -164,18 +165,18 @@ export async function setActive(staff: StaffMember, id: string, body: z.infer<ty
 export async function setNew(staff: StaffMember, id: string, body: z.infer<typeof toggleSchema>): Promise<AdminActionResult> {
   const result = await db().transaction(async (tx) => {
     const crate = await lockCrate(tx, id);
-    if (crate.isNew === body.value) fail(409, 'conflict', `${crate.name} ${crate.isNew ? 'already has' : 'has no'} NEW badge.`);
+    if (crate.isNew === body.value) fail(409, 'conflict', crate.isNew ? `${crate.name} already has the NEW badge.` : `${crate.name} has no NEW badge.`);
     await tx.update(crates).set({ isNew: body.value, updatedAt: new Date() }).where(eq(crates.id, id));
     await bumpCatalogVersion(tx, staff.name);
     await writeAdminLog(tx, staff, {
-      action: 'case.new',
+      action: body.value ? 'case.mark_new' : 'case.remove_new',
       target: { type: 'case', id, label: crate.name },
       change: body.value ? 'NEW badge on' : 'NEW badge off',
-      before: { new: String(crate.isNew) },
-      after: { new: String(body.value) },
+      before: { 'NEW badge': crate.isNew ? 'shown' : 'hidden' },
+      after: { 'NEW badge': body.value ? 'shown' : 'hidden' },
       reason: body.reason,
     });
-    return { toast: body.value ? `Marked ${crate.name} as new · logged` : `Removed NEW badge from ${crate.name} · logged` };
+    return { toast: body.value ? `Marked ${crate.name} as new · logged` : `Removed the NEW badge from ${crate.name} · logged` };
   });
   clearCatalogCache();
   return result;
@@ -199,14 +200,14 @@ export async function setCaseOfDay(staff: StaffMember, body: z.infer<typeof case
     await bumpCatalogVersion(tx, staff.name);
     const before = current ? (cat.crates.get(current)?.row.name ?? current) : '—';
     await writeAdminLog(tx, staff, {
-      action: 'case.cotd',
+      action: 'case.set_case_of_day',
       target: { type: 'case', id: crate.id, label: crate.name },
       change: `${before} → ${crate.name}`,
       before: { 'case of the day': before },
       after: { 'case of the day': crate.name },
       reason: body.reason,
     });
-    return { toast: `${crate.name} is the case of the day · logged` };
+    return { toast: `Made ${crate.name} the case of the day · logged` };
   });
   clearCatalogCache();
   return result;
@@ -235,7 +236,7 @@ export async function importDryRun(staff: StaffMember, commit: string | undefine
     const report = await dryRun(commit ?? null, staff.name);
     return publicReport(report.id, report);
   } catch (err) {
-    if (err instanceof ImportError) return fail(502, 'conflict', err.message);
+    if (err instanceof ImportError) return fail(502, 'upstream_failed', err.message);
     throw err;
   }
 }
@@ -250,7 +251,7 @@ export async function importApply(staff: StaffMember, body: z.infer<typeof apply
   try {
     build = await buildCatalog(run.sourceCommit);
   } catch (err) {
-    if (err instanceof ImportError) return fail(502, 'conflict', err.message);
+    if (err instanceof ImportError) return fail(502, 'upstream_failed', err.message);
     throw err;
   }
   const result = await db().transaction(async (tx) => {

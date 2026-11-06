@@ -29,7 +29,7 @@ export function ShowcaseFeature({ item, mobile, back, footer }: { item: Item; mo
         border: '1px solid var(--border)',
         borderRadius: 'var(--radius-panel)',
         overflow: 'hidden',
-        background: `radial-gradient(ellipse at 50% ${mobile ? 40 : 42}%, ${soft(item)}, rgba(14,16,19,0) 70%), var(--surface)`,
+        background: `radial-gradient(ellipse at 50% ${mobile ? 40 : 42}%, ${soft(item)}, color-mix(in srgb, var(--surface) 0%, transparent) 70%), var(--surface)`,
         ...(mobile ? {} : { flex: '2 1 440px', minHeight: 460 }),
       }}
     >
@@ -137,7 +137,7 @@ export function EmptySlot({ big, mobile, onAdd }: { big?: boolean; mobile?: bool
         ...(big ? (mobile ? { height: 240 } : { flex: '2 1 440px', minHeight: 460 }) : mobile ? { flex: 'none', width: 148, minHeight: 190 } : { minHeight: EDIT_CARD_HEIGHT }),
       }}
     >
-      + Add an item
+      + Add to showcase
     </button>
   );
 }
@@ -163,7 +163,7 @@ export function SlotActions({ main, onRemove, onMain }: { main: boolean; onRemov
 export function ShowcasePicker({ items, mobile, onPick, onClose }: { items: Item[]; mobile?: boolean; onPick: (item: Item) => void; onClose: () => void }) {
   return (
     <Modal label="Add to showcase" mobile={mobile} onClose={onClose}>
-      {items.length === 0 && <p style={{ fontSize: 14, color: 'var(--text-2)' }}>No other item to show. Open a case first.</p>}
+      {items.length === 0 && <p style={{ fontSize: 14, color: 'var(--text-2)' }}>No other item to show. Open a case to get more.</p>}
       <div style={{ display: 'grid', gridTemplateColumns: mobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
         {items.map((item) => (
           <button

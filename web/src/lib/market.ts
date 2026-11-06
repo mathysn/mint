@@ -139,7 +139,7 @@ export function useCancelListing() {
     },
     onError: (error, id) => {
       void client.invalidateQueries({ queryKey: marketKeys.auction(id) });
-      toast(errorText(error, 'Could not cancel the listing.'), { error: true });
+      toast(errorText(error, 'Couldn’t cancel the listing. Try again.'), { error: true });
     },
   });
 }
@@ -151,18 +151,18 @@ export { errorText };
 const pad = (n: number) => String(n).padStart(2, '0');
 const secondsLeft = (endsAt: string, now: Date) => Math.max(0, Math.floor((new Date(endsAt).getTime() - now.getTime()) / 1000));
 
-/** Card timer: "01:42", "5h 12m", "Ended". */
+/** Card timer: "01:42", "5 h 12 min", "Ended". */
 export function cardTimer(a: Pick<AuctionCard, 'status' | 'endsAt'>, now: Date): string {
   const s = a.status === 'active' ? secondsLeft(a.endsAt, now) : 0;
   if (s <= 0) return 'Ended';
   if (s < 3600) return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
-  return `${Math.floor(s / 3600)}h ${pad(Math.floor((s % 3600) / 60))}m`;
+  return `${Math.floor(s / 3600)} h ${pad(Math.floor((s % 3600) / 60))} min`;
 }
 
-/** Auction page timer: "4:12:09" above an hour, "01:42" below, "00:00" once ended. */
+/** Auction page timer: "04:12:09" above an hour, "01:42" below, "00:00" once ended (like `countdown`). */
 export function pageTimer(a: Pick<AuctionCard, 'status' | 'endsAt'>, now: Date): string {
   const s = a.status === 'active' ? secondsLeft(a.endsAt, now) : 0;
-  if (s >= 3600) return `${Math.floor(s / 3600)}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
+  if (s >= 3600) return `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
   return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
 }
 

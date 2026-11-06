@@ -12,13 +12,16 @@ const GRID = '36px 120px 90px 150px 150px 170px minmax(0, 1fr)';
 
 const ACTIONS: { value: string; label: string }[] = [
   { value: 'all', label: 'Any action' },
-  { value: 'credits.', label: 'credits.*' },
   { value: 'item.', label: 'item.*' },
-  { value: 'player.,guests.', label: 'player.*' },
+  // Old rows: credits.* and guests.* (now player.add_credits… and player.delete_guests).
+  { value: 'player.,credits.,guests.', label: 'player.*' },
   { value: 'case.,catalog.', label: 'case.* and catalog.*' },
   { value: 'economy.', label: 'economy.*' },
-  { value: 'auction.,offer.', label: 'auction.* and offer.*' },
-  { value: 'job.,staff.', label: 'job.* and staff.*' },
+  // Offers: offer.* (trade.* on old rows).
+  { value: 'auction.,offer.,trade.', label: 'auction.* and offer.*' },
+  { value: 'flag.,report.,drop.,announcement.', label: 'flag.*, report.*, drop.*, announcement.*' },
+  { value: 'event.', label: 'event.*' },
+  { value: 'job.', label: 'job.*' },
 ];
 
 type Range = '7d' | 'today' | '30d' | 'all';
@@ -130,7 +133,7 @@ export function Logs() {
   const tab: LogsTab = raw === 'ledger' || raw === 'jobs' || raw === 'errors' ? raw : 'log';
   return (
     <AdminPage gap={24}>
-      <Header label="Logs & tools" title="Logs & tools" sub="Every staff action with who, why and what changed. Entries can't be edited or deleted. All times UTC." />
+      <Header label="Logs & tools" title="Logs & tools" sub="Every staff action with who, why and what changed. Entries can’t be edited or deleted. All times UTC." />
       <div role="tablist" aria-label="Logs and tools" className={s.tabs} style={{ gap: '4px 28px' }}>
         {LOG_TABS.map(([key, label]) => (
           <button key={key} type="button" role="tab" aria-selected={tab === key} className={s.tab} onClick={() => setParams(key === 'log' ? {} : { tab: key }, { replace: true })}>
@@ -214,7 +217,7 @@ function AdminLogTab() {
           </div>
         )}
         {list.isError ? (
-          <ErrorBox title="Couldn't load the admin log" error={list.error} onRetry={() => void list.refetch()} />
+          <ErrorBox title="Couldn’t load the admin log" error={list.error} onRetry={() => void list.refetch()} />
         ) : list.isPending ? (
           <div aria-busy="true" aria-label="Loading the admin log" className={s.panel}>
             <div style={{ height: 44, borderBottom: '1px solid var(--border)', background: 'var(--rail)' }} />

@@ -129,7 +129,7 @@ export async function signTradeUp(me: UserRow, itemIds: string[], requestId: str
   const { cat, byCollection, pools } = await contracts();
   return db().transaction(async (tx) => {
     const [user] = await tx.select().from(users).where(eq(users.id, me.id)).for('update');
-    if (!user) return fail(401, 'unauthorized', 'Unknown player.');
+    if (!user) return fail(401, 'unauthorized', 'Sign in or start a guest session first.');
     const [done] = await tx.select().from(tradeUps).where(and(eq(tradeUps.userId, user.id), eq(tradeUps.requestId, requestId)));
     if (done) return resultOf(tx, done.id, done.resultItemId, false);
 

@@ -326,7 +326,7 @@ export const showcase = pgTable(
   (t) => [primaryKey({ columns: [t.userId, t.position] }), check('showcase_position', sql`${t.position} BETWEEN 1 AND 5`)],
 );
 
-/** Friends' feed: unboxings and sales from Classified (later: trade-ups). */
+/** Friends’ feed: unboxings, sales and trade-ups from Classified (FEED_TIERS). */
 export const activity = pgTable(
   'activity',
   {
@@ -558,7 +558,7 @@ export const staffNotes = pgTable(
   (t) => [index('staff_notes_user_idx').on(t.userId, t.createdAt.desc())],
 );
 
-/** Small key/value settings changed by staff: `case_of_day`, `catalog_version`. */
+/** Small key/value settings: `case_of_day` (staff pick), `catalog_version`, `economy_version`. */
 export const gameSettings = pgTable('game_settings', {
   key: text('key').primaryKey(),
   value: jsonb('value').notNull(),

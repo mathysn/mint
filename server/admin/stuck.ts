@@ -1,7 +1,7 @@
 import { desc, eq, sql, type SQL } from 'drizzle-orm';
 import type { DbOrTx } from '../db/client.js';
 import { auctions, tradeItems, trades } from '../db/schema.js';
-import { utcDay } from '../format.js';
+import { utcDateTime } from '../format.js';
 
 /**
  * A stuck item: its status says Listed or In trade while no live listing or offer holds it, so
@@ -18,8 +18,8 @@ export const stuckSql: SQL<boolean> = sql<boolean>`(
     WHERE ti.item_id = "items"."id" AND ti.side = 'sender' AND t.status = 'pending'))
 )`;
 
-const pad = (n: number) => String(n).padStart(2, '0');
-const at = (d: Date) => `${utcDay(d)} at ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+/** Same date format as everywhere else in admin: "Oct 23, 14:12 UTC". */
+const at = (d: Date) => `${utcDateTime(d)} UTC`;
 
 const TRADE_END: Record<string, string> = { expired: 'expired', declined: 'was declined', cancelled: 'was cancelled', accepted: 'was accepted' };
 const AUCTION_END: Record<string, string> = { sold: 'was sold', unsold: 'ended unsold', cancelled: 'was cancelled' };
@@ -35,7 +35,7 @@ export async function stuckNote(tx: DbOrTx, item: { id: string; status: string }
       .where(eq(tradeItems.itemId, item.id))
       .orderBy(desc(trades.createdAt))
       .limit(1);
-    if (last) cause = `Offer #${last.number} ${TRADE_END[last.status] ?? 'ended'} on ${at(last.respondedAt ?? last.expiresAt)}, but the item lock wasn't released. `;
+    if (last) cause = `Offer #${last.number} ${TRADE_END[last.status] ?? 'ended'} on ${at(last.respondedAt ?? last.expiresAt)}, but the item lock wasn’t released. `;
   } else {
     const [last] = await tx
       .select({ number: auctions.number, status: auctions.status, endsAt: auctions.endsAt, closedAt: auctions.closedAt })
@@ -43,7 +43,7 @@ export async function stuckNote(tx: DbOrTx, item: { id: string; status: string }
       .where(eq(auctions.itemId, item.id))
       .orderBy(desc(auctions.createdAt))
       .limit(1);
-    if (last) cause = `Auction #${last.number} ${AUCTION_END[last.status] ?? 'ended'} on ${at(last.closedAt ?? last.endsAt)}, but the item lock wasn't released. `;
+    if (last) cause = `Auction #${last.number} ${AUCTION_END[last.status] ?? 'ended'} on ${at(last.closedAt ?? last.endsAt)}, but the item lock wasn’t released. `;
   }
-  return `${cause}No live listing or offer holds it, so ${owner} can't sell, trade or recycle it. Unlock puts it back to Available in ${owner}'s inventory.`;
+  return `${cause}No live listing or offer holds it, so ${owner} can’t sell, trade or recycle it. Unlock puts it back to Available in ${owner}’s inventory.`;
 }

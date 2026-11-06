@@ -120,7 +120,9 @@ const TRADE_OUTCOME: Record<string, string> = { declined: 'declined', cancelled:
 function adminText(log: typeof adminLog.$inferSelect): string {
   const after = log.after as Record<string, string>;
   switch (log.action) {
+    // Old rows keep their old action names (admin_log is append-only).
     case 'item.grant':
+    case 'player.grant_item':
       return `Granted to ${log.targetLabel}`;
     case 'item.unlock':
       return 'Unlocked: back to Available';
@@ -129,9 +131,10 @@ function adminText(log: typeof adminLog.$inferSelect): string {
     case 'item.move':
       return `Moved to ${after.owner}`;
     case 'item.showcase':
+    case 'item.remove_from_showcase':
       return 'Removed from showcase';
     case 'player.delete':
-      return `Destroyed with ${log.targetLabel}'s account`;
+      return `Destroyed with ${log.targetLabel}’s account`;
     default:
       return log.change;
   }
@@ -193,7 +196,7 @@ async function timeline(itemId: string, stuck: boolean, status: string): Promise
     add(since, `Lock not released: still “${STATUS_TEXT[status as keyof typeof STATUS_TEXT]}”`, 'alert', null, `since ${utcDateTime(since)}`);
   }
   entries.sort((a, b) => a.at.localeCompare(b.at));
-  const grant = logs.find((l) => l.action === 'item.grant');
+  const grant = logs.find((l) => l.action === 'player.grant_item' || l.action === 'item.grant');
   return { entries, grantedBy: grant?.staffName ?? null };
 }
 
@@ -278,7 +281,7 @@ export async function unlockItem(staff: StaffMember, id: string, reason: string)
       reason,
       details: { items: [id] },
     });
-    return { toast: `Unlocked ${itemLabel(r)} (${serial(r.item.serial)}) · logged` };
+    return { toast: `Unlocked ${itemLabel(r)} · logged` };
   });
 }
 
@@ -327,10 +330,10 @@ async function findTarget(tx: DbOrTx, to: string, ownerId: string) {
     .from(users)
     .where(and(or(eq(users.username, text.toLowerCase()), eq(users.username, text), eq(users.discordId, text)), isNull(users.deletedAt)))
     .limit(1);
-  if (!target) return { target: null, error: `No player called “${text}”.` };
-  if (target.isGuest) return { target: null, error: 'Guests can’t receive items.' };
-  if (target.id === ownerId) return { target: null, error: `${playerLabel(target)} already owns it.` };
-  return { target, error: null };
+  if (!target) return { target: null, error: `No player called “${text}”.`, status: 404 as const };
+  if (target.isGuest) return { target: null, error: 'Guests can’t receive items.', status: 409 as const };
+  if (target.id === ownerId) return { target: null, error: `${playerLabel(target)} already owns it.`, status: 409 as const };
+  return { target, error: null, status: 200 as const };
 }
 
 export async function previewMove(id: string, to: string): Promise<MovePreview> {
@@ -343,8 +346,9 @@ export async function moveItem(staff: StaffMember, id: string, body: z.infer<typ
   return db().transaction(async (tx) => {
     const r = await loadItem(tx, id);
     if (r.item.status === 'destroyed') fail(409, 'conflict', 'Restore it first.');
-    const { target, error } = await findTarget(tx, body.to, r.item.ownerId);
-    if (!target) return fail(409, 'conflict', error!);
+    const { target, error, status } = await findTarget(tx, body.to, r.item.ownerId);
+    // An unknown name is 404 like every lookup by name; a guest or the owner is a conflict.
+    if (!target) return status === 404 ? fail(404, 'not_found', error!) : fail(409, 'conflict', error!);
     // Lock order: listing and offers holding the item, then every player involved, then the item.
     const [listing] = await tx.select().from(auctions).where(and(eq(auctions.itemId, id), eq(auctions.status, 'active'))).for('update');
     const offerIds = (await tx.select({ id: tradeItems.tradeId }).from(tradeItems).where(and(eq(tradeItems.itemId, id), eq(tradeItems.side, 'sender')))).map((o) => o.id);
@@ -393,7 +397,7 @@ export async function removeFromShowcase(staff: StaffMember, id: string, reason:
     await tx.update(items).set({ showcaseBlockedUntil: until }).where(eq(items.id, id));
     const ownerLabel = labelOf(r.owner.id, r.owner.username, r.owner.deletedAt);
     await writeAdminLog(tx, staff, {
-      action: 'item.showcase',
+      action: 'item.remove_from_showcase',
       target: logTarget(r),
       change: 'removed from showcase',
       before: { showcase: 'shown', inventory: ownerLabel },

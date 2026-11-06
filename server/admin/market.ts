@@ -243,7 +243,7 @@ export async function auctionDetail(id: string): Promise<AdminAuctionDetail> {
           lead ? `Leading bid ${cr(lead.amount)} refunded to ${lead.who}. Earlier bids were already refunded when they were outbid.` : 'Nobody bid: there is nothing to refund.',
           `${sellerLabel} pays no fee.`,
         ],
-        button: 'Cancel auction',
+        button: `Cancel auction #${a.number}`,
       }
     : null;
   let settleText: AdminConfirmText | null = null;
@@ -257,7 +257,7 @@ export async function auctionDetail(id: string): Promise<AdminAuctionDetail> {
             `${sellerLabel} gets ${cr(lead.amount - fee)} (${cr(lead.amount)} minus the ${(a.feeBp / 100).toLocaleString('en-US')}% fee, ${cr(fee)}).`,
           ]
         : [`Nobody bid: ${name} goes back to ${sellerLabel}’s inventory.`],
-      button: 'Settle now',
+      button: `Settle auction #${a.number}`,
     };
     if (missed) settleText.lines.push(`The settlement job skipped it ${times(missed)}. Logs & tools › Jobs has the details.`);
   }
@@ -298,7 +298,7 @@ const nameOf = async (tx: DbOrTx, id: string | null) => {
 export async function cancelAuction(staff: StaffMember, id: string, reason: string): Promise<AdminActionResult> {
   return db().transaction(async (tx) => {
     const a = await lockAuctionRow(tx, id);
-    if (a.status !== 'active') fail(409, 'conflict', `Auction #${a.number} already ended.`);
+    if (a.status !== 'active') fail(409, 'conflict', `Auction #${a.number} has already ended.`);
     const wallets = new Wallets(await lockUsers(tx, [a.sellerId, a.leaderId ?? a.sellerId]));
     const refund = await cancelAuctionByStaff(tx, a, 'admin', wallets, staff.name);
     const ledgerIds = await wallets.save(tx);
@@ -314,15 +314,15 @@ export async function cancelAuction(staff: StaffMember, id: string, reason: stri
       reason,
       details: { request: randomUUID(), ledger: ledgerIds, items: [a.itemId], item },
     });
-    return { toast: refund ? `Cancelled auction #${a.number}, refunded ${leaderName} · logged` : `Cancelled auction #${a.number} · logged` };
+    return { toast: refund ? `Cancelled auction #${a.number}, refunded ${cr(refund.amount)} to ${leaderName} · logged` : `Cancelled auction #${a.number} · logged` };
   });
 }
 
 export async function settleAuction(staff: StaffMember, id: string, reason: string): Promise<AdminActionResult> {
   return db().transaction(async (tx) => {
     const a = await lockAuctionRow(tx, id);
-    if (a.status !== 'active') fail(409, 'conflict', `Auction #${a.number} already ended.`);
-    if (a.endsAt > new Date()) fail(409, 'conflict', `Auction #${a.number} hasn't ended yet.`);
+    if (a.status !== 'active') fail(409, 'conflict', `Auction #${a.number} has already ended.`);
+    if (a.endsAt > new Date()) fail(409, 'conflict', `Auction #${a.number} hasn’t ended yet.`);
     const done = await settle(tx, a);
     const { item, label } = await auctionLabel(tx, a);
     const sellerName = await nameOf(tx, a.sellerId);
@@ -477,22 +477,23 @@ export async function cancelTrade(staff: StaffMember, id: string, reason: string
   return db().transaction(async (tx) => {
     const [t] = await tx.select().from(trades).where(eq(trades.id, id)).for('update');
     if (!t) return fail(404, 'not_found', 'Unknown offer.');
-    if (t.status !== 'pending') fail(409, 'conflict', `Offer #${t.number} is no longer pending.`);
+    if (t.status !== 'pending') fail(409, 'conflict', `Offer #${t.number} was already answered.`);
     await lockUsers(tx, [t.senderId, t.recipientId]);
     const before = await tx.select({ id: tradeItems.itemId }).from(tradeItems).where(and(eq(tradeItems.tradeId, t.id), eq(tradeItems.side, 'sender')));
     await release(tx, t, 'cancelled', 'admin', staff.name);
     const [from, to] = [await nameOf(tx, t.senderId), await nameOf(tx, t.recipientId)];
     const ledgerIds = t.senderCredits > 0 ? (await tx.execute<{ id: number }>(sql`SELECT id FROM ledger WHERE ref_id = ${t.id} AND type = 'trade_release' ORDER BY id DESC LIMIT 1`)).rows.map((r) => Number(r.id)) : [];
     await writeAdminLog(tx, staff, {
-      action: 'trade.cancel',
-      target: { type: 'trade', id: t.id, label: `#${t.number} · ${from} → ${to}` },
+      action: 'offer.cancel',
+      target: { type: 'offer', id: t.id, label: `#${t.number} · ${from} → ${to}` },
       change: 'cancelled',
       before: { status: 'pending', items: `${fmt(before.length)} locked`, credits: cr(t.senderCredits) },
       after: { status: `cancelled by ${staff.name}`, items: 'released', credits: t.senderCredits ? `+${cr(t.senderCredits)} back to ${from}` : '—' },
       reason,
       details: { request: randomUUID(), ledger: ledgerIds, items: before.map((b) => b.id) },
     });
-    return { toast: `Cancelled offer #${t.number}, items and credits released · logged` };
+    const released = [before.length ? plural(before.length, 'item') : null, t.senderCredits ? cr(t.senderCredits) : null].filter(Boolean).join(' and ');
+    return { toast: released ? `Cancelled offer #${t.number}, released ${released} · logged` : `Cancelled offer #${t.number} · logged` };
   });
 }
 
@@ -572,7 +573,7 @@ export async function dismissFlag(staff: StaffMember, id: number, reason: string
       after: { status: `dismissed by ${staff.name}` },
       reason,
     });
-    return { toast: `Dismissed flag “${f.kind}” · logged` };
+    return { toast: `Dismissed the “${f.kind}” flag · logged` };
   });
 }
 

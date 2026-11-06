@@ -5,7 +5,7 @@ import { z } from 'zod';
 import type { Config } from '../../shared/api.js';
 import { db } from '../db/client.js';
 import { users } from '../db/schema.js';
-import { econ, RECYCLE_MAX_ITEMS } from '../game/economy.js';
+import { econ, MARKET_ENDED_VISIBLE_DAYS, RECYCLE_MAX_ITEMS, SALES_WINDOW_DAYS } from '../game/economy.js';
 import { discordEnabled, env } from '../env.js';
 import { banFailure, fail, requireCron, requireUser, type AppEnv } from '../http.js';
 import { runJob } from '../admin/jobs.js';
@@ -41,11 +41,14 @@ gameRoutes.get('/config', (c) =>
     recycleMaxItems: RECYCLE_MAX_ITEMS,
     freeCaseMinutes: econ().freeCaseMinutes,
     freeCaseMax: econ().freeCaseMax,
+    caseRotationHours: econ().caseRotationHours,
     marketFeePct: econ().marketFeeBp / 100,
     bidStepPct: econ().bidStepBp / 100,
     antiSnipeMinutes: econ().antiSnipeMinutes,
     tradeExpiryDays: econ().tradeExpiryDays,
     tradeupSize: econ().tradeupSize,
+    salesWindowDays: SALES_WINDOW_DAYS,
+    marketEndedVisibleDays: MARKET_ENDED_VISIBLE_DAYS,
   }),
 );
 
@@ -131,7 +134,7 @@ gameRoutes.get('/items/:id', async (c) => {
   const id = itemId.safeParse(c.req.param('id'));
   if (id.success) await settleDue();
   const detail = id.success ? await itemDetail(c.get('user'), id.data) : null;
-  return detail ? c.json(detail) : fail(404, 'not_found', 'This item does not exist or you cannot see it.');
+  return detail ? c.json(detail) : fail(404, 'not_found', 'Unknown item.');
 });
 
 gameRoutes.get('/albums', async (c) => c.json(await listAlbums(requireUser(c).id)));
@@ -153,7 +156,7 @@ gameRoutes.post('/items/recycle', async (c) => {
   return c.json(await recycleItems(user.id, itemIds, confirm));
 });
 
-/** Vercel cron (daily): delete guests nobody has used for 30 days. Their items never left them. */
+/** Vercel cron (daily): purge_guests (no opening after 1 h away, or 7 days away; admin/jobs.ts). Their items never left them. */
 gameRoutes.get('/cron/purge-guests', async (c) => {
   requireCron(c);
   return c.json({ deleted: (await runJob('purge_guests', 'cron')).count });

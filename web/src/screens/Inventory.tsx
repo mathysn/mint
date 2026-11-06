@@ -164,7 +164,7 @@ export function Inventory() {
   const grid = (
     <>
       {first && items.length === 0 && (
-        <EmptyState title={first.totalCount === 0 ? 'Nothing here yet' : 'No items match these filters'}>
+        <EmptyState title={first.totalCount === 0 ? (player ? 'Nothing here yet' : 'Your inventory is empty') : 'No items match these filters'}>
           {first.totalCount === 0 ? (
             !player && (
             <Button variant="secondary" size={44} to="/cases">
@@ -185,7 +185,7 @@ export function Inventory() {
       </div>
       {inventory.hasNextPage && (
         <Button variant="secondary" size={44} onClick={() => void inventory.fetchNextPage()} disabled={inventory.isFetchingNextPage} style={{ alignSelf: 'center' }}>
-          Load more
+          Show more
         </Button>
       )}
     </>
@@ -221,7 +221,7 @@ export function Inventory() {
             <span style={{ display: 'flex', gap: 8 }}>
               {selecting && target.length > 0 && (
                 <Chip pressed={allState === 'all'} onClick={toggleAll} style={{ paddingInline: 12 }}>
-                  {allState === 'all' ? 'Unselect all' : 'Select all'}
+                  {allState === 'all' ? 'Clear' : 'Select all'}
                 </Chip>
               )}
               <Chip
@@ -232,7 +232,7 @@ export function Inventory() {
                 }}
                 style={selecting ? { background: 'transparent', color: 'var(--text)', borderColor: 'var(--text)', paddingInline: 12 } : { paddingInline: 12 }}
               >
-                {selecting ? 'Selecting' : 'Select'}
+                {selecting ? 'Done' : 'Select'}
               </Chip>
             </span>
           )}

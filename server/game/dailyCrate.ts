@@ -9,7 +9,7 @@ export interface CaseOfDayInput {
 }
 
 /**
- * "Free today": the staff pick if any, else a rotation over all cases (sorted by id) that changes
+ * "Free now": the staff pick if any, else a rotation over all cases (sorted by id) that changes
  * every `everyMs` (slots aligned on 00:00 UTC) and moves on to the next active case when the
  * current one is off.
  */

@@ -34,13 +34,11 @@ export function Friends() {
   const friends = data?.friends ?? [];
   const incoming = data?.incoming ?? [];
   const outgoing = data?.outgoing ?? [];
-  const countLine = mobile
-    ? `${plural(friends.length, 'friend')} · ${plural(incoming.length, 'request')}`
-    : `${plural(friends.length, 'friend')} · ${plural(incoming.length, 'request')} waiting`;
+  const countLine = `${plural(friends.length, 'friend')} · ${plural(incoming.length, 'request')} waiting`;
 
   const input = (
     <SearchField
-      label={mobile ? 'Add a friend' : 'Player name'}
+      label="Add a friend"
       value={query}
       onChange={setQuery}
       placeholder="Search by name"
@@ -65,7 +63,7 @@ export function Friends() {
         {incoming.length > 0 && (
           <section aria-labelledby="mf-req" style={{ display: 'flex', flexDirection: 'column' }}>
             <h2 id="mf-req" className="lbl" style={{ margin: '0 0 8px' }}>
-              Requests · {incoming.length}
+              // Requests · {incoming.length}
             </h2>
             <ul className="stagger-list" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
               {incoming.map((p) => (
@@ -77,7 +75,7 @@ export function Friends() {
         {outgoing.length > 0 && (
           <section aria-labelledby="mf-sent" style={{ display: 'flex', flexDirection: 'column' }}>
             <h2 id="mf-sent" className="lbl" style={{ margin: '0 0 8px' }}>
-              Sent
+              // Sent
             </h2>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
               {outgoing.map((p) => (
@@ -88,12 +86,12 @@ export function Friends() {
         )}
         <section aria-labelledby="mf-list" className="stagger-list" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <h2 id="mf-list" className="lbl" style={{ margin: '0 0 2px' }}>
-            Your friends
+            // Your friends
           </h2>
           {friends.map((f) => (
             <FriendCardMobile key={f.id} friend={f} />
           ))}
-          {data && friends.length === 0 && <p style={{ fontSize: 13, color: 'var(--text-2)' }}>No friends yet. Search for a player by name above.</p>}
+          {data && friends.length === 0 && <p style={{ fontSize: 13, color: 'var(--text-2)' }}>No friends yet. Search for a player by name to send a request.</p>}
         </section>
       </Page>
     );

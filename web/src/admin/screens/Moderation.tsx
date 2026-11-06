@@ -5,7 +5,7 @@ import { useIsMobile } from '../../lib/useMediaQuery';
 import { AdminPage } from '../AdminApp';
 import { BanById } from '../dialogs';
 import { useAdminAction, useModeration, usePreview, useStaff, utcDateTime } from '../lib';
-import { Btn, CLOSE, ErrorBox, Header, Logged, cx, s } from '../ui';
+import { Btn, CLOSE, Dot, ErrorBox, Header, Logged, cx, s } from '../ui';
 
 const panel: CSSProperties = { border: '1px solid var(--border)', borderRadius: 'var(--radius-panel)', background: 'var(--surface)' };
 
@@ -46,6 +46,7 @@ function ReasonConfirm({ title, text, button, path, body, onDone, stacked }: { t
           {button}
         </Btn>
       </div>
+      <Logged />
       {error && (
         <span role="alert" className={s.alertText} style={{ flexBasis: '100%' }}>
           {error}
@@ -65,7 +66,7 @@ function ReportCard({ r, revealed, onReveal, onBan }: { r: AdminReport; revealed
     <article aria-label={`Report on ${hidden ? 'a hidden name' : name}`} style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '16px 20px', borderTop: '1px solid var(--separator)', opacity: r.open ? 1 : 0.6 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px 12px' }}>
         <span className="mono" style={{ height: 22, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0 7px', borderRadius: 'var(--radius-control)', fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', border: '1px solid var(--border-strong)', color: r.urgent ? 'var(--text)' : 'var(--text-2)' }}>
-          {r.urgent && <span aria-hidden="true" className={s.dot} style={{ width: 6, height: 6 }} />}
+          {r.urgent && <Dot size={6} />}
           {r.category}
         </span>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 600 }}>
@@ -188,7 +189,7 @@ function AnnouncementRow({ a }: { a: AdminAnnouncement }) {
           </span>
           {can && !confirm && (
             <Btn size={36} variant="link" min="moderator" onClick={() => setConfirm(true)}>
-              {a.state === 'Live' ? 'End now' : 'Cancel'}
+              {a.state === 'Live' ? 'End now' : 'Cancel announcement…'}
             </Btn>
           )}
         </span>
@@ -255,7 +256,8 @@ function Composer({ max }: { max: number }) {
       <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         <span style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'var(--text-2)' }}>
           <span>Text</span>
-          <span className="mono" style={{ fontSize: 12, color: tooLong ? 'var(--error)' : 'var(--text-3)' }}>
+          <span className="mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-3)' }}>
+            {tooLong && <Dot size={6} />}
             {n} / {max}
           </span>
         </span>
@@ -286,7 +288,8 @@ function Composer({ max }: { max: number }) {
         </span>
       )}
       <Btn size={44} variant="primary" min="moderator" disabled={!text.trim() || tooLong || !reason.trim() || busy} onClick={() => void go()} style={{ alignSelf: 'flex-start' }}>
-        Schedule announcement
+        {/* The server posts it right away when the start time is now or past. */}
+        {Date.parse(`${start.replace(' ', 'T')}:00Z`) <= Date.now() ? 'Post announcement now' : 'Schedule announcement'}
       </Btn>
     </div>
   );
@@ -364,7 +367,7 @@ export function Moderation() {
   const data = useModeration();
   const [revealed, setRevealed] = useState(false);
   const [ban, setBan] = useState<string | null>(null);
-  const hint = staff.can('admin') ? null : staff.can('moderator') ? 'Events are for admins. Reports, banner and announcements are open to moderators.' : 'Read-only: you’re a Viewer. Actions here are for moderators and admins.';
+  const hint = staff.can('admin') ? null : staff.can('moderator') ? 'Events: Admins only.' : 'Read-only: you’re a Viewer. Reports, banner and announcements: Moderators and admins. Events: Admins only.';
   const m = data.data;
   return (
     <AdminPage gap={24}>
@@ -375,7 +378,7 @@ export function Moderation() {
         </span>
       )}
       {data.isError ? (
-        <ErrorBox title="Couldn't load moderation" error={data.error} onRetry={() => void data.refetch()} />
+        <ErrorBox title="Couldn’t load the moderation queue" error={data.error} onRetry={() => void data.refetch()} />
       ) : (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
           <div style={{ flex: '999 1 640px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -408,7 +411,7 @@ export function Moderation() {
                 <h2 id="gd-t" className="lbl">
                   // Global drop
                 </h2>
-                <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Every ★ drop shows in the players' banner until the next one. Hide one when the name or timing is a problem.</span>
+                <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Every ★ drop shows in the players’ banner until the next one. Hide one when the name or timing is a problem.</span>
               </div>
               {!m ? (
                 <div aria-busy="true" aria-label="Loading the drops" style={{ height: 180 }} />

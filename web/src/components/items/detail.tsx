@@ -30,7 +30,7 @@ export function ItemStage({ item, mobile, minHeight = 520 }: { item: Item & { se
         display: 'grid',
         placeItems: 'center',
         overflow: 'hidden',
-        background: `radial-gradient(ellipse at 50% 50%, color-mix(in srgb, ${rarity.color} ${mobile ? 12 : 10}%, transparent), rgba(14,16,19,0) 70%), var(--surface)`,
+        background: `radial-gradient(ellipse at 50% 50%, color-mix(in srgb, ${rarity.color} ${mobile ? 12 : 10}%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 70%), var(--surface)`,
         ...(mobile
           ? { height: 250, margin: '0 -20px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }
           : { minHeight, border: '1px solid var(--border)', borderRadius: 'var(--radius-panel)' }),

@@ -33,7 +33,7 @@ function CheckCard({ last }: { last: { ok: boolean; at: string; result: string }
     <div style={{ ...panel, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px 16px', padding: '16px 18px' }}>
       <div style={{ flex: '1 1 360px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         <span style={{ fontSize: 15, fontWeight: 600 }}>Check ledger</span>
-        <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Adds up every player's entries and compares them with balances and held bids. Read-only, about 20 s.</span>
+        <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Adds up every player’s entries and compares them with balances and held bids. Read-only, about 20 s.</span>
       </div>
       <Btn size={44} onClick={() => void run()} disabled={busy}>
         {busy && <span aria-hidden="true" className="anim" style={spinner(12)} />}
@@ -102,7 +102,7 @@ export function LedgerTab() {
         <input id="lq" type="search" className={s.field} style={{ width: '100%', height: 44, padding: '0 14px 0 40px', background: 'var(--surface)' }} value={text} onChange={(e) => setText(e.target.value)} placeholder="Player, entry ID or type (case_open, recycle…)" />
       </div>
       {list.isError ? (
-        <ErrorBox title="Couldn't load the ledger" error={list.error} onRetry={() => void list.refetch()} />
+        <ErrorBox title="Couldn’t load the ledger" error={list.error} onRetry={() => void list.refetch()} />
       ) : list.isPending ? (
         <div aria-busy="true" aria-label="Loading the ledger" className={s.panel}>
           <div style={{ height: 44, borderBottom: '1px solid var(--border)', background: 'var(--rail)' }} />
@@ -247,7 +247,7 @@ function JobCard({ job }: { job: AdminJobCard }) {
 
 export function JobsTab({ canRun }: { canRun: boolean }) {
   const jobs = useJobs();
-  if (jobs.isError) return <ErrorBox title="Couldn't load the jobs" error={jobs.error} onRetry={() => void jobs.refetch()} />;
+  if (jobs.isError) return <ErrorBox title="Couldn’t load the jobs" error={jobs.error} onRetry={() => void jobs.refetch()} />;
   return (
     <>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
@@ -266,7 +266,7 @@ export function JobsTab({ canRun }: { canRun: boolean }) {
 
 export function ErrorsTab() {
   const errors = useErrors();
-  if (errors.isError) return <ErrorBox title="Couldn't load the errors" error={errors.error} onRetry={() => void errors.refetch()} />;
+  if (errors.isError) return <ErrorBox title="Couldn’t load the errors" error={errors.error} onRetry={() => void errors.refetch()} />;
   const e = errors.data;
   const max = Math.max(1, ...(e?.codes.map((c) => c.count) ?? [1]));
   return (

@@ -19,7 +19,7 @@ async function routes(rows: (typeof adminLog.$inferSelect)[]): Promise<Map<numbe
   return new Map(
     rows.map((r) => {
       if (r.targetType === 'catalog') return [r.id, '/admin/catalog'];
-      if (r.targetType === 'job') return [r.id, '/admin'];
+      if (r.targetType === 'job') return [r.id, '/admin/logs?tab=jobs'];
       if (!r.targetId || !exists.has(r.targetId)) return [r.id, null];
       if (r.targetType === 'player') return [r.id, `/admin/players/${r.targetId}`];
       if (r.targetType === 'item') return [r.id, `/admin/items?item=${r.targetId}`];

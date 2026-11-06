@@ -25,5 +25,6 @@ export const longDate = (iso: string) => new Date(iso).toLocaleDateString('en-US
 export function timeAgo(iso: string, now: Date, compact = false): string {
   const minutes = Math.max(0, Math.floor((now.getTime() - new Date(iso).getTime()) / 60_000));
   const [value, unit] = minutes < 60 ? [Math.max(1, minutes), 'min'] : minutes < 1440 ? [Math.floor(minutes / 60), 'h'] : [Math.floor(minutes / 1440), 'd'];
-  return compact ? `${value}${unit === 'min' ? 'm' : unit}` : `${value} ${unit}`;
+  // Compact (mobile rows): "12m"; otherwise "12 min ago", the same everywhere.
+  return compact ? `${value}${unit === 'min' ? 'm' : unit}` : `${value} ${unit} ago`;
 }

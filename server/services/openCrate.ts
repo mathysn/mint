@@ -6,6 +6,7 @@ import { freeCaseAnchorAfterUse, freeCaseStack } from '../game/dailyCrate.js';
 import { RARE_SPECIAL_CARD, STRIP_RESULT_INDEX, buildStrip, drawFromCrate } from '../game/draw.js';
 import { econ, FEED_TIERS } from '../game/economy.js';
 import { cryptoRng, type Rng } from '../game/rng.js';
+import { cr } from '../format.js';
 import { fail } from '../http.js';
 import { freeCaseFor, type FreeCaseFields } from './accounts.js';
 import { caseOfDay, catalog, skinCard, type Catalog } from './catalog.js';
@@ -30,7 +31,7 @@ export async function openCrate(req: OpenRequest, rng: Rng = cryptoRng): Promise
 
   return db().transaction(async (tx) => {
     const [user] = await tx.select().from(users).where(eq(users.id, req.userId)).for('update');
-    if (!user) return fail(401, 'unauthorized', 'Unknown player.');
+    if (!user) return fail(401, 'unauthorized', 'Sign in or start a guest session first.');
 
     const [previous] = await tx
       .select()
@@ -50,7 +51,7 @@ export async function openCrate(req: OpenRequest, rng: Rng = cryptoRng): Promise
     }
 
     const crate = cat.crates.get(req.crateId);
-    if (!crate) return fail(404, 'crate_inactive', 'This case cannot be opened.');
+    if (!crate) return fail(404, 'crate_inactive', 'This case can’t be opened right now.');
 
     const now = new Date();
     let price = econ().casePrice;
@@ -68,7 +69,7 @@ export async function openCrate(req: OpenRequest, rng: Rng = cryptoRng): Promise
           : { ...after, freeCaseAnchor: freeCaseAnchorAfterUse(user.freeCaseAnchor, now) };
       price = 0;
     } else if (user.balance < price) {
-      return fail(402, 'insufficient_balance', `You need ${price} CR to open this case.`);
+      return fail(402, 'insufficient_balance', `You need ${cr(price)} to open this case. You have ${cr(user.balance)}.`);
     }
 
     const draw = drawFromCrate(crate.contents, rng);

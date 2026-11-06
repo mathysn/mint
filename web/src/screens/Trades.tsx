@@ -15,9 +15,10 @@ import { type Box, useTradeAction, useTrades } from '../lib/trades';
 import { useIsMobile } from '../lib/useMediaQuery';
 
 const EMPTY: Record<Box, string> = {
-  received: 'No offers waiting for you.',
-  sent: 'You have no offers waiting for an answer.',
-  history: 'Answered, cancelled and expired offers show up here.',
+  // Empty state titles: no final period, like every other EmptyState.
+  received: 'No offers waiting for you',
+  sent: 'No offers waiting for an answer',
+  history: 'Answered, cancelled and expired offers show up here',
 };
 
 export function Trades() {
@@ -67,7 +68,7 @@ export function Trades() {
     const short = me ? offer.give.credits - me.balance : 0;
     const accept = mobile ? (
       <Button size={44} bevel="none" onClick={() => run(offer, 'accept')} disabled={action.isPending || short > 0}>
-        Accept
+        Accept trade
       </Button>
     ) : (
       <Button size={44} bevel={10} onClick={() => run(offer, 'accept')} disabled={action.isPending || short > 0} style={{ paddingInline: 22 }}>
@@ -170,7 +171,7 @@ export function Trades() {
           <HudLabel>// Trades</HudLabel>
           <h1 style={{ fontSize: 40, lineHeight: 1.05, fontWeight: 600, letterSpacing: '-0.02em' }}>Trades</h1>
           <p style={{ maxWidth: 560, fontSize: 14, lineHeight: 1.5, color: 'var(--text-2)' }}>
-            Items in an open offer are locked: they can't be sold, recycled or put in another offer until it's answered.
+            Items in an open offer are locked: they can’t be sold, recycled or put in another offer until it’s answered.
           </p>
         </div>
         <Button size={48} onClick={() => setPicking(true)} style={{ paddingInline: 26 }}>

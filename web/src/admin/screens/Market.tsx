@@ -121,8 +121,9 @@ function AuctionConfirm({ text, path, onDone, onBack }: { text: { title: string;
         </span>
       )}
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+        {/* "Cancel" next to "Cancel auction #12" would read twice: keep the thing instead. */}
         <Btn size={44} onClick={onBack}>
-          Back
+          {text.button.startsWith('Cancel') ? 'Keep auction' : 'Cancel'}
         </Btn>
         <Btn size={44} variant="primary" min="moderator" disabled={!reason.trim() || busy} onClick={() => void go()}>
           {text.button}
@@ -167,7 +168,7 @@ function AuctionDrawer({ id, onClose }: { id: string; onClose: () => void }) {
       footer={footer}
     >
       {auction.isError ? (
-        <ErrorBox title="Couldn't load this auction" error={auction.error} onRetry={() => void auction.refetch()} />
+        <ErrorBox title="Couldn’t load this auction" error={auction.error} onRetry={() => void auction.refetch()} />
       ) : !a ? (
         <div aria-busy="true" aria-label="Loading the auction" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <span className={s.skel} style={{ width: 240, height: 110 }} />
@@ -254,7 +255,7 @@ function Auctions() {
       { replace: true },
     );
   const rows = rowsOf(list.data);
-  if (list.isError) return <ErrorBox title="Couldn't load the auctions" error={list.error} onRetry={() => void list.refetch()} />;
+  if (list.isError) return <ErrorBox title="Couldn’t load the auctions" error={list.error} onRetry={() => void list.refetch()} />;
   if (list.isPending) return <Skeleton label="Loading the auctions" />;
   return (
     <>
@@ -311,7 +312,7 @@ function TradeCancel({ t, onDone }: { t: AdminTradeRow; onDone: () => void }) {
       </div>
       <label className={s.reasonInline}>
         <span>Reason</span>
-        <input autoFocus className={s.field} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Shown in the admin log" onKeyDown={(e) => e.key === 'Enter' && reason.trim() && !busy && void go()} />
+        <input autoFocus className={s.field} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason, shown in the admin log" onKeyDown={(e) => e.key === 'Enter' && reason.trim() && !busy && void go()} />
       </label>
       <Btn variant="quiet" onClick={onDone}>
         Keep offer
@@ -319,6 +320,7 @@ function TradeCancel({ t, onDone }: { t: AdminTradeRow; onDone: () => void }) {
       <Btn variant="primary" min="moderator" disabled={!reason.trim() || busy} onClick={() => void go()}>
         Cancel offer
       </Btn>
+      <Logged />
     </div>
   );
 }
@@ -327,7 +329,7 @@ function Trades() {
   const list = useAdminTrades();
   const [confirm, setConfirm] = useState<AdminTradeRow | null>(null);
   const rows = rowsOf(list.data);
-  if (list.isError) return <ErrorBox title="Couldn't load the trade offers" error={list.error} onRetry={() => void list.refetch()} />;
+  if (list.isError) return <ErrorBox title="Couldn’t load the trade offers" error={list.error} onRetry={() => void list.refetch()} />;
   if (list.isPending) return <Skeleton label="Loading the trade offers" />;
   return (
     <>
@@ -420,12 +422,7 @@ function FlagCard({ f, onBan }: { f: AdminFlag; onBan: (id: string) => void }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <h2 id={`fl-${f.id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 600, color: f.open ? 'var(--text)' : 'var(--text-2)' }}>
-            {f.urgent && (
-              <>
-                <span aria-hidden="true" className={s.dot} style={{ width: 8, height: 8 }} />
-                <span className="sr-only">High importance:</span>
-              </>
-            )}
+            {f.urgent && <Dot size={8} />}
             {f.kind}
           </h2>
           <span className="mono" style={{ fontSize: 11, color: 'var(--text-3)' }}>
@@ -459,13 +456,14 @@ function FlagCard({ f, onBan }: { f: AdminFlag; onBan: (id: string) => void }) {
       {f.open &&
         (dismissing ? (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: 12, border: '1px solid var(--text)', borderRadius: 'var(--radius-card)', background: 'var(--surface-bar)' }}>
-            <input autoFocus className={s.field} aria-label="Reason to dismiss" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why it's fine, shown in the admin log" style={{ flex: '1 1 220px', minWidth: 0 }} onKeyDown={(e) => e.key === 'Escape' && setDismissing(false)} />
+            <input autoFocus className={s.field} aria-label="Reason to dismiss" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason, shown in the admin log" style={{ flex: '1 1 220px', minWidth: 0 }} onKeyDown={(e) => e.key === 'Escape' && setDismissing(false)} />
             <Btn variant="quiet" onClick={() => setDismissing(false)}>
               Cancel
             </Btn>
             <Btn variant="primary" min="moderator" disabled={!reason.trim() || busy} onClick={() => void go()}>
               Dismiss flag
             </Btn>
+            <Logged />
             {error && (
               <span role="alert" className={s.alertText} style={{ flexBasis: '100%' }}>
                 {error}
@@ -493,7 +491,7 @@ function Flags() {
   const flags = useFlags();
   const mobile = useIsMobile();
   const [ban, setBan] = useState<string | null>(null);
-  if (flags.isError) return <ErrorBox title="Couldn't load the flags" error={flags.error} onRetry={() => void flags.refetch()} />;
+  if (flags.isError) return <ErrorBox title="Couldn’t load the flags" error={flags.error} onRetry={() => void flags.refetch()} />;
   if (flags.isPending)
     return (
       <div aria-busy="true" aria-label="Loading the flags" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(520px, 100%), 1fr))', gap: 16 }}>

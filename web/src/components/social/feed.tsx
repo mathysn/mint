@@ -37,7 +37,7 @@ export function FriendsFeed({ mobile }: { mobile?: boolean }) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10, padding: mobile ? '8px 0 12px' : '24px 0 4px' }}>
         <p style={{ fontSize: mobile ? 14 : 16, fontWeight: 600 }}>No activity yet</p>
-        <p style={{ fontSize: mobile ? 13 : 14, lineHeight: 1.55, color: 'var(--text-2)' }}>Your friends' Classified, Covert and ★ pulls and sales show up here.</p>
+        <p style={{ fontSize: mobile ? 13 : 14, lineHeight: 1.55, color: 'var(--text-2)' }}>Your friends’ Classified, Covert and ★ pulls and sales show up here.</p>
         <Button variant="secondary" size={44} to="/friends" style={{ marginTop: 4, paddingInline: 20 }}>
           Find friends
         </Button>

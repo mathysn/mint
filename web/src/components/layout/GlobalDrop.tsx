@@ -53,7 +53,7 @@ export function GlobalDropBanner() {
         </span>
       </span>
       <span className="mono" style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-3)' }}>
-        {timeAgo(drop.createdAt, now)} ago
+        {timeAgo(drop.createdAt, now)}
       </span>
     </div>
   );

@@ -25,7 +25,7 @@ export async function showcaseOf(userId: string): Promise<Item[]> {
  */
 export async function setShowcase(userId: string, itemIds: string[]): Promise<Item[]> {
   const ids = [...new Set(itemIds)];
-  if (ids.length > SHOWCASE_SIZE) fail(400, 'bad_request', `A showcase holds ${SHOWCASE_SIZE} items.`);
+  if (ids.length > SHOWCASE_SIZE) fail(409, 'limit_reached', `A showcase holds ${SHOWCASE_SIZE} items.`);
   await db().transaction(async (tx) => {
     await tx.select({ id: users.id }).from(users).where(eq(users.id, userId)).for('update');
     if (ids.length) {
@@ -33,7 +33,7 @@ export async function setShowcase(userId: string, itemIds: string[]): Promise<It
         .select({ n: count() })
         .from(items)
         .where(and(inArray(items.id, ids), eq(items.ownerId, userId), ne(items.status, 'destroyed')));
-      if ((mine?.n ?? 0) !== ids.length) fail(409, 'items_unavailable', 'Only your own items can go in your showcase.');
+      if ((mine?.n ?? 0) !== ids.length) fail(403, 'forbidden', 'Only your own items can go in your showcase.');
       // Staff took it out of a showcase: it stays out for 24 h.
       const [blocked] = await tx
         .select({ until: items.showcaseBlockedUntil })
@@ -85,7 +85,7 @@ export async function profileOf(viewerId: string | null, username: string): Prom
 /** Home feed length (desktop shows it in a scroll the height of the Today panel). */
 export const FEED_SIZE = 10;
 
-/** Friends' activity: their unboxings from Classified, newest first (items stay listed after a recycle). */
+/** Friends’ activity: their unboxings, sales and trade-ups from Classified, newest first (items stay listed after a recycle). */
 export async function friendsFeed(viewerId: string, limit = FEED_SIZE): Promise<FeedEntry[]> {
   const ids = await friendIds(viewerId);
   if (!ids.length) return [];

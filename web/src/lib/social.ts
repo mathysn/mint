@@ -59,7 +59,7 @@ export function useFriendActions() {
     void client.invalidateQueries({ queryKey: keys.me });
     void client.invalidateQueries({ queryKey: socialKeys.feed });
   };
-  const onError = (error: Error) => toast(error instanceof ApiRequestError ? error.message : 'Something went wrong.', { error: true });
+  const onError = (error: Error) => toast(error instanceof ApiRequestError ? error.message : 'Couldn’t update your friends. Try again.', { error: true });
   const options = { onSuccess: refresh, onError };
   return {
     add: useMutation({ mutationFn: (username: string) => api<{ relation: Relation }>('/friends/requests', { method: 'POST', json: { username } }), ...options }),
@@ -79,6 +79,6 @@ export function useSetShowcase() {
       void client.invalidateQueries({ queryKey: ['profile'] });
       void client.invalidateQueries({ queryKey: ['items'] });
     },
-    onError: (error) => toast(error instanceof ApiRequestError ? error.message : 'Could not save the showcase.', { error: true }),
+    onError: (error) => toast(error instanceof ApiRequestError ? error.message : 'Couldn’t save the showcase. Try again.', { error: true }),
   });
 }

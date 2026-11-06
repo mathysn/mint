@@ -11,13 +11,6 @@ import s from './opening.module.css';
 
 const cx = (...names: (string | false | undefined)[]) => names.filter(Boolean).join(' ');
 
-const ODDS_NAME: Record<Tier, string> = {
-  milspec: 'Mil-Spec',
-  restricted: 'Restricted',
-  classified: 'Classified',
-  covert: 'Covert',
-  gold: '★ Knife or gloves',
-};
 
 /** The odds every case shares (Cases screen). */
 export function OddsStrip({ odds, mobile }: { odds: OddsRow[]; mobile?: boolean }) {
@@ -26,7 +19,7 @@ export function OddsStrip({ odds, mobile }: { odds: OddsRow[]; mobile?: boolean 
       {odds.map((o) => (
         <div key={o.tier} className={s.oddsCell} role={mobile ? 'listitem' : undefined}>
           <span aria-hidden="true" className={s.oddsBar} style={{ background: RARITY[o.tier].color }} />
-          <span className={s.oddsName}>{ODDS_NAME[o.tier]}</span>
+          <span className={s.oddsName}>{RARITY[o.tier].name}</span>
           <span className={`mono ${s.oddsPct}`}>{formatPct(o.pct)}</span>
         </div>
       ))}
@@ -240,14 +233,14 @@ const GRADES: Record<'desktop' | 'mobile', Record<Exclude<Tier, 'gold'>, Grade>>
   desktop: {
     milspec: { bg: 'var(--surface)', haloInset: '22% 24%', pulse: false, brackets: false },
     restricted: { bg: 'var(--surface)', haloInset: '16% 18%', pulse: false, brackets: false },
-    classified: { bg: 'radial-gradient(ellipse at 28% 50%, rgba(211,44,230,0.13), rgba(14,16,19,0) 62%), var(--surface)', haloInset: '8% 10%', pulse: false, brackets: true },
-    covert: { bg: 'radial-gradient(ellipse at 28% 50%, rgba(235,75,75,0.22), rgba(14,16,19,0) 66%), var(--surface)', haloInset: '0% 2%', pulse: true, brackets: true },
+    classified: { bg: 'radial-gradient(ellipse at 28% 50%, color-mix(in srgb, var(--classified) 13%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 62%), var(--surface)', haloInset: '8% 10%', pulse: false, brackets: true },
+    covert: { bg: 'radial-gradient(ellipse at 28% 50%, color-mix(in srgb, var(--covert) 22%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 66%), var(--surface)', haloInset: '0% 2%', pulse: true, brackets: true },
   },
   mobile: {
     milspec: { bg: 'var(--surface)', haloInset: '24% 22%', pulse: false, brackets: false },
     restricted: { bg: 'var(--surface)', haloInset: '16% 16%', pulse: false, brackets: false },
-    classified: { bg: 'radial-gradient(ellipse at 50% 22%, rgba(211,44,230,0.14), rgba(14,16,19,0) 60%), var(--surface)', haloInset: '8% 8%', pulse: false, brackets: true },
-    covert: { bg: 'radial-gradient(ellipse at 50% 22%, rgba(235,75,75,0.24), rgba(14,16,19,0) 64%), var(--surface)', haloInset: '0% 2%', pulse: true, brackets: true },
+    classified: { bg: 'radial-gradient(ellipse at 50% 22%, color-mix(in srgb, var(--classified) 14%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 60%), var(--surface)', haloInset: '8% 8%', pulse: false, brackets: true },
+    covert: { bg: 'radial-gradient(ellipse at 50% 22%, color-mix(in srgb, var(--covert) 24%, transparent), color-mix(in srgb, var(--surface) 0%, transparent) 64%), var(--surface)', haloInset: '0% 2%', pulse: true, brackets: true },
   },
 };
 
@@ -273,7 +266,6 @@ export function SoundToggle() {
   );
 }
 
-const REVEAL_RARITY: Record<Tier, string> = { ...Object.fromEntries(Object.entries(RARITY).map(([k, v]) => [k, v.name])), gold: 'Rare special' } as Record<Tier, string>;
 
 /** Graded reveal (DESIGN.md §5): subtle for Mil-Spec, marked for Covert. Gold has its own full screen. */
 export function RevealPanel({ item, mobile, actions, footer, closing }: { item: Item; mobile?: boolean; actions: ReactNode; footer?: ReactNode; closing?: boolean }) {
@@ -293,7 +285,7 @@ export function RevealPanel({ item, mobile, actions, footer, closing }: { item: 
         <div className={s.revealRarity}>
           <span aria-hidden="true" className={s.revealSquare} style={{ background: rarity.color }} />
           <span className="lbl" style={{ color: rarity.text }}>
-            {REVEAL_RARITY[item.skin.tier]}
+            {RARITY[item.skin.tier].name}
           </span>
         </div>
         <div className={s.revealTitle}>
@@ -316,7 +308,7 @@ export function RevealPanel({ item, mobile, actions, footer, closing }: { item: 
         )}
         <div className={s.recycleRow}>
           <span className={s.recycleLabel}>Recycle value</span>
-          <span className={`mono ${s.recycleValue}`}>{formatCredits(item.value)} CR</span>
+          <span className={`mono ${s.recycleValue}`}>{formatCredits(item.recycleValue)} CR</span>
         </div>
         <div className={s.actions}>{actions}</div>
         {footer}
@@ -345,11 +337,11 @@ export function GoldReveal({ item, mobile, onKeep, actions, closing }: { item: I
   return (
     <div role="dialog" aria-modal="true" aria-labelledby="gold-title" className={cx('anim', s.gold, mobile && s.mobile)} data-closing={closing || undefined}>
       <span className="lbl" style={{ fontSize: mobile ? 11 : 12, color: 'var(--gold-text)' }}>
-        ★ Rare special item
+        ★ Rare special
       </span>
       <div className={s.goldArt}>
         <span aria-hidden="true" className={`anim ${s.rays}`} />
-        <Halo color="rgba(228,174,57,0.45)" inset={mobile ? '4% 10%' : '6% 14%'} />
+        <Halo color="color-mix(in srgb, var(--gold) 45%, transparent)" inset={mobile ? '4% 10%' : '6% 14%'} />
         <HudCorners size={mobile ? 18 : 26} inset={0} color="var(--gold-text)" />
         <SkinArt skin={item.skin} className={`anim ${s.goldImg}`} />
       </div>

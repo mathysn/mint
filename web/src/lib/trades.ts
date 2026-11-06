@@ -2,6 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import type { CreateTradeBody, Item, Me, TradeActionResult, TradeOffer, TradeOptions, TradeQuote } from '../../../shared/api';
 import { useToast } from '../components/ui/Toast';
 import { ApiRequestError, api } from './api';
+import { formatFloat } from './format';
 import { keys, useRefreshPlayerData } from './queries';
 import { useIsAccount } from './social';
 
@@ -58,7 +59,7 @@ export function useSendTrade() {
   return useMutation({
     mutationFn: (body: CreateTradeBody) => api<{ id: string }>('/trades', { method: 'POST', json: body }),
     onSuccess: () => after(),
-    onError: (error) => toast(error instanceof ApiRequestError ? error.message : 'Could not send the offer.', { error: true }),
+    onError: (error) => toast(error instanceof ApiRequestError ? error.message : 'Couldn’t send the offer. Try again.', { error: true }),
   });
 }
 
@@ -71,7 +72,7 @@ export function useTradeAction() {
     onSuccess: (result) => after(result.balance),
     onError: (error) => {
       after();
-      toast(error instanceof ApiRequestError ? error.message : 'Something went wrong.', { error: true });
+      toast(error instanceof ApiRequestError ? error.message : 'Couldn’t update the offer. Try again.', { error: true });
     },
   });
 }
@@ -85,12 +86,12 @@ export function expiresIn(iso: string, now: Date): string {
   return `Expires in ${Math.floor(hours / 24)} d ${String(hours % 24).padStart(2, '0')} h`;
 }
 
-/** "ST™ · FT · 0.1876" (cards) or "ST FT 0.1876" (picker tiles). */
+/** "ST™ · FT · 0.1876" (cards) or "ST™ FT 0.1876" (picker tiles). */
 export function itemTag(item: Item, short = false, lock = true): string {
   if (lock && item.status === 'listed') return 'Listed';
   if (lock && item.status === 'in_trade') return 'In a trade';
-  const wear = item.wear && item.float !== null ? (short ? `${item.wear.code} ${item.float.toFixed(4)}` : `${item.wear.code} · ${item.float.toFixed(4)}`) : 'Vanilla';
-  return item.stattrak ? (short ? `ST ${wear}` : `ST™ · ${wear}`) : wear;
+  const wear = item.wear && item.float !== null ? (short ? `${item.wear.code} ${formatFloat(item.float, 4)}` : `${item.wear.code} · ${formatFloat(item.float, 4)}`) : 'Vanilla';
+  return item.stattrak ? (short ? `ST™ ${wear}` : `ST™ · ${wear}`) : wear;
 }
 
 /** "Estimated +500 CR for you" / "−300 CR for you". */

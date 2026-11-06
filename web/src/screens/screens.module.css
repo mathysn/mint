@@ -7,6 +7,40 @@
   background: var(--surface);
   padding: 28px;
 }
+/* Home: feed + Today side by side. `contain: size` keeps the feed out of the row height, so
+   Today alone sets it and the feed stretches to match, scrolling its list. Stacked when too
+   narrow for both (460 + 24 + 300 px of content, plus the sidebar and page padding). */
+.homeRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+  gap: 24px;
+}
+.feedPanel {
+  contain: size;
+  min-height: 0;
+}
+.feedScroll {
+  flex: 1 1 0;
+  /* The thumb sits in the panel padding, not over the timestamps. */
+  margin-right: -16px;
+}
+.feedViewport {
+  padding-right: 16px;
+}
+/* ScrollArea contains overscroll (right for modals and the sidebar). Here the feed sits in the
+   page: once its list ends, or when it has nothing to scroll, the wheel scrolls the page.
+   Two classes so it wins over .viewport whatever order the CSS modules load in. */
+.feedScroll .feedViewport {
+  overscroll-behavior: auto;
+}
+@media (max-width: 1127px) {
+  .homeRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .feedPanel {
+    contain: none;
+  }
+}
 .panelHead {
   display: flex;
   justify-content: space-between;

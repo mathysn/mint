@@ -4,6 +4,7 @@ import { CaseTile } from '../components/items/items';
 import { FriendsFeed } from '../components/social/feed';
 import { Button } from '../components/ui/Button';
 import { Credits, HudCorners, HudLabel } from '../components/ui/primitives';
+import { ScrollArea } from '../components/ui/Scrollbar';
 import { useFreeCase } from '../lib/freeCase';
 import { useCrates, useEconomyText, useMe } from '../lib/queries';
 import { useIsMobile } from '../lib/useMediaQuery';
@@ -104,14 +105,16 @@ function DesktopHome() {
         </div>
       </section>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-        <section aria-labelledby="feed-title" className={s.panel} style={{ flex: '2 1 460px', gap: 16 }}>
+      {/* The Today panel sets the row height; the feed fills it and scrolls (homeRow, feedPanel). */}
+      <div className={s.homeRow}>
+        <section aria-labelledby="feed-title" className={`${s.panel} ${s.feedPanel}`} style={{ gap: 16 }}>
           <div className={s.panelHead}>
             <h2 id="feed-title" className={s.panelTitle}>
               Friends' activity
             </h2>
             <HudLabel>// Feed</HudLabel>
           </div>
+          <ScrollArea className={s.feedScroll} viewportClassName={s.feedViewport} aria-label="Friends' activity" tabIndex={0}>
           {guest ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, padding: '24px 0 4px' }}>
               <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'var(--text-3)', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
@@ -128,8 +131,9 @@ function DesktopHome() {
           ) : (
             <FriendsFeed />
           )}
+          </ScrollArea>
         </section>
-        <section aria-labelledby="today-title" className={s.panel} style={{ flex: '1 1 300px', gap: 24 }}>
+        <section aria-labelledby="today-title" className={s.panel} style={{ gap: 24 }}>
           <div className={s.panelHead}>
             <h2 id="today-title" className={s.panelTitle}>
               Today

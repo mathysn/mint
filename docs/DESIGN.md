@@ -112,6 +112,7 @@ Toutes les animations se coupent avec `prefers-reduced-motion: reduce` (roulette
 - **Onglets** : texte 15 px, actif blanc avec soulignement 2 px. Sur mobile : contrôle segmenté, segment actif blanc.
 - **Puce de rareté** : carré de couleur 8 px + libellé ; active = fond `#1E2227` et contour blanc.
 - **Barre de sélection** : apparaît au-dessus de la grille dès qu'un objet est coché (nombre, valeur, Clear, List on market, Recycle).
+- **Accueil desktop, fil d'activité et Today** : côte à côte (2/3 – 1/3). Le panneau Today fixe la hauteur de la rangée ; le fil des amis prend la même hauteur et fait défiler ses 10 dernières entrées. Empilés quand la place manque (sous 1 128 px de fenêtre), le fil s'affiche alors en entier.
 - **Carte d'offre de trade** : en-tête (joueur, expiration, statut), deux colonnes « You give » / « You get » avec total estimé, pied avec l'écart de valeur et les actions.
 
 ## 4. Écrans et fichiers

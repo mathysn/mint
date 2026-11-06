@@ -82,8 +82,11 @@ export async function profileOf(viewerId: string | null, username: string): Prom
   };
 }
 
+/** Home feed length (desktop shows it in a scroll the height of the Today panel). */
+export const FEED_SIZE = 10;
+
 /** Friends' activity: their unboxings from Classified, newest first (items stay listed after a recycle). */
-export async function friendsFeed(viewerId: string, limit = 20): Promise<FeedEntry[]> {
+export async function friendsFeed(viewerId: string, limit = FEED_SIZE): Promise<FeedEntry[]> {
   const ids = await friendIds(viewerId);
   if (!ids.length) return [];
   const entries = await db()

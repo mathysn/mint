@@ -155,6 +155,14 @@ function DesktopHome() {
               <dt style={{ color: 'var(--text-2)' }}>Case of the day</dt>
               <dd style={{ margin: 0, textAlign: 'right' }}>{daily?.name ?? '—'}</dd>
             </div>
+            {free.crateNext && (
+              <div className={s.row}>
+                <dt style={{ color: 'var(--text-2)' }}>Next case in</dt>
+                <dd className="mono" style={{ margin: 0 }}>
+                  {free.crateNext}
+                </dd>
+              </div>
+            )}
           </dl>
         </section>
       </div>
@@ -259,6 +267,12 @@ function MobileHome() {
           <span style={{ color: 'var(--text-2)' }}>Case of the day</span>
           <span style={{ textAlign: 'right' }}>{daily?.name ?? '—'}</span>
         </div>
+        {free.crateNext && (
+          <div className={s.row}>
+            <span style={{ color: 'var(--text-2)' }}>Next case in</span>
+            <span className="mono">{free.crateNext}</span>
+          </div>
+        )}
       </section>
 
       <section aria-labelledby="m-cases" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

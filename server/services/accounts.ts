@@ -6,7 +6,7 @@ import { freeCaseStack } from '../game/dailyCrate.js';
 import { econ } from '../game/economy.js';
 import { banInfo, fail, type UserRow } from '../http.js';
 import { staffRoleOf } from '../admin/staff.js';
-import { caseOfDay, catalog } from './catalog.js';
+import { caseOfDay, caseOfDayChangesAt, catalog } from './catalog.js';
 import { heldInBids } from './market.js';
 import { pendingReceived } from './trades.js';
 
@@ -85,7 +85,14 @@ export async function freeCaseFor(user: FreeCaseFields, now = new Date()): Promi
   const cat = await catalog();
   const stack = freeCaseStack(user.freeCaseAnchor, now);
   const count = stack.count + user.bonusFreeCases;
-  return { available: count > 0, count, max: stack.max, nextAt: stack.nextAt?.toISOString() ?? null, crateId: caseOfDay(cat, now) };
+  return {
+    available: count > 0,
+    count,
+    max: stack.max,
+    nextAt: stack.nextAt?.toISOString() ?? null,
+    crateId: caseOfDay(cat, now),
+    crateChangesAt: caseOfDayChangesAt(cat, now)?.toISOString() ?? null,
+  };
 }
 
 export const avatarUrl = (user: Pick<UserRow, 'discordId' | 'avatarHash'>) =>

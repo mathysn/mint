@@ -53,6 +53,8 @@ export interface FreeCase {
   nextAt: string | null;
   /** Today's free case. */
   crateId: string | null;
+  /** ISO date when the case of the day moves to the next case; null while staff hold it in place. */
+  crateChangesAt: string | null;
 }
 
 export type StaffRole = 'viewer' | 'moderator' | 'admin';

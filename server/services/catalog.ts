@@ -2,7 +2,7 @@ import { eq, inArray } from 'drizzle-orm';
 import type { SkinCard } from '../../shared/api.js';
 import { db, type DbOrTx } from '../db/client.js';
 import { collections, crateItems, crates, gameSettings, skins } from '../db/schema.js';
-import { dailyCrateId } from '../game/dailyCrate.js';
+import { caseOfDayEndsAt, caseRotationMs, dailyCrateId } from '../game/dailyCrate.js';
 import type { CrateContents, DrawableSkin } from '../game/draw.js';
 import { TIERS, type Tier } from '../game/economy.js';
 
@@ -115,9 +115,13 @@ export async function catalog(): Promise<Catalog> {
   return result;
 }
 
-/** Today's free case. */
+/** The free case right now: staff pick, else the rotation (every `caseRotationHours`). */
 export const caseOfDay = (cat: Pick<Catalog, 'allIds' | 'activeIds' | 'caseOfDayPick'>, now = new Date()) =>
-  dailyCrateId({ allIds: cat.allIds, activeIds: cat.activeIds, pick: cat.caseOfDayPick }, now);
+  dailyCrateId({ allIds: cat.allIds, activeIds: cat.activeIds, pick: cat.caseOfDayPick }, now, caseRotationMs());
+
+/** When the rotation moves on; null while an active staff pick holds the case in place. */
+export const caseOfDayChangesAt = (cat: Pick<Catalog, 'activeIds' | 'caseOfDayPick'>, now = new Date()): Date | null =>
+  (cat.caseOfDayPick && cat.activeIds.includes(cat.caseOfDayPick)) || cat.activeIds.length === 0 ? null : caseOfDayEndsAt(now, caseRotationMs());
 
 export function clearCatalogCache() {
   cache = undefined;

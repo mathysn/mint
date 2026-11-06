@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { anchorAfterUse, dailyCrateId, freeCaseStack, freeStack } from '../../server/game/dailyCrate.js';
+import { anchorAfterUse, caseOfDayEndsAt, dailyCrateId, freeCaseStack, freeStack } from '../../server/game/dailyCrate.js';
 import {
   EXTRA_TEASERS_MAX,
   NEAR_MISS_PERCENT,
@@ -225,31 +225,50 @@ describe('recycleValue', () => {
 
 describe('daily crate', () => {
   const ids = ['crate-b', 'crate-a', 'crate-c'];
+  const H = 60 * 60 * 1000;
+  const EVERY = 4 * H;
 
-  const day = (n: number, hour = 0) => new Date(Date.UTC(1970, 0, 1 + n, hour));
+  /** Start of slot n (4 h each, from 1970-01-01 00:00 UTC), plus some minutes. */
+  const slot = (n: number, minutes = 0) => new Date(n * EVERY + minutes * 60_000);
   const all = (activeIds: string[], pick: string | null = null) => ({ allIds: ids, activeIds, pick });
 
-  it('rotates once per UTC day over the sorted ids', () => {
-    expect(dailyCrateId(all(ids), day(0))).toBe('crate-a');
-    expect(dailyCrateId(all(ids), day(0, 23))).toBe('crate-a');
-    expect(dailyCrateId(all(ids), day(1))).toBe('crate-b');
-    expect(dailyCrateId(all(ids), day(3))).toBe('crate-a');
-    expect(dailyCrateId({ allIds: [], activeIds: [], pick: null }, day(0))).toBeNull();
+  it('rotates every slot over the sorted ids', () => {
+    expect(dailyCrateId(all(ids), slot(0), EVERY)).toBe('crate-a');
+    expect(dailyCrateId(all(ids), slot(0, 239), EVERY)).toBe('crate-a');
+    expect(dailyCrateId(all(ids), slot(1), EVERY)).toBe('crate-b');
+    expect(dailyCrateId(all(ids), slot(3), EVERY)).toBe('crate-a');
+    expect(dailyCrateId({ allIds: [], activeIds: [], pick: null }, slot(0), EVERY)).toBeNull();
   });
 
-  it('skips to the next active case, so turning another case off never moves today’s pick', () => {
-    expect(dailyCrateId(all(['crate-a', 'crate-c']), day(1))).toBe('crate-c');
-    expect(dailyCrateId(all(['crate-a', 'crate-c']), day(0))).toBe('crate-a');
-    expect(dailyCrateId(all(['crate-a', 'crate-b']), day(0))).toBe('crate-a');
-    expect(dailyCrateId(all([]), day(0))).toBeNull();
+  it('changes at 04:00 UTC with 4 h, not at 03:59; once a day with 24 h', () => {
+    const at = (h: number, m = 0) => new Date(Date.UTC(2026, 10, 6, h, m));
+    expect(dailyCrateId(all(ids), at(3, 59), EVERY)).toBe(dailyCrateId(all(ids), at(0), EVERY));
+    expect(dailyCrateId(all(ids), at(4), EVERY)).not.toBe(dailyCrateId(all(ids), at(3, 59), EVERY));
+    expect(dailyCrateId(all(ids), at(23, 59), 24 * H)).toBe(dailyCrateId(all(ids), at(0), 24 * H));
+  });
+
+  it('knows when the next case comes', () => {
+    expect(caseOfDayEndsAt(new Date('2026-11-06T09:30:00Z'), EVERY)).toEqual(new Date('2026-11-06T12:00:00Z'));
+    expect(caseOfDayEndsAt(new Date('2026-11-06T12:00:00Z'), EVERY)).toEqual(new Date('2026-11-06T16:00:00Z'));
+    expect(caseOfDayEndsAt(new Date('2026-11-06T09:30:00Z'), 24 * H)).toEqual(new Date('2026-11-07T00:00:00Z'));
+  });
+
+  it('skips to the next active case, so turning another case off never moves the current pick', () => {
+    expect(dailyCrateId(all(['crate-a', 'crate-c']), slot(1), EVERY)).toBe('crate-c');
+    expect(dailyCrateId(all(['crate-a', 'crate-c']), slot(0), EVERY)).toBe('crate-a');
+    expect(dailyCrateId(all(['crate-a', 'crate-b']), slot(0), EVERY)).toBe('crate-a');
+    expect(dailyCrateId(all([]), slot(0), EVERY)).toBeNull();
   });
 
   it('uses the staff pick while it is active', () => {
-    expect(dailyCrateId(all(ids, 'crate-c'), day(0))).toBe('crate-c');
-    expect(dailyCrateId(all(ids, 'crate-c'), day(1))).toBe('crate-c');
-    expect(dailyCrateId(all(['crate-a', 'crate-b'], 'crate-c'), day(1))).toBe('crate-b');
+    expect(dailyCrateId(all(ids, 'crate-c'), slot(0), EVERY)).toBe('crate-c');
+    expect(dailyCrateId(all(ids, 'crate-c'), slot(1), EVERY)).toBe('crate-c');
+    expect(dailyCrateId(all(['crate-a', 'crate-b'], 'crate-c'), slot(1), EVERY)).toBe('crate-b');
   });
 
+  it('rotates every 4 h by default', () => {
+    expect(DEFAULT_ECONOMY.caseRotationHours).toBe(4);
+  });
 });
 
 describe('free case stack', () => {

@@ -1,7 +1,5 @@
 import { econ } from './economy.js';
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 export interface CaseOfDayInput {
   /** Every case, active or not: turning one case on or off never moves today's pick. */
   allIds: readonly string[];
@@ -12,20 +10,27 @@ export interface CaseOfDayInput {
 
 /**
  * "Free today": the staff pick if any, else a rotation over all cases (sorted by id) that changes
- * at 00:00 UTC and moves on to the next active case when today's one is off.
+ * every `everyMs` (slots aligned on 00:00 UTC) and moves on to the next active case when the
+ * current one is off.
  */
-export function dailyCrateId({ allIds, activeIds, pick }: CaseOfDayInput, now: Date): string | null {
+export function dailyCrateId({ allIds, activeIds, pick }: CaseOfDayInput, now: Date, everyMs: number): string | null {
   const active = new Set(activeIds);
   if (pick && active.has(pick)) return pick;
   if (active.size === 0) return null;
   const sorted = [...allIds].sort();
-  const day = Math.floor(now.getTime() / DAY_MS);
+  const slot = Math.floor(now.getTime() / everyMs);
   for (let i = 0; i < sorted.length; i++) {
-    const id = sorted[(day + i) % sorted.length]!;
+    const id = sorted[(slot + i) % sorted.length]!;
     if (active.has(id)) return id;
   }
   return null;
 }
+
+/** When the rotation moves on to the next case: the start of the next slot. */
+export const caseOfDayEndsAt = (now: Date, everyMs: number) => new Date((Math.floor(now.getTime() / everyMs) + 1) * everyMs);
+
+/** Rotation length under the economy in force (4 h by default). */
+export const caseRotationMs = () => econ().caseRotationHours * 60 * 60 * 1000;
 
 export interface FreeStack {
   /** Free cases ready now, from 0 to `max`. */

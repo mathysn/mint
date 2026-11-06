@@ -31,6 +31,7 @@ export const SETTINGS: SettingDef[] = [
   // New keys (the old `free_case.every` was in hours): a value saved in hours is never read as minutes.
   { key: 'free_case.every_min', group: 'cases', label: 'Free case every', help: 'Time for the stack to gain one free case.', unit: 'min', decimals: 0, min: 1, max: 10_080, read: (e) => e.freeCaseMinutes, write: (e, v) => ({ ...e, freeCaseMinutes: n(v) }) },
   { key: 'free_case.max', group: 'cases', label: 'Free case stack', help: 'Free cases a player can save up.', unit: 'max', decimals: 0, min: 1, max: 50, read: (e) => e.freeCaseMax, write: (e, v) => ({ ...e, freeCaseMax: n(v) }) },
+  { key: 'case_of_day.every_h', group: 'cases', label: 'Case of the day every', help: 'Time before the free case moves to the next case.', unit: 'h', decimals: 0, min: 1, max: 168, read: (e) => e.caseRotationHours, write: (e, v) => ({ ...e, caseRotationHours: n(v) }) },
   ...TIERS.map(
     (tier): SettingDef => ({
       key: `odds.${tier}`,

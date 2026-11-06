@@ -112,7 +112,7 @@ Dix fonctionnalités : six de base (ouverture, inventaire, recyclage, trade, mai
 - Liste des caisses avec leur prix ; aperçu du contenu groupé par rareté, avec les taux.
 - Animation de roulette horizontale qui défile puis s'arrête sur l'objet obtenu. Le résultat est tiré par le serveur avant le début de l'animation.
 - Écran de révélation : image, nom, état, float, pattern, badge StatTrak. Actions : garder, recycler, mettre en vente.
-- Une caisse gratuite toutes les 10 minutes, qui s'accumulent jusqu'à 5 (un nouveau joueur commence avec les 5), sur la « caisse du jour » (qui change à 00:00 UTC). On les ouvre une par une.
+- Une caisse gratuite toutes les 10 minutes, qui s'accumulent jusqu'à 5 (un nouveau joueur commence avec les 5), sur la « caisse du jour » (qui change toutes les 4 h, à 00:00, 04:00, 08:00… UTC ; réglable dans admin › Economy). On les ouvre une par une.
 
 ### Inventaire et album de collection
 
@@ -267,6 +267,7 @@ Chaque phase doit être jouable avant de passer à la suivante.
 - [x] Float tiré uniformément ou pondéré pour rendre Factory New plus rare ? → **uniforme** dans la plage du skin (pas de pondération)
 - [ ] Valeurs de l'économie à rééquilibrer après les premiers tests (à surveiller en priorité depuis le passage à une caisse gratuite toutes les 10 min : jusqu'à 144 caisses gratuites par jour pour un joueur très actif, contre 6 avant)
 - [x] Caisse gratuite : par jour ou par heure ? → **toutes les 4 h**, et la récompense quotidienne de 250 CR est supprimée ; revu le 05/11/2026 : **une toutes les 10 min, jusqu'à 5 en réserve**, toujours sur la caisse du jour, ouvertes une par une, réserve pleine au départ (nouveaux joueurs et joueurs existants)
+- [x] Caisse du jour : une par jour ? → revu le 06/11/2026 : **elle change toutes les 4 h** (créneaux alignés sur 00:00 UTC), durée réglable dans admin › Economy (« Case of the day every », 1 à 168 h). Un choix du staff dans Catalog reste prioritaire et fige la caisse
 - [x] Progression invité → **jamais transférée**, ni dans un compte existant ni dans un nouveau (anti-farm) : le compte Discord démarre avec sa propre collection et l'invité est supprimé
 
 ## Sources

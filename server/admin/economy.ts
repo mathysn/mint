@@ -126,6 +126,7 @@ function impacts(changes: Checked['changes'], next: Economy): string[] {
   if (keys.some((k) => k.startsWith('recycle.'))) out.push('Recycle values apply right away, to items players already own.');
   if (keys.some((k) => k.startsWith('odds.'))) out.push('New odds apply to the next opening. The Overview compares them with real drops.');
   if (keys.some((k) => k.startsWith('free_case.'))) out.push('Free case stacks are recomputed right away: a full stack stays full, a partial one fills at the new pace.');
+  if (keys.includes('case_of_day.every_h')) out.push('The case of the day may change right away: the rotation restarts on the new schedule, aligned on 00:00 UTC. A case picked by staff stays.');
   if (!out.length) out.push('Applies right away, no deploy needed.');
   return out;
 }

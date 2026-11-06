@@ -101,7 +101,7 @@ Les écrans racontent une même journée, utile pour vérifier qu'on n'a rien ou
 
 ## 9. Points ouverts
 
-1. ~~Caisse gratuite~~ : tranché, **une toutes les 10 min, jusqu'à 5 en réserve**, partout (jeu et admin ; revu le 05/11/2026, avant une toutes les 4 h). Les deux chiffres se règlent dans Economy (« Free case every », « Free case stack »). Les caisses gratuites d'un événement s'ajoutent à la réserve, sans plafond. La caisse du jour est choisie par un admin (Catalog) ou, à défaut, par la rotation quotidienne ; un choix s'applique tout de suite.
+1. ~~Caisse gratuite~~ : tranché, **une toutes les 10 min, jusqu'à 5 en réserve**, partout (jeu et admin ; revu le 05/11/2026, avant une toutes les 4 h). Les deux chiffres se règlent dans Economy (« Free case every », « Free case stack »). Les caisses gratuites d'un événement s'ajoutent à la réserve, sans plafond. La caisse du jour est choisie par un admin (Catalog) ou, à défaut, par la rotation, qui change toutes les 4 h par défaut (« Case of the day every » dans Economy, 1 à 168 h, créneaux alignés sur 00:00 UTC ; revu le 06/11/2026, avant une fois par jour) ; un choix s'applique tout de suite.
 2. Pas d'écran Items mobile : l'onglet Items et la feuille More renvoient vers les pages desktop.
 3. ~~Seuils des moniteurs~~ : tranchés (24/10/2026), vérifiés au moment de l'événement (acceptation d'un trade, ouverture d'une session, vente) :
    - *Repeated trades* : au moins 4 trades acceptés entre les deux mêmes joueurs en 48 h, au moins 80 % de la valeur dans un sens, au moins 10 000 CR déplacés ; urgent dès 25 000 CR ;

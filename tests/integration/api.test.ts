@@ -2,14 +2,14 @@ import { eq, sql } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { closeDb, db } from '../../server/db/client.js';
 import { items, ledger, users } from '../../server/db/schema.js';
-import { dailyCrateId } from '../../server/game/dailyCrate.js';
+import { caseRotationMs, dailyCrateId } from '../../server/game/dailyCrate.js';
 import { recycleValue } from '../../server/game/value.js';
 import { Client, newAccount, newGuest, resetDb } from './helpers.js';
 
 beforeEach(resetDb);
 afterAll(closeDb);
 
-const todaysCrate = () => dailyCrateId({ allIds: ['crate-a', 'crate-b'], activeIds: ['crate-a', 'crate-b'], pick: null }, new Date())!;
+const todaysCrate = () => dailyCrateId({ allIds: ['crate-a', 'crate-b'], activeIds: ['crate-a', 'crate-b'], pick: null }, new Date(), caseRotationMs())!;
 const otherCrate = () => (todaysCrate() === 'crate-a' ? 'crate-b' : 'crate-a');
 
 async function ledgerMatchesBalances() {

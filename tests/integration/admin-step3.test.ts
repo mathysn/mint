@@ -92,6 +92,29 @@ describe('economy settings', () => {
   });
 });
 
+describe('case of the day rotation', () => {
+  it('rotates every 4 h by default, follows the admin setting, and stops while staff pick a case', async () => {
+    const H = 60 * 60 * 1000;
+    const admin = await newStaff('mathys', 'admin');
+    const vex = await newAccount('vex');
+    const boundary = (every: number) => new Date((Math.floor(Date.now() / every) + 1) * every).toISOString();
+
+    const before = (await vex.client.json('/me')).body.freeCase;
+    expect(before.crateChangesAt).toBe(boundary(4 * H));
+
+    const preview = await post(admin.client, '/admin/economy/preview', { edits: { 'case_of_day.every_h': '1' } });
+    expect(preview.body).toMatchObject({ valid: true, diff: [{ key: 'case_of_day.every_h', label: 'Case of the day every', from: '4 h', to: '1 h' }] });
+    expect(preview.body.impacts[0]).toMatch(/^The case of the day may change right away/);
+    const save = await post(admin.client, '/admin/economy', { edits: { 'case_of_day.every_h': '1' }, reason: 'faster rotation' });
+    expect(save.body).toEqual({ toast: 'Saved 1 economy change · logged' });
+    expect((await logsOf('economy.update')).map((l) => [l.targetId, l.change])).toEqual([['case_of_day.every_h', '4 → 1 h']]);
+    expect((await vex.client.json('/me')).body.freeCase.crateChangesAt).toBe(boundary(H));
+
+    await post(admin.client, '/admin/catalog/case-of-day', { crateId: 'crate-b', reason: 'event' });
+    expect((await vex.client.json('/me')).body.freeCase).toMatchObject({ crateId: 'crate-b', crateChangesAt: null });
+  });
+});
+
 describe('market and trades', () => {
   it('cancels an auction: the leading bid is refunded, no fee, the item goes back', async () => {
     const mod = await newStaff('lea', 'moderator');

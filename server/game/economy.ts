@@ -14,6 +14,8 @@ export interface Economy {
   freeCaseMinutes: number;
   /** …up to this many cases saved. */
   freeCaseMax: number;
+  /** The case of the day moves to the next case every N hours, aligned on 00:00 UTC (game/dailyCrate.ts). */
+  caseRotationHours: number;
   /** Chance per opening, in basis points of 1/10 000. Sums to 10 000. */
   oddsBp: Record<Tier, number>;
   /** Recycle value of each rarity before wear and StatTrak. */
@@ -44,6 +46,7 @@ export const DEFAULT_ECONOMY: Economy = {
   startingBalance: 1000,
   freeCaseMinutes: 10,
   freeCaseMax: 5,
+  caseRotationHours: 4,
   oddsBp: { milspec: 7992, restricted: 1598, classified: 320, covert: 64, gold: 26 },
   recycle: { milspec: 30, restricted: 120, classified: 500, covert: 2500, gold: 10000 },
   stattrakOneIn: 10,
